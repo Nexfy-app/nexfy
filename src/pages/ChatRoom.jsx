@@ -17,32 +17,21 @@ function MessageBubble({ msg, isMe }) {
       initial={{ opacity: 0, y: 6, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className={cn("flex mb-2", isMe ? "justify-end" : "justify-start")}
+      className={cn("flex mb-1.5", isMe ? "justify-end" : "justify-start")}
     >
-      <div
-        className="max-w-[78%] rounded-2xl px-3.5 py-2.5"
-        style={isMe
-          ? {
-              background: 'hsl(var(--primary))',
-              color: 'white',
-              borderBottomRightRadius: '6px',
-              boxShadow: '0 2px 12px rgba(59,130,246,0.25)',
-            }
-          : {
-              background: 'hsl(var(--card))',
-              color: 'hsl(var(--foreground))',
-              borderBottomLeftRadius: '6px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
-            }
-        }
-      >
+      <div className={cn(
+        "max-w-[78%] rounded-2xl px-3.5 py-2.5 shadow-sm",
+        isMe
+          ? "bg-foreground text-white rounded-br-md"
+          : "bg-white text-foreground rounded-bl-md border border-slate-100"
+      )}>
         {msg.message_type === 'image' && msg.file_url && (
           <img src={msg.file_url} alt="imagem" className="rounded-xl max-w-full max-h-52 object-cover mb-1.5" />
         )}
         {msg.message_type === 'file' && msg.file_url && (
-          <a href={msg.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 py-1 hover:opacity-80">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: isMe ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)' }}>
+          <a href={msg.file_url} target="_blank" rel="noreferrer"
+            className="flex items-center gap-2 py-1 hover:opacity-80">
+            <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center", isMe ? "bg-white/15" : "bg-slate-100")}>
               <Paperclip className="w-3.5 h-3.5" />
             </div>
             <span className="text-xs font-medium underline truncate max-w-[140px]">{msg.file_name || 'arquivo'}</span>
@@ -55,8 +44,8 @@ function MessageBubble({ msg, isMe }) {
           <span className="text-[10px]">{time}</span>
           {isMe && (
             msg.is_read
-              ? <CheckCheck className="w-3 h-3" style={{ color: isMe ? 'rgba(147,197,253,0.8)' : undefined }} />
-              : <Check className="w-3 h-3 opacity-50" />
+              ? <CheckCheck className="w-3 h-3 text-blue-400" />
+              : <Check className="w-3 h-3 opacity-60" />
           )}
         </div>
       </div>
@@ -66,15 +55,10 @@ function MessageBubble({ msg, isMe }) {
 
 function DateDivider({ label }) {
   return (
-    <div className="flex items-center gap-3 my-4">
-      <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-      <span
-        className="text-[10px] font-semibold px-3 py-1 rounded-full"
-        style={{ background: 'rgba(255,255,255,0.06)', color: 'hsl(var(--muted-foreground))' }}
-      >
-        {label}
-      </span>
-      <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+    <div className="flex items-center gap-2 my-3">
+      <div className="flex-1 h-px bg-slate-200" />
+      <span className="text-[10px] text-muted-foreground font-medium bg-transparent px-2">{label}</span>
+      <div className="flex-1 h-px bg-slate-200" />
     </div>
   );
 }
@@ -86,7 +70,10 @@ function groupMessagesByDate(messages) {
     if (!msg.created_date) return;
     const d = new Date(msg.created_date);
     const label = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-    if (label !== lastDate) { groups.push({ type: 'divider', label }); lastDate = label; }
+    if (label !== lastDate) {
+      groups.push({ type: 'divider', label });
+      lastDate = label;
+    }
     groups.push({ type: 'msg', msg });
   });
   return groups;
@@ -130,10 +117,13 @@ export default function ChatRoom() {
 
   const otherPro = proData?.[0];
 
+  // Mark received messages as read
   useEffect(() => {
     if (!user || !messages.length) return;
     const unread = messages.filter(m => m.receiver_email === user.email && !m.is_read);
-    unread.forEach(m => base44.entities.ChatMessage.update(m.id, { is_read: true }).catch(() => {}));
+    unread.forEach(m => {
+      base44.entities.ChatMessage.update(m.id, { is_read: true }).catch(() => {});
+    });
   }, [messages, user]);
 
   useEffect(() => {
@@ -194,63 +184,38 @@ export default function ChatRoom() {
   const otherPhone = request?.client_email === user?.email ? otherPro?.phone : null;
   const grouped = groupMessagesByDate(messages);
 
-  const STATUS_INFO = {
-    in_progress: { label: 'Em andamento', color: '#34d399' },
-    completed: { label: 'Concluído', color: '#86efac' },
-    accepted: { label: 'Aceito', color: '#93c5fd' },
-    pending: { label: 'Aguardando', color: '#fbbf24' },
-  };
-  const statusInfo = STATUS_INFO[request?.status] || {};
+  const unreadCount = messages.filter(m => m.receiver_email === user?.email && !m.is_read).length;
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: 'hsl(var(--background))' }}>
+    <div className="h-screen flex flex-col bg-slate-50">
       {/* Header */}
       <div
         className="px-4 pt-safe shrink-0"
-        style={{
-          background: 'rgba(14,16,22,0.9)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          boxShadow: '0 1px 0 rgba(255,255,255,0.03)',
-        }}
+        style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 12px rgba(0,0,0,0.06)' }}
       >
         <div className="flex items-center gap-3 py-3">
           <button
             onClick={() => navigate('/chat')}
-            className="w-8 h-8 flex items-center justify-center rounded-full transition active:opacity-60"
-            style={{ background: 'rgba(255,255,255,0.07)' }}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition"
           >
-            <ArrowLeft className="w-4 h-4 text-foreground" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm text-white shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.6), rgba(59,130,246,0.3))', border: '1px solid rgba(59,130,246,0.3)' }}
-          >
+          <div className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center font-bold text-sm text-white shrink-0 shadow-sm">
             {otherName?.charAt(0)?.toUpperCase()}
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-black text-sm text-foreground truncate">{otherName}</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <p className="text-[10px] text-muted-foreground capitalize">
-                {request?.category?.replace(/_/g, ' ')}
-              </p>
-              {statusInfo.label && (
-                <>
-                  <span className="text-muted-foreground text-[10px]">·</span>
-                  <span className="text-[10px] font-bold" style={{ color: statusInfo.color }}>{statusInfo.label}</span>
-                </>
-              )}
-            </div>
+            <p className="font-bold text-sm truncate text-foreground">{otherName}</p>
+            <p className="text-[10px] text-muted-foreground capitalize">
+              {request?.category?.replace(/_/g, ' ')} · {request?.status === 'in_progress' ? '🟢 Em andamento' : request?.status === 'completed' ? '✅ Concluído' : '⏳ Aguardando'}
+            </p>
           </div>
 
           {otherPhone && (
             <a
               href={`tel:${otherPhone}`}
-              className="w-9 h-9 flex items-center justify-center rounded-full transition active:opacity-60"
-              style={{ background: 'rgba(255,255,255,0.07)' }}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition"
             >
               <Phone className="w-4 h-4 text-foreground" />
             </a>
@@ -259,18 +224,15 @@ export default function ChatRoom() {
       </div>
 
       {/* Security notice */}
-      <div
-        className="px-4 py-2 flex items-center gap-2 shrink-0"
-        style={{ background: 'rgba(245,158,11,0.08)', borderBottom: '1px solid rgba(245,158,11,0.1)' }}
-      >
+      <div className="bg-amber-50 border-b border-amber-100 px-4 py-2 flex items-center gap-2 shrink-0">
         <span className="text-xs">🔒</span>
-        <p className="text-[10px]" style={{ color: 'rgba(251,191,36,0.8)' }}>
-          <strong>Segurança:</strong> Combine detalhes pelo app. Pague somente após o serviço concluído.
+        <p className="text-[10px] text-amber-800">
+          <strong>Segurança:</strong> Combine tudo pelo app. Pague somente após o serviço ser concluído.
         </p>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4" style={{ background: 'hsl(var(--background))' }}>
+      <div className="flex-1 overflow-y-auto px-4 py-4">
         {grouped.map((item, i) =>
           item.type === 'divider'
             ? <DateDivider key={`d-${i}`} label={item.label} />
@@ -286,20 +248,19 @@ export default function ChatRoom() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
-            className="px-4 py-4 flex gap-4 shrink-0"
-            style={{ background: 'hsl(var(--card))', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            className="bg-white border-t border-slate-100 px-4 py-3 flex gap-4 shrink-0"
           >
             <label className="flex flex-col items-center gap-1.5 cursor-pointer">
               <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.2)' }}>
-                <Image className="w-5 h-5" style={{ color: '#c084fc' }} />
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center">
+                <Image className="w-5 h-5 text-purple-600" />
               </div>
               <span className="text-[10px] text-muted-foreground font-medium">Foto</span>
             </label>
             <label className="flex flex-col items-center gap-1.5 cursor-pointer">
               <input ref={fileInputRef} type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.2)' }}>
-                <Paperclip className="w-5 h-5" style={{ color: '#93c5fd' }} />
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <Paperclip className="w-5 h-5 text-blue-600" />
               </div>
               <span className="text-[10px] text-muted-foreground font-medium">Arquivo</span>
             </label>
@@ -311,48 +272,31 @@ export default function ChatRoom() {
       </AnimatePresence>
 
       {/* Input bar */}
-      <div
-        className="px-3 py-3 pb-safe shrink-0"
-        style={{
-          background: 'rgba(14,16,22,0.9)',
-          backdropFilter: 'blur(40px)',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}
-      >
+      <div className="bg-white border-t border-slate-100 px-3 py-2 pb-safe shrink-0" style={{ boxShadow: '0 -1px 12px rgba(0,0,0,0.04)' }}>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAttach(!showAttach)}
-            className="w-9 h-9 flex items-center justify-center rounded-full transition active:opacity-60 shrink-0"
-            style={{ background: 'rgba(255,255,255,0.07)' }}
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition text-muted-foreground"
           >
-            <Paperclip style={{ width: 18, height: 18, color: 'hsl(var(--muted-foreground))' }} />
+            <Paperclip className="w-4.5 h-4.5" style={{ width: '18px', height: '18px' }} />
           </button>
 
-          <div
-            className="flex-1 rounded-full px-4 py-2 min-h-[40px] flex items-center"
-            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}
-          >
+          <div className="flex-1 bg-slate-100 rounded-full px-4 py-2 min-h-[40px] flex items-center">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
               placeholder="Mensagem..."
-              className="w-full bg-transparent text-sm outline-none"
-              style={{ color: 'hsl(var(--foreground))' }}
+              className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
 
           <button
             onClick={handleSend}
             disabled={!message.trim() || sending}
-            className="w-9 h-9 rounded-full flex items-center justify-center transition active:opacity-80 shrink-0"
-            style={{
-              background: message.trim() ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.07)',
-              boxShadow: message.trim() ? '0 2px 12px rgba(59,130,246,0.3)' : 'none',
-              opacity: sending ? 0.5 : 1,
-            }}
+            className="w-9 h-9 bg-foreground text-white rounded-full flex items-center justify-center transition disabled:opacity-30 shadow-sm"
           >
-            <Send style={{ width: 16, height: 16, color: 'white' }} />
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </div>

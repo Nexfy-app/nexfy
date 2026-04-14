@@ -87,8 +87,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(14,16,22,0.82)', backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+          className="glass rounded-2xl overflow-hidden"
         >
           {/* Location bar */}
           <div className="flex items-center gap-3 px-4 pt-3 pb-2">
@@ -111,7 +110,7 @@ export default function Home() {
                 }
               </p>
             </div>
-            <div className="text-[11px] font-bold px-3 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.15)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.2)' }}>
+            <div className="bg-green-500/15 text-green-700 text-[11px] font-bold px-3 py-1 rounded-full border border-green-200">
               {availableWithDist.length} online
             </div>
           </div>
@@ -149,10 +148,7 @@ export default function Home() {
         animate={{ height: listExpanded ? '50vh' : 'auto' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(14,16,22,0.88)', backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 -4px 40px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.6)' }}
-        >
+        <div className="glass-strong rounded-2xl overflow-hidden">
           {/* Handle + header */}
           <button
             onClick={() => setListExpanded(!listExpanded)}
@@ -165,7 +161,7 @@ export default function Home() {
                   {availableWithDist.length} disponíveis{userLocation ? ` em ${radiusKm}km` : ' agora'}
                 </h2>
               </div>
-              <div className="w-7 h-7 flex items-center justify-center rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <div className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100">
                 {listExpanded
                   ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   : <ChevronUp className="w-4 h-4 text-muted-foreground" />

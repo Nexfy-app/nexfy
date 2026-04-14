@@ -27,18 +27,11 @@ export default function Explore() {
   return (
     <div className="min-h-screen bg-background">
       {/* Sticky header */}
-      <div
-        className="sticky top-0 z-10"
-        style={{
-          background: 'rgba(14,16,22,0.85)',
-          backdropFilter: 'blur(32px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-        }}
-      >
-        <div className="px-4 pt-14 pb-3">
-          <h1 className="text-2xl font-black text-foreground mb-4 tracking-tight">Encontrar</h1>
+      <div className="sticky top-0 z-10" style={{ background: 'rgba(245,247,250,0.88)', backdropFilter: 'blur(20px)' }}>
+        <div className="px-4 pt-12 pb-3">
+          <h1 className="text-2xl font-bold text-foreground mb-4">Encontrar</h1>
 
+          {/* Search bar */}
           <div className="relative mb-3">
             <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
               <Search className="w-4 h-4 text-muted-foreground" />
@@ -47,12 +40,7 @@ export default function Explore() {
               placeholder="Buscar profissional ou serviço..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-medium placeholder:text-muted-foreground focus:outline-none transition"
-              style={{
-                background: 'hsl(var(--card))',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: 'hsl(var(--foreground))',
-              }}
+              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition shadow-sm"
             />
           </div>
 
@@ -61,23 +49,28 @@ export default function Explore() {
       </div>
 
       {/* Results */}
-      <div className="px-4 pt-3 pb-6 space-y-2.5">
+      <div className="px-4 pt-2 pb-6 space-y-2.5">
+        {/* Count badge */}
         {!isLoading && (
-          <p className="text-xs text-muted-foreground font-medium px-1 py-1">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-xs text-muted-foreground font-medium px-1 py-1"
+          >
             {filtered.length} profissional{filtered.length !== 1 ? 'is' : ''} encontrado{filtered.length !== 1 ? 's' : ''}
-          </p>
+          </motion.p>
         )}
 
         {isLoading ? (
           <div className="flex flex-col gap-2.5 pt-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="rounded-2xl p-4" style={{ background: 'hsl(var(--card))', height: 86 }}>
+              <div key={i} className="bg-white rounded-2xl p-4 shadow-sm" style={{ height: 86 }}>
                 <div className="flex gap-3 items-center">
-                  <div className="w-14 h-14 rounded-full bg-muted animate-pulse" />
+                  <div className="w-14 h-14 rounded-full bg-slate-100 animate-pulse" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3 bg-muted rounded-full w-32 animate-pulse" />
-                    <div className="h-2.5 bg-muted rounded-full w-24 animate-pulse" />
-                    <div className="h-2.5 bg-muted rounded-full w-16 animate-pulse" />
+                    <div className="h-3 bg-slate-100 rounded-full w-32 animate-pulse" />
+                    <div className="h-2.5 bg-slate-100 rounded-full w-24 animate-pulse" />
+                    <div className="h-2.5 bg-slate-100 rounded-full w-16 animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -91,10 +84,10 @@ export default function Explore() {
           </AnimatedList>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: 'hsl(var(--card))' }}>
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <Search className="w-7 h-7 text-muted-foreground" />
             </div>
-            <p className="font-bold text-foreground">Nenhum resultado</p>
+            <p className="font-semibold text-foreground">Nenhum resultado</p>
             <p className="text-sm text-muted-foreground mt-1">Tente outro nome ou categoria</p>
           </div>
         )}
