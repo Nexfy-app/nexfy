@@ -15,10 +15,10 @@ const STATUS_LABELS = {
 };
 
 const STATUS_STYLES = {
-  pending: { background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.2)' },
-  accepted: { background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' },
-  in_progress: { background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' },
-  completed: { background: 'rgba(34,197,94,0.15)', color: '#86efac', border: '1px solid rgba(34,197,94,0.2)' },
+  pending: { background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' },
+  accepted: { background: '#dbeafe', color: '#1e40af', border: '1px solid #bfdbfe' },
+  in_progress: { background: '#dbeafe', color: '#1e40af', border: '1px solid #bfdbfe' },
+  completed: { background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0' },
 };
 
 export default function ChatList() {
@@ -63,16 +63,10 @@ export default function ChatList() {
   const totalUnread = allMessages.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div
-        className="sticky top-0 z-10 px-4"
-        style={{
-          background: 'rgba(14,16,22,0.85)',
-          backdropFilter: 'blur(32px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-        }}
+        className="sticky top-0 z-10 px-4 bg-white border-b border-slate-100"
       >
         <div className="pt-14 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -80,7 +74,7 @@ export default function ChatList() {
             {totalUnread > 0 && (
               <div
                 className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white"
-                style={{ background: 'hsl(var(--primary))', boxShadow: '0 0 10px rgba(59,130,246,0.4)' }}
+                style={{ background: '#3b82f6' }}
               >
                 {totalUnread > 9 ? '9+' : totalUnread}
               </div>
@@ -100,7 +94,7 @@ export default function ChatList() {
             ? format(new Date(r.updated_date), 'dd/MM', { locale: ptBR })
             : r.created_date ? format(new Date(r.created_date), 'dd/MM', { locale: ptBR }) : '';
           const unread = unreadByRequest[r.id] || 0;
-          const statusStyle = STATUS_STYLES[r.status] || { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' };
+          const statusStyle = STATUS_STYLES[r.status] || { background: '#f1f5f9', color: '#64748b' };
 
           return (
             <motion.div
@@ -113,23 +107,23 @@ export default function ChatList() {
                 to={`/chat/${r.id}`}
                 className="flex items-center gap-3.5 rounded-2xl px-4 py-3.5 transition-all active:opacity-70"
                 style={{
-                  background: unread > 0 ? 'rgba(59,130,246,0.06)' : 'hsl(var(--card))',
-                  border: unread > 0 ? '1px solid rgba(59,130,246,0.15)' : '1px solid rgba(255,255,255,0.05)',
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.3)',
+                  background: unread > 0 ? '#eff6ff' : 'white',
+                  border: unread > 0 ? '1px solid #bfdbfe' : '1px solid #f1f5f9',
+                  boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
                 }}
               >
                 {/* Avatar */}
                 <div className="relative shrink-0">
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center font-black text-sm text-white shadow-lg"
-                    style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.6), rgba(59,130,246,0.3))', border: '1px solid rgba(59,130,246,0.3)' }}
+                    style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)' }}
                   >
                     {initials}
                   </div>
                   {unread > 0 && (
                     <div
                       className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black text-white border-2 border-background"
-                      style={{ background: 'hsl(var(--primary))', boxShadow: '0 0 8px rgba(59,130,246,0.5)' }}
+                      style={{ background: '#3b82f6' }}
                     >
                       {unread > 9 ? '9+' : unread}
                     </div>
@@ -160,11 +154,11 @@ export default function ChatList() {
           );
         }) : (
           <div className="flex flex-col items-center justify-center py-24 text-center px-8">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-7 h-7 text-muted-foreground" />
             </div>
-            <p className="font-black text-foreground">Nenhuma conversa ainda</p>
-            <p className="text-sm text-muted-foreground mt-1">Contrate um profissional para iniciar uma conversa</p>
+            <p className="font-bold text-slate-900">Nenhuma conversa ainda</p>
+            <p className="text-sm text-slate-500 mt-1">Contrate um profissional para iniciar uma conversa</p>
           </div>
         )}
       </div>
