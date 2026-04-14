@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight, Briefcase } from 'lucide-react';
 import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -21,19 +21,19 @@ const STATUS_STEPS = [
 
 function ConfirmationCode({ code }) {
   return (
-    <div className="bg-foreground text-background rounded-2xl p-4 mb-3">
-      <div className="flex items-center gap-2 mb-2">
-        <Shield className="w-4 h-4" />
-        <p className="text-xs font-semibold uppercase tracking-wider">Código de Confirmação</p>
+    <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+      <div className="flex items-center gap-2 mb-3">
+        <Shield className="w-3.5 h-3.5 text-white/70" />
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/60">Código de Confirmação</p>
       </div>
       <div className="flex gap-2">
         {code?.split('').map((digit, i) => (
-          <div key={i} className="w-10 h-12 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
-            <span className="text-xl font-bold">{digit}</span>
+          <div key={i} className="w-12 h-14 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+            <span className="text-2xl font-black text-white">{digit}</span>
           </div>
         ))}
       </div>
-      <p className="text-[10px] opacity-60 mt-2">Informe este código ao profissional para confirmar o serviço</p>
+      <p className="text-[10px] text-white/40 mt-2.5">Informe este código ao profissional para iniciar o serviço</p>
     </div>
   );
 }
@@ -43,7 +43,7 @@ function TrackingSteps({ status }) {
   const currentIdx = steps.findIndex(s => s.key === status);
 
   return (
-    <div className="flex items-center justify-between py-3 px-1 mb-3">
+    <div className="flex items-center justify-between py-3 px-1 mb-2">
       {steps.map((step, i) => {
         const done = i <= currentIdx;
         const active = i === currentIdx;
@@ -51,17 +51,17 @@ function TrackingSteps({ status }) {
         return (
           <React.Fragment key={step.key}>
             <div className="flex flex-col items-center gap-1">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                done ? 'bg-foreground text-background' : 'bg-border text-muted-foreground'
-              } ${active ? 'ring-4 ring-foreground/20' : ''}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm ${
+                done ? 'bg-foreground text-white' : 'bg-slate-100 text-muted-foreground'
+              } ${active ? 'ring-4 ring-foreground/15 scale-110' : ''}`}>
                 <Icon className="w-3.5 h-3.5" />
               </div>
-              <span className={`text-[9px] font-medium ${done ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <span className={`text-[9px] font-semibold ${done ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {step.label}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-1 mb-4 rounded-full ${i < currentIdx ? 'bg-foreground' : 'bg-border'}`} />
+              <div className={`flex-1 h-0.5 mx-1.5 mb-4 rounded-full transition-all ${i < currentIdx ? 'bg-foreground' : 'bg-slate-200'}`} />
             )}
           </React.Fragment>
         );
@@ -72,13 +72,15 @@ function TrackingSteps({ status }) {
 
 function SafetyBanner() {
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-4">
-      <div className="flex gap-2">
-        <span className="text-base">🛡️</span>
+    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-3.5 mb-4">
+      <div className="flex gap-2.5">
+        <div className="w-7 h-7 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+          <Shield className="w-3.5 h-3.5 text-amber-600" />
+        </div>
         <div>
-          <p className="text-xs font-semibold text-amber-900 mb-0.5">Dica de Segurança</p>
-          <p className="text-[10px] text-amber-800 leading-relaxed">
-            Recomendamos combinar todos os detalhes pelo app para manter registros. Pagamentos externos são aceitos, mas <strong>sempre pague após o serviço concluído</strong>. Não envie dinheiro antecipado a desconhecidos.
+          <p className="text-xs font-bold text-amber-900 mb-0.5">Dica de Segurança</p>
+          <p className="text-[11px] text-amber-800 leading-relaxed">
+            Sempre pague <strong>após</strong> o serviço concluído. Nunca envie dinheiro antecipado.
           </p>
         </div>
       </div>
@@ -150,12 +152,13 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-2xl border overflow-hidden mb-3 shadow-sm"
+      className="bg-white rounded-2xl overflow-hidden mb-3"
+      style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div>
-          <p className="font-bold text-sm">
+          <p className="font-bold text-sm text-foreground">
             {isProvider ? request.client_name : request.professional_name}
           </p>
           <p className="text-xs text-muted-foreground capitalize mt-0.5">
@@ -164,11 +167,11 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
         </div>
         <div className="flex items-center gap-2">
           {request.is_urgent && (
-            <span className="text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-full flex items-center gap-1">
               <Zap className="w-3 h-3" /> Urgente
             </span>
           )}
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground font-medium">
             {request.created_date && format(new Date(request.created_date), "dd MMM", { locale: ptBR })}
           </span>
         </div>
@@ -182,28 +185,25 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       )}
 
       {isCancelled && (
-        <div className="mx-4 mb-3 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-          <p className="text-xs text-red-700 font-medium flex items-center gap-1.5">
+        <div className="mx-4 mb-3 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+          <p className="text-xs text-red-600 font-semibold flex items-center gap-1.5">
             <XCircle className="w-3.5 h-3.5" /> Pedido Cancelado
           </p>
         </div>
       )}
 
-      {/* Confirmation code - show to client when accepted */}
       {!isProvider && request.confirmation_code && request.status === 'accepted' && (
         <div className="px-4">
           <ConfirmationCode code={request.confirmation_code} />
         </div>
       )}
 
-      {/* Description */}
       {request.description && (
-        <div className="mx-4 mb-3 bg-secondary rounded-xl px-3 py-2">
+        <div className="mx-4 mb-3 bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-100">
           <p className="text-xs text-muted-foreground leading-relaxed">{request.description}</p>
         </div>
       )}
 
-      {/* Address */}
       {request.address && (
         <div className="mx-4 mb-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <span>📍</span> {request.address}
@@ -214,31 +214,31 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       <div className="flex items-center gap-2 px-4 pb-4">
         <button
           onClick={() => navigate(`/chat/${request.id}`)}
-          className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl bg-secondary text-sm font-medium hover:bg-border transition"
+          className="flex items-center justify-center gap-1.5 h-9 px-4 rounded-xl bg-slate-100 text-sm font-semibold hover:bg-slate-200 transition text-foreground"
         >
-          <MessageSquare className="w-4 h-4" /> Chat
+          <MessageSquare className="w-3.5 h-3.5" /> Chat
         </button>
 
         {isProvider && request.status === 'pending' && (
           <>
             <button
               onClick={() => handleAction('cancelled')}
-              className="h-9 px-4 rounded-xl border text-sm font-medium hover:bg-secondary transition"
+              className="h-9 px-4 rounded-xl border border-slate-200 text-sm font-medium hover:bg-slate-50 transition text-muted-foreground"
             >
               Recusar
             </button>
             <button
               onClick={() => handleAction('accepted')}
-              className="h-9 px-4 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/80 transition"
+              className="flex-1 h-9 rounded-xl bg-foreground text-white text-sm font-bold hover:bg-foreground/80 transition shadow-sm"
             >
-              Aceitar
+              Aceitar ✓
             </button>
           </>
         )}
         {isProvider && request.status === 'accepted' && (
           <button
             onClick={() => handleAction('in_progress')}
-            className="h-9 px-4 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/80 transition"
+            className="flex-1 h-9 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition shadow-sm"
           >
             Iniciar Serviço
           </button>
@@ -246,7 +246,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
         {isProvider && request.status === 'in_progress' && (
           <button
             onClick={() => handleAction('completed')}
-            className="h-9 px-4 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/80 transition"
+            className="flex-1 h-9 rounded-xl bg-green-600 text-white text-sm font-bold hover:bg-green-700 transition shadow-sm"
           >
             Concluir ✓
           </button>
@@ -254,7 +254,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
         {!isProvider && isCompleted && (
           <button
             onClick={() => navigate(`/review/${request.id}`)}
-            className="h-9 px-4 rounded-xl bg-foreground text-background text-sm font-semibold flex items-center gap-1.5 hover:bg-foreground/80 transition"
+            className="flex-1 h-9 rounded-xl bg-foreground text-white text-sm font-bold flex items-center justify-center gap-1.5 hover:bg-foreground/80 transition shadow-sm"
           >
             <Star className="w-3.5 h-3.5" /> Avaliar
           </button>
@@ -305,29 +305,30 @@ export default function Requests() {
   const pendingCount = proRequests.filter(r => r.status === 'pending').length;
 
   return (
-    <div className="min-h-screen bg-secondary/30">
-      <div className="sticky top-0 z-10 bg-background border-b px-4 pt-safe">
-        <div className="pt-4 pb-3 flex items-center justify-between">
-          <h1 className="text-xl font-bold">Pedidos</h1>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="sticky top-0 z-10 px-4" style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}>
+        <div className="pt-12 pb-3 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-foreground">Pedidos</h1>
           {pendingCount > 0 && (
-            <span className="bg-foreground text-background text-xs font-bold px-2.5 py-0.5 rounded-full">
+            <span className="bg-foreground text-white text-xs font-bold px-3 py-1 rounded-full">
               {pendingCount} novo{pendingCount > 1 ? 's' : ''}
             </span>
           )}
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="px-4 pb-6">
         <SafetyBanner />
 
         <Tabs defaultValue="client">
-          <TabsList className="w-full rounded-xl bg-secondary h-10 mb-4">
-            <TabsTrigger value="client" className="flex-1 rounded-lg text-xs font-medium">
+          <TabsList className="w-full rounded-2xl bg-white border border-slate-200 h-11 mb-4 p-1 shadow-sm">
+            <TabsTrigger value="client" className="flex-1 rounded-xl text-xs font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm">
               Como Cliente
             </TabsTrigger>
             {professional && (
-              <TabsTrigger value="provider" className="flex-1 rounded-lg text-xs font-medium">
-                Como Profissional {pendingCount > 0 && `(${pendingCount})`}
+              <TabsTrigger value="provider" className="flex-1 rounded-xl text-xs font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm">
+                Profissional {pendingCount > 0 && `(${pendingCount})`}
               </TabsTrigger>
             )}
           </TabsList>
@@ -337,8 +338,10 @@ export default function Requests() {
               <RequestCard key={r.id} request={r} isProvider={false} onAction={handleAction} />
             )) : (
               <div className="text-center py-16">
-                <div className="text-4xl mb-3">📋</div>
-                <p className="font-semibold text-foreground">Nenhum pedido ainda</p>
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Briefcase className="w-7 h-7 text-muted-foreground" />
+                </div>
+                <p className="font-bold text-foreground">Nenhum pedido ainda</p>
                 <p className="text-sm text-muted-foreground mt-1">Explore profissionais e solicite um serviço</p>
               </div>
             )}
@@ -350,8 +353,10 @@ export default function Requests() {
                 <RequestCard key={r.id} request={r} isProvider={true} onAction={handleAction} />
               )) : (
                 <div className="text-center py-16">
-                  <div className="text-4xl mb-3">📭</div>
-                  <p className="font-semibold text-foreground">Nenhum pedido recebido</p>
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Briefcase className="w-7 h-7 text-muted-foreground" />
+                  </div>
+                  <p className="font-bold text-foreground">Nenhum pedido recebido</p>
                   <p className="text-sm text-muted-foreground mt-1">Fique online para receber pedidos</p>
                 </div>
               )}

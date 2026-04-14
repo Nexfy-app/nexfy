@@ -14,13 +14,12 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Global notification bell */}
       {userEmail && (
-        <div className="fixed top-3 right-3 z-50">
+        <div className="fixed top-4 right-4 z-50">
           <NotificationCenter userEmail={userEmail} />
         </div>
       )}
-      <main className="pb-20">
+      <main className="pb-24">
         <Outlet />
       </main>
       <BottomNav />
