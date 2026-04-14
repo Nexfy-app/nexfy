@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { PRICE_TYPE_LABELS, SERVICE_CATEGORIES } from '@/lib/constants';
 import { base44 } from '@/api/base44Client';
+import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 
@@ -47,12 +48,20 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
       confirmation_code: code,
     });
 
-    // Notify professional by email
-    base44.integrations.Core.SendEmail({
+    // In-app notification for professional
+    createNotification({
+      user_email: professional.user_email,
+      title: `Novo pedido de ${user.full_name || user.email}`,
+      body: description?.slice(0, 80) || `Serviço: ${professional.categories?.[0]?.replace(/_/g, ' ')}`,
+      type: 'new_request',
+      link: '/requests',
+    });
+    // Email (respects settings)
+    sendEmailIfEnabled(professional.user_email, 'new_request', {
       to: professional.user_email,
       subject: `🔔 Novo pedido de serviço — ${user.full_name || user.email}`,
-      body: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${professional.categories?.[0]?.replace(/_/g, ' ')}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
-    }).catch(() => {});
+      emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${professional.categories?.[0]?.replace(/_/g, ' ')}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
+    });
 
     toast.success('Pedido enviado! Aguarde a confirmação do profissional.');
     setLoading(false);

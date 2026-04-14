@@ -1,0 +1,41 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio destinat\u00e1rio"
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "new_request",
+        "request_accepted",
+        "request_in_progress",
+        "request_completed",
+        "new_message",
+        "request_cancelled"
+      ],
+      "description": "Tipo da notifica\u00e7\u00e3o"
+    },
+    "link": {
+      "type": "string",
+      "description": "Rota para navegar ao clicar"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email",
+    "title",
+    "type"
+  ]
+}

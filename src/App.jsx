@@ -16,6 +16,7 @@ import Profile from './pages/Profile';
 import ProfessionalEdit from './pages/ProfessionalEdit';
 import ReviewPage from './pages/ReviewPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import NotificationSettings from './pages/NotificationSettings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -55,6 +56,7 @@ const AuthenticatedApp = () => {
       <Route path="/professional/edit" element={<ProfessionalEdit />} />
       <Route path="/review/:requestId" element={<ReviewPage />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/notifications/settings" element={<NotificationSettings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight } from 'lucide-react';
+import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
@@ -93,26 +94,55 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
   const handleAction = async (newStatus) => {
     await onAction(request, newStatus);
     if (newStatus === 'accepted') {
-      // Send email notification to client
-      base44.integrations.Core.SendEmail({
+      createNotification({
+        user_email: request.client_email,
+        title: `Pedido aceito por ${request.professional_name}`,
+        body: `Seu código de confirmação é ${request.confirmation_code}`,
+        type: 'request_accepted',
+        link: '/requests',
+      });
+      sendEmailIfEnabled(request.client_email, 'request_accepted', {
         to: request.client_email,
         subject: `✅ Pedido aceito — ${request.professional_name}`,
-        body: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nSeu código de confirmação: ${request.confirmation_code}\n\nAcompanhe no ServiçosJá.`,
-      }).catch(() => {});
+        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nSeu código de confirmação: ${request.confirmation_code}\n\nAcompanhe no ServiçosJá.`,
+      });
     }
     if (newStatus === 'in_progress') {
-      base44.integrations.Core.SendEmail({
+      createNotification({
+        user_email: request.client_email,
+        title: `Serviço iniciado por ${request.professional_name}`,
+        body: 'O profissional está a caminho ou já iniciou o trabalho.',
+        type: 'request_in_progress',
+        link: '/requests',
+      });
+      sendEmailIfEnabled(request.client_email, 'request_in_progress', {
         to: request.client_email,
         subject: `🔧 Serviço iniciado — ${request.professional_name}`,
-        body: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no ServiçosJá.`,
-      }).catch(() => {});
+        emailBody: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no ServiçosJá.`,
+      });
     }
     if (newStatus === 'completed') {
-      base44.integrations.Core.SendEmail({
+      createNotification({
+        user_email: request.client_email,
+        title: 'Serviço concluído! 🎉',
+        body: `${request.professional_name} finalizou o serviço. Avalie sua experiência!`,
+        type: 'request_completed',
+        link: `/review/${request.id}`,
+      });
+      sendEmailIfEnabled(request.client_email, 'request_completed', {
         to: request.client_email,
         subject: `🎉 Serviço concluído!`,
-        body: `${request.professional_name} concluiu o serviço. Avalie sua experiência no ServiçosJá!`,
-      }).catch(() => {});
+        emailBody: `${request.professional_name} concluiu o serviço. Avalie sua experiência no ServiçosJá!`,
+      });
+    }
+    if (newStatus === 'cancelled') {
+      createNotification({
+        user_email: request.client_email,
+        title: 'Pedido recusado',
+        body: `${request.professional_name} não pôde atender seu pedido.`,
+        type: 'request_cancelled',
+        link: '/requests',
+      });
     }
   };
 

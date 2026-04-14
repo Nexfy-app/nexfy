@@ -1,0 +1,38 @@
+{
+  "name": "NotificationSettings",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio"
+    },
+    "email_new_request": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email ao receber novo pedido"
+    },
+    "email_request_accepted": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email quando pedido for aceito"
+    },
+    "email_request_in_progress": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email quando servi\u00e7o iniciar"
+    },
+    "email_request_completed": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email quando servi\u00e7o for conclu\u00eddo"
+    },
+    "email_new_message": {
+      "type": "boolean",
+      "default": false,
+      "description": "Email para cada nova mensagem no chat"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}
