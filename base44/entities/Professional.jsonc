@@ -1,0 +1,97 @@
+{
+  "name": "Professional",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio associado"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nome completo do profissional"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "URL da foto de perfil"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Telefone de contato"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Descri\u00e7\u00e3o sobre o profissional"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Categorias de servi\u00e7o oferecidas"
+    },
+    "price_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "budget",
+        "hourly"
+      ],
+      "description": "Tipo de precifica\u00e7\u00e3o"
+    },
+    "price_min": {
+      "type": "number",
+      "description": "Pre\u00e7o m\u00ednimo"
+    },
+    "price_max": {
+      "type": "number",
+      "description": "Pre\u00e7o m\u00e1ximo"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": false,
+      "description": "Est\u00e1 dispon\u00edvel agora"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Profissional premium (destaque)"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude atual"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude atual"
+    },
+    "rating_avg": {
+      "type": "number",
+      "default": 0,
+      "description": "M\u00e9dia de avalia\u00e7\u00f5es"
+    },
+    "rating_count": {
+      "type": "number",
+      "default": 0,
+      "description": "N\u00famero de avalia\u00e7\u00f5es"
+    },
+    "services_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Servi\u00e7os conclu\u00eddos"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "name",
+    "user_email",
+    "categories"
+  ]
+}

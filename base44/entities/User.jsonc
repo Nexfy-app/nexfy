@@ -1,0 +1,25 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user",
+        "professional"
+      ],
+      "default": "user"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "accepted_terms": {
+      "type": "boolean",
+      "default": false
+    },
+    "ip_address": {
+      "type": "string"
+    }
+  }
+}

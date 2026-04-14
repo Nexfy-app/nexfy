@@ -1,0 +1,30 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "service_request_id": {
+      "type": "string"
+    },
+    "professional_id": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Nota de 1 a 5"
+    },
+    "comment": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "service_request_id",
+    "professional_id",
+    "rating"
+  ]
+}

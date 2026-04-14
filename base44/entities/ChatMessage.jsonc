@@ -1,0 +1,28 @@
+{
+  "name": "ChatMessage",
+  "type": "object",
+  "properties": {
+    "service_request_id": {
+      "type": "string",
+      "description": "ID do pedido de servi\u00e7o associado"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "receiver_email": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "service_request_id",
+    "sender_email",
+    "message"
+  ]
+}
