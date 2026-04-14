@@ -14,11 +14,11 @@ const STATUS_LABELS = {
   completed: 'Concluído',
 };
 
-const STATUS_COLORS = {
-  pending: 'bg-amber-100 text-amber-700',
-  accepted: 'bg-blue-100 text-blue-700',
-  in_progress: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700',
+const STATUS_STYLES = {
+  pending: { background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.2)' },
+  accepted: { background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' },
+  in_progress: { background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' },
+  completed: { background: 'rgba(34,197,94,0.15)', color: '#86efac', border: '1px solid rgba(34,197,94,0.2)' },
 };
 
 export default function ChatList() {
@@ -45,7 +45,6 @@ export default function ChatList() {
     refetchInterval: 5000,
   });
 
-  // Fetch unread counts per request
   const { data: allMessages = [] } = useQuery({
     queryKey: ['all-unread-messages', user?.email],
     queryFn: async () => {
@@ -68,60 +67,78 @@ export default function ChatList() {
       {/* Header */}
       <div
         className="sticky top-0 z-10 px-4"
-        style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}
+        style={{
+          background: 'rgba(14,16,22,0.85)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+        }}
       >
-        <div className="pt-12 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-foreground">Mensagens</h1>
+        <div className="pt-14 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Mensagens</h1>
             {totalUnread > 0 && (
-              <span className="bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <div
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white"
+                style={{ background: 'hsl(var(--primary))', boxShadow: '0 0 10px rgba(59,130,246,0.4)' }}
+              >
                 {totalUnread > 9 ? '9+' : totalUnread}
-              </span>
+              </div>
             )}
           </div>
-          <span className="text-xs text-muted-foreground font-medium">{requests.length} conversa{requests.length !== 1 ? 's' : ''}</span>
+          <span className="text-xs text-muted-foreground font-medium">
+            {requests.length} conversa{requests.length !== 1 ? 's' : ''}
+          </span>
         </div>
       </div>
 
-      {/* List */}
-      <div className="px-4 space-y-2 pt-2 pb-6">
+      <div className="px-4 space-y-2 pt-3 pb-6">
         {requests.length > 0 ? requests.map((r, i) => {
           const otherName = r.client_email === user?.email ? r.professional_name : r.client_name;
           const initials = otherName?.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() || '?';
           const dateLabel = r.updated_date
             ? format(new Date(r.updated_date), 'dd/MM', { locale: ptBR })
-            : r.created_date
-              ? format(new Date(r.created_date), 'dd/MM', { locale: ptBR })
-              : '';
+            : r.created_date ? format(new Date(r.created_date), 'dd/MM', { locale: ptBR }) : '';
           const unread = unreadByRequest[r.id] || 0;
+          const statusStyle = STATUS_STYLES[r.status] || { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' };
 
           return (
             <motion.div
               key={r.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
             >
               <Link
                 to={`/chat/${r.id}`}
-                className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3.5 transition-all hover:shadow-md active:scale-[0.98]"
-                style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+                className="flex items-center gap-3.5 rounded-2xl px-4 py-3.5 transition-all active:opacity-70"
+                style={{
+                  background: unread > 0 ? 'rgba(59,130,246,0.06)' : 'hsl(var(--card))',
+                  border: unread > 0 ? '1px solid rgba(59,130,246,0.15)' : '1px solid rgba(255,255,255,0.05)',
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.3)',
+                }}
               >
-                {/* Avatar with unread indicator */}
+                {/* Avatar */}
                 <div className="relative shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center font-black text-sm text-white shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.6), rgba(59,130,246,0.3))', border: '1px solid rgba(59,130,246,0.3)' }}
+                  >
                     {initials}
                   </div>
                   {unread > 0 && (
-                    <div className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white">
-                      <span className="text-[9px] font-black text-white">{unread > 9 ? '9+' : unread}</span>
+                    <div
+                      className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black text-white border-2 border-background"
+                      style={{ background: 'hsl(var(--primary))', boxShadow: '0 0 8px rgba(59,130,246,0.5)' }}
+                    >
+                      {unread > 9 ? '9+' : unread}
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className={cn("text-sm truncate", unread > 0 ? "font-bold text-foreground" : "font-semibold text-foreground")}>
+                    <p className={`text-sm truncate ${unread > 0 ? 'font-black text-foreground' : 'font-semibold text-foreground'}`}>
                       {otherName}
                     </p>
                     <span className="text-[10px] text-muted-foreground shrink-0 ml-2 font-medium">{dateLabel}</span>
@@ -130,7 +147,10 @@ export default function ChatList() {
                     <p className="text-xs text-muted-foreground capitalize truncate">
                       {r.category?.replace(/_/g, ' ')}
                     </p>
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ml-2 shrink-0 ${STATUS_COLORS[r.status] || 'bg-slate-100 text-slate-600'}`}>
+                    <span
+                      className="text-[9px] font-bold px-2 py-0.5 rounded-full ml-2 shrink-0"
+                      style={statusStyle}
+                    >
                       {STATUS_LABELS[r.status] || r.status}
                     </span>
                   </div>
@@ -140,18 +160,14 @@ export default function ChatList() {
           );
         }) : (
           <div className="flex flex-col items-center justify-center py-24 text-center px-8">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.06)' }}>
               <MessageSquare className="w-7 h-7 text-muted-foreground" />
             </div>
-            <p className="font-bold text-foreground">Nenhuma conversa ainda</p>
+            <p className="font-black text-foreground">Nenhuma conversa ainda</p>
             <p className="text-sm text-muted-foreground mt-1">Contrate um profissional para iniciar uma conversa</p>
           </div>
         )}
       </div>
     </div>
   );
-}
-
-function cn(...classes) {
-  return classes.filter(Boolean).join(' ');
 }

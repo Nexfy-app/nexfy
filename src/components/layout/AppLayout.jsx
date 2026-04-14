@@ -19,7 +19,7 @@ export default function AppLayout() {
           <NotificationCenter userEmail={userEmail} />
         </div>
       )}
-      <main className="pb-24">
+      <main className="pb-28">
         <Outlet />
       </main>
       <BottomNav />

@@ -77,11 +77,11 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
       <SheetContent
         side="bottom"
         className="p-0 border-0 rounded-t-[2rem] max-h-[92vh] overflow-y-auto"
-        style={{ background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(40px)' }}
+        style={{ background: 'hsl(220 15% 11%)', backdropFilter: 'blur(40px)', border: '1px solid rgba(255,255,255,0.08)' }}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-slate-200 rounded-full" />
+          <div className="w-10 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.15)' }} />
         </div>
 
         {/* Hero section */}
@@ -128,7 +128,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
           {/* Categories */}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {professional.categories?.map(cat => (
-              <span key={cat} className="text-[11px] bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-medium border border-slate-200">
+              <span key={cat} className="text-[11px] px-3 py-1 rounded-full font-medium" style={{ background: 'rgba(59,130,246,0.12)', color: 'rgba(147,197,253,0.9)', border: '1px solid rgba(59,130,246,0.15)' }}>
                 {getCategoryLabel(cat)}
               </span>
             ))}
@@ -136,12 +136,12 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-slate-100 mx-5" />
+        <div className="h-px mx-5" style={{ background: 'rgba(255,255,255,0.07)' }} />
 
         {/* Price */}
         {professional.price_min && (
           <div className="px-5 py-4">
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <p className="text-xs text-muted-foreground font-medium">{PRICE_TYPE_LABELS[professional.price_type] || 'A partir de'}</p>
               <p className="text-2xl font-black text-foreground mt-0.5">
                 R$ {professional.price_min}
@@ -163,7 +163,8 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
               placeholder="Detalhe o que precisa ser feito..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="rounded-xl resize-none bg-slate-50 border-slate-200 text-sm focus:bg-white transition-colors"
+              className="rounded-xl resize-none text-sm transition-colors"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'hsl(var(--foreground))' }}
               rows={3}
             />
           </div>
@@ -173,36 +174,37 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
               placeholder="Onde será o serviço? (opcional)"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+              className="rounded-xl transition-colors"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'hsl(var(--foreground))' }}
             />
           </div>
 
           {/* Urgent toggle */}
           <button
             onClick={() => setIsUrgent(!isUrgent)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${
-              isUrgent
-                ? 'bg-orange-50 border border-orange-200'
-                : 'bg-slate-50 border border-slate-200 hover:border-slate-300'
-            }`}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200"
+            style={isUrgent
+            ? { background: 'rgba(249,115,22,0.12)', border: '1px solid rgba(249,115,22,0.2)' }
+            : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }
+            }
           >
             <div className="flex items-center gap-2">
               <Zap className={`w-4 h-4 ${isUrgent ? 'text-orange-500' : 'text-muted-foreground'}`} />
-              <span className={`text-sm font-medium ${isUrgent ? 'text-orange-700' : 'text-foreground'}`}>
+              <span className="text-sm font-medium" style={{ color: isUrgent ? '#fb923c' : 'hsl(var(--foreground))' }}>
                 Serviço Urgente
               </span>
             </div>
             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-              isUrgent ? 'bg-orange-500 border-orange-500' : 'border-slate-300'
+              isUrgent ? 'bg-orange-500 border-orange-500' : 'border-muted'
             }`}>
               {isUrgent && <div className="w-2 h-2 bg-white rounded-full" />}
             </div>
           </button>
 
           {/* Safety */}
-          <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-100 rounded-2xl p-3">
-            <Shield className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-            <p className="text-[11px] text-amber-800 leading-relaxed">
+          <div className="flex items-start gap-2.5 rounded-2xl p-3" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.15)' }}>
+            <Shield className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#fbbf24' }} />
+            <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(251,191,36,0.8)' }}>
               <strong>Pagamento seguro:</strong> Pague apenas após o serviço ser concluído. Combine tudo pelo app.
             </p>
           </div>
@@ -212,8 +214,8 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
             whileTap={{ scale: 0.98 }}
             onClick={handleHire}
             disabled={loading}
-            className="w-full h-14 bg-foreground text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 transition-all"
-            style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
+            className="w-full h-14 text-white rounded-2xl font-black text-base flex items-center justify-center gap-2 disabled:opacity-60 transition-all"
+            style={{ background: 'hsl(var(--primary))', boxShadow: '0 8px 32px rgba(59,130,246,0.35)' }}
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
