@@ -1,65 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Send, Paperclip, Mic, Image, Phone, X, Play, StopCircle } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 function MessageBubble({ msg, isMe }) {
-  const [playing, setPlaying] = useState(false);
-  const audioRef = useRef(null);
-
   const time = msg.created_date
     ? new Date(msg.created_date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     : '';
 
-  const toggleAudio = () => {
-    if (!audioRef.current) return;
-    if (playing) { audioRef.current.pause(); setPlaying(false); }
-    else { audioRef.current.play(); setPlaying(true); }
-  };
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={cn("flex items-end gap-1 mb-1", isMe ? "justify-end" : "justify-start")}
+      initial={{ opacity: 0, y: 6, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      className={cn("flex mb-1.5", isMe ? "justify-end" : "justify-start")}
     >
       <div className={cn(
-        "max-w-[78%] rounded-2xl px-3 py-2",
+        "max-w-[78%] rounded-2xl px-3.5 py-2.5 shadow-sm",
         isMe
-          ? "bg-foreground text-background rounded-br-sm"
-          : "bg-card border rounded-bl-sm"
+          ? "bg-foreground text-white rounded-br-md"
+          : "bg-white text-foreground rounded-bl-md border border-slate-100"
       )}>
         {msg.message_type === 'image' && msg.file_url && (
-          <img src={msg.file_url} alt="imagem" className="rounded-xl max-w-full max-h-52 object-cover mb-1" />
-        )}
-        {msg.message_type === 'audio' && msg.file_url && (
-          <div className="flex items-center gap-2 py-1 min-w-[160px]">
-            <audio ref={audioRef} src={msg.file_url} onEnded={() => setPlaying(false)} />
-            <button onClick={toggleAudio} className={cn("w-8 h-8 rounded-full flex items-center justify-center", isMe ? "bg-white/20" : "bg-foreground/10")}>
-              {playing ? <StopCircle className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            </button>
-            <div className="flex-1 h-1 rounded-full bg-current opacity-20" />
-            <span className="text-[10px] opacity-60">áudio</span>
-          </div>
+          <img src={msg.file_url} alt="imagem" className="rounded-xl max-w-full max-h-52 object-cover mb-1.5" />
         )}
         {msg.message_type === 'file' && msg.file_url && (
-          <a href={msg.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 py-1">
-            <Paperclip className="w-4 h-4 shrink-0" />
-            <span className="text-xs underline truncate max-w-[140px]">{msg.file_name || 'arquivo'}</span>
+          <a href={msg.file_url} target="_blank" rel="noreferrer"
+            className="flex items-center gap-2 py-1 hover:opacity-80">
+            <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center", isMe ? "bg-white/15" : "bg-slate-100")}>
+              <Paperclip className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-xs font-medium underline truncate max-w-[140px]">{msg.file_name || 'arquivo'}</span>
           </a>
         )}
         {msg.message && (
-          <p className="text-sm leading-snug">{msg.message}</p>
+          <p className="text-sm leading-relaxed">{msg.message}</p>
         )}
-        <div className={cn("flex items-center justify-end gap-1 mt-0.5", isMe ? "text-white/50" : "text-muted-foreground")}>
-          <span className="text-[9px]">{time}</span>
+        <div className={cn("flex items-center justify-end gap-1 mt-1", isMe ? "text-white/40" : "text-muted-foreground")}>
+          <span className="text-[10px]">{time}</span>
           {isMe && (
-            <span className="text-[9px]">{msg.is_read ? '✓✓' : '✓'}</span>
+            msg.is_read
+              ? <CheckCheck className="w-3 h-3 text-blue-400" />
+              : <Check className="w-3 h-3 opacity-60" />
           )}
         </div>
       </div>
@@ -67,16 +53,41 @@ function MessageBubble({ msg, isMe }) {
   );
 }
 
+function DateDivider({ label }) {
+  return (
+    <div className="flex items-center gap-2 my-3">
+      <div className="flex-1 h-px bg-slate-200" />
+      <span className="text-[10px] text-muted-foreground font-medium bg-transparent px-2">{label}</span>
+      <div className="flex-1 h-px bg-slate-200" />
+    </div>
+  );
+}
+
+function groupMessagesByDate(messages) {
+  const groups = [];
+  let lastDate = null;
+  messages.forEach(msg => {
+    if (!msg.created_date) return;
+    const d = new Date(msg.created_date);
+    const label = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+    if (label !== lastDate) {
+      groups.push({ type: 'divider', label });
+      lastDate = label;
+    }
+    groups.push({ type: 'msg', msg });
+  });
+  return groups;
+}
+
 export default function ChatRoom() {
   const requestId = window.location.pathname.split('/chat/')[1];
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
   const [showAttach, setShowAttach] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -106,6 +117,15 @@ export default function ChatRoom() {
 
   const otherPro = proData?.[0];
 
+  // Mark received messages as read
+  useEffect(() => {
+    if (!user || !messages.length) return;
+    const unread = messages.filter(m => m.receiver_email === user.email && !m.is_read);
+    unread.forEach(m => {
+      base44.entities.ChatMessage.update(m.id, { is_read: true }).catch(() => {});
+    });
+  }, [messages, user]);
+
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -128,13 +148,12 @@ export default function ChatRoom() {
       file_name: fileName,
       is_read: false,
     });
-    // email notification
     const receiverEmail = getReceiverEmail();
     if (receiverEmail && type === 'text') {
       base44.integrations.Core.SendEmail({
         to: receiverEmail,
         subject: `💬 Nova mensagem de ${user.full_name || user.email}`,
-        body: `Você recebeu uma nova mensagem:\n\n"${content}"\n\nAbra o ServiçosJá para responder.`,
+        body: `"${content}"\n\nAbra o ServiçosJá para responder.`,
       }).catch(() => {});
     }
     queryClient.invalidateQueries({ queryKey: ['chat-messages', requestId] });
@@ -152,34 +171,10 @@ export default function ChatRoom() {
     const file = e.target.files?.[0];
     if (!file) return;
     setShowAttach(false);
-    toast.loading('Enviando arquivo...');
+    toast.loading('Enviando...');
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     toast.dismiss();
     await sendMessage('', type, file_url, file.name);
-  };
-
-  const handleRecord = async () => {
-    if (recording) {
-      mediaRecorder?.stop();
-      setRecording(false);
-      return;
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    const chunks = [];
-    recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      const file = new File([blob], 'audio.webm', { type: 'audio/webm' });
-      toast.loading('Enviando áudio...');
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      toast.dismiss();
-      await sendMessage('', 'audio', file_url, 'audio.webm');
-    };
-    recorder.start();
-    setMediaRecorder(recorder);
-    setRecording(true);
   };
 
   const otherName = request
@@ -187,59 +182,62 @@ export default function ChatRoom() {
     : 'Chat';
 
   const otherPhone = request?.client_email === user?.email ? otherPro?.phone : null;
+  const grouped = groupMessagesByDate(messages);
 
-  const isOnline = true; // real-time presence could be added later
+  const unreadCount = messages.filter(m => m.receiver_email === user?.email && !m.is_read).length;
 
   return (
-    <div className="h-screen flex flex-col" style={{ backgroundColor: '#ece5dd' }}>
+    <div className="h-screen flex flex-col bg-slate-50">
       {/* Header */}
-      <div className="bg-foreground text-background px-4 pt-safe">
+      <div
+        className="px-4 pt-safe shrink-0"
+        style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 12px rgba(0,0,0,0.06)' }}
+      >
         <div className="flex items-center gap-3 py-3">
-          <button onClick={() => navigate('/chat')} className="opacity-70 hover:opacity-100">
+          <button
+            onClick={() => navigate('/chat')}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition"
+          >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm shrink-0">
+
+          <div className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center font-bold text-sm text-white shrink-0 shadow-sm">
             {otherName?.charAt(0)?.toUpperCase()}
           </div>
+
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm truncate">{otherName}</p>
-            <p className="text-[10px] opacity-60">{isOnline ? 'online' : 'offline'}</p>
+            <p className="font-bold text-sm truncate text-foreground">{otherName}</p>
+            <p className="text-[10px] text-muted-foreground capitalize">
+              {request?.category?.replace(/_/g, ' ')} · {request?.status === 'in_progress' ? '🟢 Em andamento' : request?.status === 'completed' ? '✅ Concluído' : '⏳ Aguardando'}
+            </p>
           </div>
+
           {otherPhone && (
             <a
               href={`tel:${otherPhone}`}
-              className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-xs font-medium transition"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition"
             >
-              <Phone className="w-3.5 h-3.5" />
-              Ligar
-            </a>
-          )}
-          {otherPhone && (
-            <a
-              href={`https://wa.me/55${otherPhone?.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-full text-xs font-medium transition"
-            >
-              WhatsApp
+              <Phone className="w-4 h-4 text-foreground" />
             </a>
           )}
         </div>
       </div>
 
-      {/* Safety banner */}
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-start gap-2">
-        <span className="text-sm">🔒</span>
-        <p className="text-[10px] text-amber-800 leading-tight">
-          <strong>Dica de segurança:</strong> Combine tudo pelo app para registros. Faça pagamentos apenas após o serviço concluído e somente a profissionais de confiança.
+      {/* Security notice */}
+      <div className="bg-amber-50 border-b border-amber-100 px-4 py-2 flex items-center gap-2 shrink-0">
+        <span className="text-xs">🔒</span>
+        <p className="text-[10px] text-amber-800">
+          <strong>Segurança:</strong> Combine tudo pelo app. Pague somente após o serviço ser concluído.
         </p>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} msg={msg} isMe={msg.sender_email === user?.email} />
-        ))}
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {grouped.map((item, i) =>
+          item.type === 'divider'
+            ? <DateDivider key={`d-${i}`} label={item.label} />
+            : <MessageBubble key={item.msg.id} msg={item.msg} isMe={item.msg.sender_email === user?.email} />
+        )}
         <div ref={scrollRef} />
       </div>
 
@@ -247,73 +245,60 @@ export default function ChatRoom() {
       <AnimatePresence>
         {showAttach && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="bg-card border-t px-4 py-3 flex gap-4"
+            exit={{ opacity: 0, y: 16 }}
+            className="bg-white border-t border-slate-100 px-4 py-3 flex gap-4 shrink-0"
           >
-            <label className="flex flex-col items-center gap-1 cursor-pointer">
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+            <label className="flex flex-col items-center gap-1.5 cursor-pointer">
+              <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center">
                 <Image className="w-5 h-5 text-purple-600" />
               </div>
-              <span className="text-[10px] text-muted-foreground">Foto</span>
+              <span className="text-[10px] text-muted-foreground font-medium">Foto</span>
             </label>
-            <label className="flex flex-col items-center gap-1 cursor-pointer">
-              <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+            <label className="flex flex-col items-center gap-1.5 cursor-pointer">
+              <input ref={fileInputRef} type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
                 <Paperclip className="w-5 h-5 text-blue-600" />
               </div>
-              <span className="text-[10px] text-muted-foreground">Arquivo</span>
+              <span className="text-[10px] text-muted-foreground font-medium">Arquivo</span>
             </label>
-            <button onClick={() => setShowAttach(false)} className="ml-auto text-muted-foreground">
+            <button onClick={() => setShowAttach(false)} className="ml-auto text-muted-foreground self-center">
               <X className="w-5 h-5" />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Input */}
-      <div className="bg-card border-t p-2 pb-safe">
+      {/* Input bar */}
+      <div className="bg-white border-t border-slate-100 px-3 py-2 pb-safe shrink-0" style={{ boxShadow: '0 -1px 12px rgba(0,0,0,0.04)' }}>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAttach(!showAttach)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition text-muted-foreground"
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition text-muted-foreground"
           >
-            <Paperclip className="w-5 h-5" />
+            <Paperclip className="w-4.5 h-4.5" style={{ width: '18px', height: '18px' }} />
           </button>
-          <div className="flex-1 bg-secondary rounded-full px-4 py-2 min-h-[40px] flex items-center">
+
+          <div className="flex-1 bg-slate-100 rounded-full px-4 py-2 min-h-[40px] flex items-center">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Mensagem"
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              placeholder="Mensagem..."
               className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
-          {message.trim() ? (
-            <button
-              onClick={handleSend}
-              disabled={sending}
-              className="w-10 h-10 bg-foreground text-background rounded-full flex items-center justify-center"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          ) : (
-            <button
-              onClick={handleRecord}
-              className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center transition",
-                recording ? "bg-red-500 text-white" : "bg-foreground text-background"
-              )}
-            >
-              <Mic className="w-4 h-4" />
-            </button>
-          )}
+
+          <button
+            onClick={handleSend}
+            disabled={!message.trim() || sending}
+            className="w-9 h-9 bg-foreground text-white rounded-full flex items-center justify-center transition disabled:opacity-30 shadow-sm"
+          >
+            <Send className="w-4 h-4" />
+          </button>
         </div>
-        {recording && (
-          <p className="text-xs text-red-500 text-center mt-1 animate-pulse">● Gravando... toque para parar</p>
-        )}
       </div>
     </div>
   );
