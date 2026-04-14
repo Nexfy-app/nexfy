@@ -15,6 +15,23 @@
     "message": {
       "type": "string"
     },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "file"
+      ],
+      "default": "text"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL do arquivo/imagem/\u00e1udio enviado"
+    },
+    "file_name": {
+      "type": "string"
+    },
     "is_read": {
       "type": "boolean",
       "default": false
@@ -22,7 +39,6 @@
   },
   "required": [
     "service_request_id",
-    "sender_email",
-    "message"
+    "sender_email"
   ]
 }

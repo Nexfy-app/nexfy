@@ -19,8 +19,8 @@ export default function CategoryFilter({ selected, onSelect }) {
         className={cn(
           "shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all",
           !selected
-            ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
-            : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+            ? "bg-foreground text-background shadow-sm"
+            : "bg-secondary text-muted-foreground hover:bg-border"
         )}
       >
         Todos
@@ -33,10 +33,10 @@ export default function CategoryFilter({ selected, onSelect }) {
             key={cat.id}
             onClick={() => onSelect(isActive ? null : cat.id)}
             className={cn(
-              "shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all",
+              "shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all border",
               isActive
-                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
-                : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+                ? "bg-foreground text-background border-foreground shadow-sm"
+                : "bg-card text-muted-foreground border-border hover:border-foreground"
             )}
           >
             {Icon && <Icon className="w-3.5 h-3.5" />}

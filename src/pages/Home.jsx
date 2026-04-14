@@ -30,22 +30,22 @@ export default function Home() {
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-safe">
         <div className="px-4 pt-3 pb-2">
-          <div className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-lg border p-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-primary-foreground" />
+          <div className="bg-card rounded-2xl shadow-lg border">
+            <div className="flex items-center gap-2 px-3 pt-3 pb-2">
+              <div className="w-7 h-7 rounded-full bg-foreground flex items-center justify-center">
+                <MapPin className="w-3.5 h-3.5 text-background" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Sua localização</p>
-                <p className="text-sm font-semibold">Santa Maria, RS</p>
+              <div className="flex-1">
+                <p className="text-sm font-bold leading-none">Santa Maria, RS</p>
+                <p className="text-[10px] text-muted-foreground">Localização atual</p>
               </div>
-              <div className="ml-auto">
-                <span className="text-xs bg-green-500/10 text-green-700 px-2 py-1 rounded-full font-medium">
-                  {available.length} online
-                </span>
-              </div>
+              <span className="text-[10px] font-bold bg-foreground text-background px-2.5 py-1 rounded-full">
+                {available.length} online
+              </span>
             </div>
-            <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+            <div className="border-t">
+              <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+            </div>
           </div>
         </div>
       </div>
@@ -63,17 +63,17 @@ export default function Home() {
         className="absolute bottom-20 left-0 right-0 z-10"
         animate={{ height: listExpanded ? '50vh' : 'auto' }}
       >
-        <div className="bg-card/95 backdrop-blur-xl rounded-t-3xl shadow-2xl border-t mx-2">
+        <div className="bg-card rounded-t-3xl shadow-2xl border-t mx-2">
           <button
             onClick={() => setListExpanded(!listExpanded)}
             className="w-full flex items-center justify-center pt-3 pb-1"
           >
-            <div className="w-10 h-1 bg-border rounded-full" />
+            <div className="w-12 h-1.5 bg-border rounded-full" />
           </button>
           
           <div className="px-4 pb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold">
-              {available.length} profissionais disponíveis
+            <h2 className="text-sm font-bold">
+              {available.length} disponíveis agora
             </h2>
             <button onClick={() => setListExpanded(!listExpanded)} className="text-muted-foreground">
               {listExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}

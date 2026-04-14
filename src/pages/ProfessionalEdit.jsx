@@ -129,7 +129,7 @@ export default function ProfessionalEdit() {
                 <img src={form.photo_url} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Upload className="w-6 h-6 text-muted-foreground group-hover:text-primary transition" />
+                  <Upload className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition" />
                 </div>
               )}
             </div>
@@ -164,7 +164,7 @@ export default function ProfessionalEdit() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
                   form.categories.includes(cat.id)
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-foreground text-background"
                     : "bg-secondary text-muted-foreground"
                 )}
               >

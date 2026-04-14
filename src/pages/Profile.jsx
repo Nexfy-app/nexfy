@@ -61,18 +61,18 @@ export default function Profile() {
           className="bg-card rounded-2xl border p-5 mb-4"
         >
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-              {professional?.photo_url ? (
-                <img src={professional.photo_url} className="w-full h-full rounded-2xl object-cover" />
-              ) : (
-                <User className="w-6 h-6 text-primary" />
-              )}
+            <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center">
+            {professional?.photo_url ? (
+              <img src={professional.photo_url} className="w-full h-full rounded-2xl object-cover" />
+            ) : (
+              <User className="w-6 h-6 text-foreground" />
+            )}
             </div>
             <div className="flex-1">
               <h2 className="font-bold">{user?.full_name || 'Usuário'}</h2>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
               {professional && (
-                <Badge className="mt-1 bg-primary/10 text-primary border-0 text-[10px]">
+                <Badge className="mt-1 bg-foreground text-background border-0 text-[10px]">
                   <Award className="w-3 h-3 mr-0.5" /> Profissional
                 </Badge>
               )}
@@ -90,8 +90,8 @@ export default function Profile() {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${professional.is_available ? 'bg-green-500/10' : 'bg-secondary'}`}>
-                  <MapPin className={`w-5 h-5 ${professional.is_available ? 'text-green-600' : 'text-muted-foreground'}`} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-secondary">
+                  <MapPin className={`w-5 h-5 ${professional.is_available ? 'text-foreground' : 'text-muted-foreground'}`} />
                 </div>
                 <div>
                   <p className="font-semibold text-sm">Disponível agora</p>
@@ -137,7 +137,7 @@ export default function Profile() {
               to="/admin"
               className="flex items-center gap-3 bg-card rounded-2xl border p-4 hover:bg-secondary/50 transition"
             >
-              <Shield className="w-5 h-5 text-primary" />
+              <Shield className="w-5 h-5 text-foreground" />
               <span className="text-sm font-medium flex-1">Painel Administrativo</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>

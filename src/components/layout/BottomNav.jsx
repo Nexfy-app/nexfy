@@ -25,18 +25,18 @@ export default function BottomNav() {
               to={path}
               className={cn(
                 "flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-all duration-200",
-                isActive 
-                  ? "text-primary" 
+                isActive
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <div className={cn(
                 "w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-200",
-                isActive && "bg-primary/10"
+                isActive && "bg-foreground/8"
               )}>
                 <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.5} />
               </div>
-              <span className="text-[10px] font-medium">{label}</span>
+              <span className={cn("text-[10px] font-medium", isActive && "font-bold")}>{label}</span>
             </Link>
           );
         })}

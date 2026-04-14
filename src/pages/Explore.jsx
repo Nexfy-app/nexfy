@@ -29,14 +29,14 @@ export default function Explore() {
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b">
         <div className="px-4 pt-safe">
           <div className="pt-4 pb-3">
-            <h1 className="text-xl font-bold mb-3">Explorar</h1>
+            <h1 className="text-xl font-bold mb-3">Encontre um Profissional</h1>
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar profissional ou serviço..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 rounded-xl bg-secondary border-0 h-11"
+                className="pl-10 rounded-full bg-secondary border-0 h-11 font-medium"
               />
             </div>
             <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />

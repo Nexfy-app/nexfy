@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, MapPin, Award, MessageSquare, Zap, Phone, Clock } from 'lucide-react';
+import { Star, Award, Zap, Clock, Shield, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,10 @@ import { base44 } from '@/api/base44Client';
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 
+function generateCode() {
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
+
 export default function ProfessionalSheet({ professional, open, onClose }) {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
@@ -22,23 +26,39 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
   if (!professional) return null;
 
   const handleHire = async () => {
+    if (!description.trim()) {
+      toast.error('Descreva o serviço que você precisa');
+      return;
+    }
     setLoading(true);
     const user = await base44.auth.me();
-    await base44.entities.ServiceRequest.create({
+    const code = generateCode();
+    const req = await base44.entities.ServiceRequest.create({
       client_email: user.email,
       client_name: user.full_name || user.email,
       professional_id: professional.id,
       professional_name: professional.name,
+      professional_user_email: professional.user_email,
       category: professional.categories?.[0] || '',
       description,
       address,
       is_urgent: isUrgent,
       status: 'pending',
+      confirmation_code: code,
     });
-    toast.success('Solicitação enviada com sucesso!');
+
+    // Notify professional by email
+    base44.integrations.Core.SendEmail({
+      to: professional.user_email,
+      subject: `🔔 Novo pedido de serviço — ${user.full_name || user.email}`,
+      body: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${professional.categories?.[0]?.replace(/_/g, ' ')}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
+    }).catch(() => {});
+
+    toast.success('Pedido enviado! Aguarde a confirmação do profissional.');
     setLoading(false);
     setDescription('');
     setAddress('');
+    setIsUrgent(false);
     onClose();
     navigate('/requests');
   };
@@ -50,104 +70,130 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto p-0">
-        <div className="p-6">
-          <SheetHeader className="mb-4">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-2xl bg-secondary overflow-hidden">
-                  {professional.photo_url ? (
-                    <img src={professional.photo_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xl font-bold text-muted-foreground">
-                      {professional.name?.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                {professional.is_available && (
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-card" />
+      <SheetContent side="bottom" className="rounded-t-3xl max-h-[92vh] overflow-y-auto p-0">
+        {/* Professional header */}
+        <div className="bg-foreground text-background p-6 rounded-t-3xl">
+          <div className="w-10 h-1 bg-white/30 rounded-full mx-auto mb-5" />
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl bg-white/20 overflow-hidden">
+                {professional.photo_url ? (
+                  <img src={professional.photo_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-2xl font-bold">
+                    {professional.name?.charAt(0)}
+                  </div>
                 )}
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <SheetTitle className="text-lg">{professional.name}</SheetTitle>
-                  {professional.is_premium && <Award className="w-5 h-5 text-primary" />}
-                </div>
-                <div className="flex items-center gap-3 mt-1">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    <span className="text-sm font-semibold">{professional.rating_avg?.toFixed(1) || '0.0'}</span>
-                    <span className="text-xs text-muted-foreground">({professional.rating_count || 0} avaliações)</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  <span>{professional.services_completed || 0} serviços realizados</span>
-                </div>
+              {professional.is_available && (
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-foreground" />
+              )}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <SheetTitle className="text-lg text-background">{professional.name}</SheetTitle>
+                {professional.is_premium && <Award className="w-4 h-4 text-yellow-400" />}
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                <span className="text-sm font-semibold">{professional.rating_avg?.toFixed(1) || '0.0'}</span>
+                <span className="text-xs opacity-60">({professional.rating_count || 0} avaliações)</span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5 text-xs opacity-60">
+                <Clock className="w-3 h-3" />
+                <span>{professional.services_completed || 0} serviços</span>
               </div>
             </div>
-          </SheetHeader>
+          </div>
+        </div>
 
+        <div className="p-5 space-y-4">
+          {/* Bio */}
           {professional.bio && (
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{professional.bio}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{professional.bio}</p>
           )}
 
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          {/* Categories */}
+          <div className="flex flex-wrap gap-1.5">
             {professional.categories?.map(cat => (
-              <Badge key={cat} variant="secondary" className="text-xs px-3 py-1">
+              <Badge key={cat} variant="secondary" className="text-xs px-3 py-1 rounded-full font-medium">
                 {getCategoryLabel(cat)}
               </Badge>
             ))}
           </div>
 
+          {/* Price */}
           {professional.price_min && (
-            <div className="bg-secondary/50 rounded-xl p-3 mb-4">
+            <div className="border rounded-2xl p-4">
               <p className="text-xs text-muted-foreground">{PRICE_TYPE_LABELS[professional.price_type] || 'Preço'}</p>
-              <p className="text-xl font-bold text-primary">
+              <p className="text-2xl font-bold mt-1">
                 R$ {professional.price_min}
-                {professional.price_max && ` - R$ ${professional.price_max}`}
+                {professional.price_max && <span className="text-base font-normal text-muted-foreground"> — R$ {professional.price_max}</span>}
               </p>
             </div>
           )}
 
-          <div className="space-y-3 mb-4">
+          {/* Safety notice */}
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl p-3">
+            <Shield className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+            <p className="text-[10px] text-amber-800 leading-relaxed">
+              <strong>Pagamento seguro:</strong> Recomendamos combinar tudo pelo app. Pague somente após o serviço ser concluído e a profissionais de confiança.
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="space-y-3">
             <Textarea
-              placeholder="Descreva o serviço que você precisa..."
+              placeholder="Descreva detalhadamente o serviço que você precisa..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="rounded-xl resize-none"
+              className="rounded-xl resize-none bg-secondary border-0 text-sm"
               rows={3}
             />
             <Input
-              placeholder="Endereço para o serviço"
+              placeholder="Endereço para o serviço (opcional)"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="rounded-xl"
+              className="rounded-xl bg-secondary border-0"
             />
           </div>
 
-          <div className="flex gap-2 mb-3">
-            <Button
-              onClick={handleHire}
-              disabled={loading}
-              className="flex-1 h-12 rounded-xl font-semibold text-sm"
-            >
-              {loading ? 'Enviando...' : 'Contratar Agora'}
-            </Button>
-            <Button
-              variant={isUrgent ? "default" : "outline"}
-              onClick={() => setIsUrgent(!isUrgent)}
-              className="h-12 rounded-xl px-4"
-            >
-              <Zap className="w-4 h-4" />
-            </Button>
-          </div>
+          {/* Urgent toggle */}
+          <button
+            onClick={() => setIsUrgent(!isUrgent)}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
+              isUrgent ? 'bg-orange-50 border-orange-300' : 'bg-secondary border-transparent'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Zap className={`w-4 h-4 ${isUrgent ? 'text-orange-600' : 'text-muted-foreground'}`} />
+              <span className={`text-sm font-medium ${isUrgent ? 'text-orange-700' : 'text-foreground'}`}>
+                Serviço Urgente
+              </span>
+            </div>
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${
+              isUrgent ? 'bg-orange-500 border-orange-500' : 'border-border'
+            }`}>
+              {isUrgent && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+            </div>
+          </button>
 
-          {isUrgent && (
-            <p className="text-xs text-center text-orange-600 font-medium">
-              ⚡ Serviço marcado como urgente — o profissional será notificado imediatamente
-            </p>
-          )}
+          {/* CTA */}
+          <button
+            onClick={handleHire}
+            disabled={loading}
+            className="w-full h-14 bg-foreground text-background rounded-2xl font-bold text-base flex items-center justify-center gap-2 hover:bg-foreground/80 transition disabled:opacity-60"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-background border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>Contratar — Um código será gerado <ChevronRight className="w-4 h-4" /></>
+            )}
+          </button>
+
+          <p className="text-[10px] text-center text-muted-foreground pb-2">
+            Ao contratar, você receberá um código de 4 dígitos para confirmar o serviço com o profissional.
+          </p>
         </div>
       </SheetContent>
     </Sheet>
