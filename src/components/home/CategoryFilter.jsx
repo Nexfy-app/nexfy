@@ -7,9 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 // Group categories into tabs
 const GROUPS = [
   { label: 'Todos', ids: null },
-  { label: 'Serviços', ids: ['limpeza', 'informatica', 'mudanca', 'outros'] },
-  { label: 'Reformas', ids: ['eletricista', 'encanador', 'pintura', 'pedreiro', 'montador', 'ar_condicionado'] },
-  { label: 'Jardim', ids: ['corte_grama', 'jardinagem'] },
+  { label: 'Serviços', ids: ['limpeza', 'informatica', 'mudanca', 'outros', 'eletricista', 'encanador', 'pintura', 'pedreiro', 'montador', 'ar_condicionado', 'corte_grama', 'jardinagem'] },
 ];
 
 export default function CategoryFilter({ selected, onSelect, otherText, onOtherText }) {
