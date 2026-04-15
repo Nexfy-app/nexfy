@@ -52,12 +52,12 @@ export default function NotificationCenter({ userEmail }) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)} className="bg-[hsl(var(--muted-foreground))] text-[hsl(var(--foreground))] rounded-full relative w-9 h-9 flex items-center justify-center hover:bg-secondary transition">
-        
-        
-        
+        onClick={() => setOpen(true)}
+        className="relative w-9 h-9 flex items-center justify-center rounded-full bg-white/70 border border-border hover:bg-white transition shadow-sm"
+      >
+        <Bell className="w-4 h-4 text-foreground" />
         {unread > 0 &&
-        <span className="absolute top-1 right-1 w-4 h-4 bg-foreground text-background text-[9px] font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
           </span>
         }
