@@ -25,6 +25,7 @@ function formatDistance(km) {
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [otherCategoryText, setOtherCategoryText] = useState('');
   const [selectedPro, setSelectedPro] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [listExpanded, setListExpanded] = useState(false);
@@ -125,7 +126,12 @@ export default function Home() {
 
           {/* Categories */}
           <div className="border-t border-white/50">
-            <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+            <CategoryFilter
+              selected={selectedCategory}
+              onSelect={setSelectedCategory}
+              otherText={otherCategoryText}
+              onOtherText={setOtherCategoryText}
+            />
           </div>
         </motion.div>
       </div>
