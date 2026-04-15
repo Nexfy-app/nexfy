@@ -52,8 +52,8 @@ export default function NotificationCenter({ userEmail }) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary transition">
+        onClick={() => setOpen(true)} className="bg-[hsl(var(--muted-foreground))] text-[hsl(var(--foreground))] rounded-full relative w-9 h-9 flex items-center justify-center hover:bg-secondary transition">
+        
         
         
         {unread > 0 &&
