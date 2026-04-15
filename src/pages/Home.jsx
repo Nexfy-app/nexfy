@@ -83,24 +83,24 @@ export default function Home() {
       </div>
 
       {/* Top glass header */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4">
+      <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="glass rounded-2xl overflow-hidden"
         >
-          {/* Location bar + online count */}
-          <div className="flex items-center gap-3 px-4 pt-3 pb-2.5">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${
+          {/* Location bar */}
+          <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
               userLocation ? 'bg-blue-600' : 'bg-foreground'
             }`}>
               {userLocation
-                ? <LocateFixed className="w-3.5 h-3.5 text-white" />
-                : <MapPin className="w-3.5 h-3.5 text-white" />
+                ? <LocateFixed className="w-2.5 h-2.5 text-white" />
+                : <MapPin className="w-2.5 h-2.5 text-white" />
               }
             </div>
-            <p className="text-xs font-semibold text-foreground flex-1 truncate">
-              {userLocation ? `GPS ativo · raio ${radiusKm}km` : locationError ? 'Localização negada' : 'Obtendo GPS...'}
+            <p className="text-[11px] font-medium text-foreground flex-1 truncate">
+              {userLocation ? `GPS ativo · ${radiusKm}km` : locationError ? 'GPS negado' : 'Obtendo GPS...'}
             </p>
             {userLocation && (
               <div className="flex gap-1">
@@ -108,7 +108,7 @@ export default function Home() {
                   <button
                     key={km}
                     onClick={() => setRadiusKm(km)}
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${
+                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full transition-all ${
                       radiusKm === km
                         ? 'bg-foreground text-white'
                         : 'bg-white/60 text-muted-foreground border border-border'
@@ -119,13 +119,13 @@ export default function Home() {
                 ))}
               </div>
             )}
-            <div className="bg-green-500/15 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 shrink-0">
+            <div className="bg-green-500/15 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-green-200 shrink-0">
               {availableWithDist.length} online
             </div>
           </div>
 
           {/* Categories */}
-          <div className="border-t border-white/50">
+          <div className="border-t border-white/40">
             <CategoryFilter
               selected={selectedCategory}
               onSelect={setSelectedCategory}
