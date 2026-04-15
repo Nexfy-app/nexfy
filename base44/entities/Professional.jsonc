@@ -87,6 +87,21 @@
         "suspended"
       ],
       "default": "active"
+    },
+    "pix_key": {
+      "type": "string",
+      "description": "Chave PIX para recebimento (opcional)"
+    },
+    "pix_key_type": {
+      "type": "string",
+      "enum": [
+        "cpf",
+        "cnpj",
+        "email",
+        "phone",
+        "random"
+      ],
+      "description": "Tipo da chave PIX"
     }
   },
   "required": [

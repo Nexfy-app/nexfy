@@ -1,0 +1,29 @@
+{
+  "name": "PixClick",
+  "type": "object",
+  "properties": {
+    "client_email": {
+      "type": "string"
+    },
+    "professional_id": {
+      "type": "string"
+    },
+    "professional_name": {
+      "type": "string"
+    },
+    "service_request_id": {
+      "type": "string"
+    },
+    "pix_key": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Valor combinado do servi\u00e7o"
+    }
+  },
+  "required": [
+    "client_email",
+    "professional_id"
+  ]
+}

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Upload, Save, MapPin } from 'lucide-react';
+import { ArrowLeft, Upload, Save, MapPin, QrCode } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { SERVICE_CATEGORIES, SANTA_MARIA_CENTER } from '@/lib/constants';
@@ -23,6 +23,8 @@ export default function ProfessionalEdit() {
     photo_url: '',
     latitude: SANTA_MARIA_CENTER.lat,
     longitude: SANTA_MARIA_CENTER.lng,
+    pix_key: '',
+    pix_key_type: 'random',
   });
 
   useEffect(() => {
@@ -49,6 +51,8 @@ export default function ProfessionalEdit() {
         photo_url: pro.photo_url || '',
         latitude: pro.latitude || SANTA_MARIA_CENTER.lat,
         longitude: pro.longitude || SANTA_MARIA_CENTER.lng,
+        pix_key: pro.pix_key || '',
+        pix_key_type: pro.pix_key_type || 'random',
       });
     } else if (user) {
       setForm(prev => ({ ...prev, name: user.full_name || '' }));
@@ -189,6 +193,30 @@ export default function ProfessionalEdit() {
             <Input type="number" placeholder="Mín (R$)" value={form.price_min} onChange={e => setForm(p => ({...p, price_min: e.target.value}))} className="rounded-xl" />
             <Input type="number" placeholder="Máx (R$)" value={form.price_max} onChange={e => setForm(p => ({...p, price_max: e.target.value}))} className="rounded-xl" />
           </div>
+        </div>
+
+        {/* PIX */}
+        <div>
+          <Label className="text-xs mb-1 block flex items-center gap-1.5">
+            <QrCode className="w-3.5 h-3.5 text-green-600" /> Chave PIX <span className="text-muted-foreground font-normal">(opcional)</span>
+          </Label>
+          <p className="text-[11px] text-muted-foreground mb-2">Seus clientes poderão te pagar diretamente pelo app após o serviço.</p>
+          <Select value={form.pix_key_type} onValueChange={v => setForm(p => ({...p, pix_key_type: v}))}>
+            <SelectTrigger className="rounded-xl mb-2"><SelectValue placeholder="Tipo da chave" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cpf">CPF</SelectItem>
+              <SelectItem value="cnpj">CNPJ</SelectItem>
+              <SelectItem value="email">E-mail</SelectItem>
+              <SelectItem value="phone">Telefone</SelectItem>
+              <SelectItem value="random">Chave aleatória</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input
+            value={form.pix_key}
+            onChange={e => setForm(p => ({...p, pix_key: e.target.value}))}
+            className="rounded-xl"
+            placeholder="Ex: 123.456.789-00 / seu@email.com"
+          />
         </div>
 
         {/* Location */}

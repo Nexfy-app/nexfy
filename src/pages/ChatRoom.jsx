@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check } from 'lucide-react';
+import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check, QrCode } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import PixPaymentModal from '../components/chat/PixPaymentModal';
 
 function MessageBubble({ msg, isMe }) {
   const time = msg.created_date
@@ -85,6 +86,7 @@ export default function ChatRoom() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [showAttach, setShowAttach] = useState(false);
+  const [showPix, setShowPix] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
@@ -223,12 +225,21 @@ export default function ChatRoom() {
         </div>
       </div>
 
-      {/* Security notice */}
+      {/* Security notice + PIX CTA */}
       <div className="bg-amber-50 border-b border-amber-100 px-4 py-2 flex items-center gap-2 shrink-0">
         <span className="text-xs">🔒</span>
-        <p className="text-[10px] text-amber-800">
+        <p className="text-[10px] text-amber-800 flex-1">
           <strong>Segurança:</strong> Combine tudo pelo app. Pague somente após o serviço ser concluído.
         </p>
+        {otherPro?.pix_key && request?.client_email === user?.email && (
+          <button
+            onClick={() => setShowPix(true)}
+            className="shrink-0 flex items-center gap-1 bg-green-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-green-700 transition"
+          >
+            <QrCode className="w-3 h-3" />
+            Pagar PIX
+          </button>
+        )}
       </div>
 
       {/* Messages */}
@@ -240,6 +251,15 @@ export default function ChatRoom() {
         )}
         <div ref={scrollRef} />
       </div>
+
+      {/* PIX Modal */}
+      {showPix && otherPro && (
+        <PixPaymentModal
+          professional={otherPro}
+          request={request}
+          onClose={() => setShowPix(false)}
+        />
+      )}
 
       {/* Attach panel */}
       <AnimatePresence>
