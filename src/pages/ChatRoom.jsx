@@ -208,7 +208,7 @@ export default function ChatRoom() {
           <div className="flex-1 min-w-0">
             <p className="font-bold text-sm truncate text-foreground">{otherName}</p>
             <p className="text-[10px] text-muted-foreground capitalize">
-              {request?.category?.replace(/_/g, ' ')} · {request?.status === 'in_progress' ? '🟢 Em andamento' : request?.status === 'completed' ? '✅ Concluído' : '⏳ Aguardando'}
+              {request?.category?.startsWith('outros:') ? request.category.replace('outros:', '') : request?.category?.replace(/_/g, ' ')} · {request?.status === 'in_progress' ? '🟢 Em andamento' : request?.status === 'completed' ? '✅ Concluído' : '⏳ Aguardando'}
             </p>
           </div>
 

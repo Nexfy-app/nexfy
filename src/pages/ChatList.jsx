@@ -128,7 +128,7 @@ export default function ChatList() {
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground capitalize truncate">
-                      {r.category?.replace(/_/g, ' ')}
+                      {r.category?.startsWith('outros:') ? r.category.replace('outros:', '') : r.category?.replace(/_/g, ' ')}
                     </p>
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ml-2 shrink-0 ${STATUS_COLORS[r.status] || 'bg-slate-100 text-slate-600'}`}>
                       {STATUS_LABELS[r.status] || r.status}

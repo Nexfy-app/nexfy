@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Award, Zap, Clock, Shield, ChevronRight, X, CheckCircle } from 'lucide-react';
+import { Star, Award, Zap, Clock, Shield, X, CheckCircle } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -19,65 +19,81 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
   const [address, setAddress] = useState('');
   const [isUrgent, setIsUrgent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [otherCategoryText, setOtherCategoryText] = useState('');
   const navigate = useNavigate();
 
   if (!professional) return null;
-
-  const handleHire = async () => {
-    if (!description.trim()) {
-      toast.error('Descreva o serviço que você precisa');
-      return;
-    }
-    setLoading(true);
-    const user = await base44.auth.me();
-    const code = generateCode();
-    await base44.entities.ServiceRequest.create({
-      client_email: user.email,
-      client_name: user.full_name || user.email,
-      professional_id: professional.id,
-      professional_name: professional.name,
-      professional_user_email: professional.user_email,
-      category: professional.categories?.[0] || '',
-      description,
-      address,
-      is_urgent: isUrgent,
-      status: 'pending',
-      confirmation_code: code,
-    });
-
-    createNotification({
-      user_email: professional.user_email,
-      title: `Novo pedido de ${user.full_name || user.email}`,
-      body: description?.slice(0, 80) || `Serviço: ${professional.categories?.[0]?.replace(/_/g, ' ')}`,
-      type: 'new_request',
-      link: '/requests',
-    });
-    sendEmailIfEnabled(professional.user_email, 'new_request', {
-      to: professional.user_email,
-      subject: `🔔 Novo pedido de serviço — ${user.full_name || user.email}`,
-      emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${professional.categories?.[0]?.replace(/_/g, ' ')}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
-    });
-
-    toast.success('Pedido enviado!');
-    setLoading(false);
-    setDescription('');
-    setAddress('');
-    setIsUrgent(false);
-    onClose();
-    navigate('/requests');
-  };
 
   const getCategoryLabel = (id) => {
     const cat = SERVICE_CATEGORIES.find(c => c.id === id);
     return cat ? cat.label : id;
   };
 
+  const effectiveCategory = selectedCategory || professional.categories?.[0] || '';
+  const effectiveCategoryLabel = effectiveCategory === 'outros' && otherCategoryText
+    ? otherCategoryText
+    : getCategoryLabel(effectiveCategory);
+
+  const handleHire = async () => {
+    if (!description.trim()) {
+      toast.error('Descreva o serviço que você precisa');
+      return;
+    }
+    if (effectiveCategory === 'outros' && !otherCategoryText.trim()) {
+      toast.error('Descreva qual é o serviço em "Outros"');
+      return;
+    }
+    setLoading(true);
+    try {
+      const user = await base44.auth.me();
+      const code = generateCode();
+      await base44.entities.ServiceRequest.create({
+        client_email: user.email,
+        client_name: user.full_name || user.email,
+        professional_id: professional.id,
+        professional_name: professional.name,
+        professional_user_email: professional.user_email,
+        category: effectiveCategory === 'outros' ? `outros:${otherCategoryText}` : effectiveCategory,
+        description,
+        address,
+        is_urgent: isUrgent,
+        status: 'pending',
+        confirmation_code: code,
+      });
+
+      createNotification({
+        user_email: professional.user_email,
+        title: `Novo pedido de ${user.full_name || user.email}`,
+        body: description?.slice(0, 80) || `Serviço: ${effectiveCategoryLabel}`,
+        type: 'new_request',
+        link: '/requests',
+      });
+      sendEmailIfEnabled(professional.user_email, 'new_request', {
+        to: professional.user_email,
+        subject: `🔔 Novo pedido de serviço — ${user.full_name || user.email}`,
+        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
+      });
+
+      toast.success('Pedido enviado!');
+      setDescription('');
+      setAddress('');
+      setIsUrgent(false);
+      setSelectedCategory(null);
+      setOtherCategoryText('');
+      onClose();
+      navigate('/requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={onClose}>
+    <Sheet open={open} onOpenChange={(v) => { if (!loading) onClose(); }}>
       <SheetContent
         side="bottom"
         className="p-0 border-0 rounded-t-[2rem] max-h-[92vh] overflow-y-auto"
-        style={{ background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(40px)' }}
+        style={{ background: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(40px)' }}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
@@ -85,11 +101,10 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
         </div>
 
         {/* Hero section */}
-        <div className="px-5 pb-5 pt-2">
+        <div className="px-5 pb-4 pt-2">
           <div className="flex items-center gap-4">
-            {/* Avatar */}
             <div className="relative">
-              <div className="w-18 h-18 rounded-2xl overflow-hidden bg-slate-100 shadow-md" style={{ width: 72, height: 72 }}>
+              <div className="rounded-2xl overflow-hidden bg-slate-100 shadow-md" style={{ width: 72, height: 72 }}>
                 {professional.photo_url ? (
                   <img src={professional.photo_url} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -120,35 +135,52 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
             </div>
           </div>
 
-          {/* Bio */}
           {professional.bio && (
-            <p className="text-sm text-muted-foreground leading-relaxed mt-4">{professional.bio}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">{professional.bio}</p>
           )}
 
-          {/* Categories */}
+          {/* Categories as selectable pills */}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {professional.categories?.map(cat => (
-              <span key={cat} className="text-[11px] bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-medium border border-slate-200">
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
+                className={`text-[11px] px-3 py-1 rounded-full font-medium border transition-all ${
+                  (selectedCategory === cat) || (!selectedCategory && cat === professional.categories?.[0])
+                    ? 'bg-foreground text-white border-foreground'
+                    : 'bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-400'
+                }`}
+              >
                 {getCategoryLabel(cat)}
-              </span>
+              </button>
             ))}
           </div>
+
+          {/* "Outros" free text field */}
+          {effectiveCategory === 'outros' && (
+            <div className="mt-2">
+              <Input
+                placeholder="Qual serviço você precisa?"
+                value={otherCategoryText}
+                onChange={e => setOtherCategoryText(e.target.value)}
+                className="rounded-xl bg-slate-50 border-slate-200 text-sm"
+              />
+            </div>
+          )}
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-slate-100 mx-5" />
 
         {/* Price */}
         {professional.price_min && (
-          <div className="px-5 py-4">
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+          <div className="px-5 py-3">
+            <div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-100">
               <p className="text-xs text-muted-foreground font-medium">{PRICE_TYPE_LABELS[professional.price_type] || 'A partir de'}</p>
               <p className="text-2xl font-black text-foreground mt-0.5">
                 R$ {professional.price_min}
                 {professional.price_max && (
-                  <span className="text-base font-normal text-muted-foreground ml-1">
-                    — R$ {professional.price_max}
-                  </span>
+                  <span className="text-base font-normal text-muted-foreground ml-1">— R$ {professional.price_max}</span>
                 )}
               </p>
             </div>
@@ -156,7 +188,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
         )}
 
         {/* Form */}
-        <div className="px-5 space-y-3 pb-4">
+        <div className="px-5 space-y-3 pb-6">
           <div>
             <label className="text-xs font-semibold text-foreground mb-1.5 block">Descreva o serviço</label>
             <Textarea
@@ -179,6 +211,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
 
           {/* Urgent toggle */}
           <button
+            type="button"
             onClick={() => setIsUrgent(!isUrgent)}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${
               isUrgent
@@ -208,11 +241,11 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
           </div>
 
           {/* CTA */}
-          <motion.button
-            whileTap={{ scale: 0.98 }}
+          <button
+            type="button"
             onClick={handleHire}
             disabled={loading}
-            className="w-full h-14 bg-foreground text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 transition-all"
+            className="w-full h-14 bg-foreground text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
             style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
           >
             {loading ? (
@@ -223,9 +256,9 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
                 Contratar Agora
               </>
             )}
-          </motion.button>
+          </button>
 
-          <p className="text-[10px] text-center text-muted-foreground pb-2">
+          <p className="text-[10px] text-center text-muted-foreground">
             Um código de confirmação será gerado ao contratar
           </p>
         </div>

@@ -193,13 +193,25 @@ export default function ProfessionalEdit() {
 
         {/* Location */}
         <div>
-          <Label className="text-xs mb-2 block">Localização</Label>
-          <Button variant="outline" onClick={handleGetLocation} className="w-full rounded-xl h-11">
-            <MapPin className="w-4 h-4 mr-2" /> Atualizar minha localização
-          </Button>
-          <p className="text-[10px] text-muted-foreground mt-1 text-center">
-            Lat: {form.latitude?.toFixed(4)} · Lng: {form.longitude?.toFixed(4)}
+          <Label className="text-xs mb-1 block">Localização GPS</Label>
+          <p className="text-[11px] text-muted-foreground mb-2">
+            Sua localização é usada para mostrar a clientes próximos a distância até você. Atualize sempre que mudar de local.
           </p>
+          <button
+            type="button"
+            onClick={handleGetLocation}
+            className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-2 text-sm font-semibold text-foreground transition-all active:scale-[0.98]"
+          >
+            <MapPin className="w-4 h-4 text-blue-600" />
+            {form.latitude && form.latitude !== SANTA_MARIA_CENTER.lat
+              ? '📍 Localização salva — Atualizar'
+              : 'Usar minha localização atual'}
+          </button>
+          {form.latitude && form.latitude !== SANTA_MARIA_CENTER.lat && (
+            <p className="text-[10px] text-green-600 font-medium mt-1 text-center">
+              ✓ GPS ativo · {form.latitude?.toFixed(4)}, {form.longitude?.toFixed(4)}
+            </p>
+          )}
         </div>
 
         <Button onClick={handleSave} disabled={saving} className="w-full h-12 rounded-xl font-semibold">

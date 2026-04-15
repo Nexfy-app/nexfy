@@ -162,7 +162,9 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
             {isProvider ? request.client_name : request.professional_name}
           </p>
           <p className="text-xs text-muted-foreground capitalize mt-0.5">
-            {request.category?.replace(/_/g, ' ')}
+            {request.category?.startsWith('outros:')
+              ? request.category.replace('outros:', '')
+              : request.category?.replace(/_/g, ' ')}
           </p>
         </div>
         <div className="flex items-center gap-2">

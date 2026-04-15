@@ -7,7 +7,6 @@ import MapView from '../components/map/MapView';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
-import RadiusControl from '../components/home/RadiusControl';
 import EtaCard from '../components/home/EtaCard';
 import useUserLocation from '../hooks/useUserLocation';
 
@@ -89,38 +88,40 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="glass rounded-2xl overflow-hidden"
         >
-          {/* Location bar */}
-          <div className="flex items-center gap-3 px-4 pt-3 pb-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${
+          {/* Location bar + online count */}
+          <div className="flex items-center gap-3 px-4 pt-3 pb-2.5">
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${
               userLocation ? 'bg-blue-600' : 'bg-foreground'
             }`}>
               {userLocation
-                ? <LocateFixed className="w-4 h-4 text-white" />
-                : <MapPin className="w-4 h-4 text-white" />
+                ? <LocateFixed className="w-3.5 h-3.5 text-white" />
+                : <MapPin className="w-3.5 h-3.5 text-white" />
               }
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground leading-none">
-                {userLocation ? 'Sua localização' : 'Santa Maria, RS'}
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                {userLocation
-                  ? `GPS ativo · ${availableWithDist.length} profissional${availableWithDist.length !== 1 ? 'is' : ''} no raio`
-                  : locationError ? 'Localização negada' : 'Obtendo GPS...'
-                }
-              </p>
-            </div>
-            <div className="bg-green-500/15 text-green-700 text-[11px] font-bold px-3 py-1 rounded-full border border-green-200">
+            <p className="text-xs font-semibold text-foreground flex-1 truncate">
+              {userLocation ? `GPS ativo · raio ${radiusKm}km` : locationError ? 'Localização negada' : 'Obtendo GPS...'}
+            </p>
+            {userLocation && (
+              <div className="flex gap-1">
+                {[1, 5, 10, 25].map(km => (
+                  <button
+                    key={km}
+                    onClick={() => setRadiusKm(km)}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${
+                      radiusKm === km
+                        ? 'bg-foreground text-white'
+                        : 'bg-white/60 text-muted-foreground border border-border'
+                    }`}
+                  >
+                    {km}km
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="bg-green-500/15 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 shrink-0">
               {availableWithDist.length} online
             </div>
           </div>
-
-          {/* Radius control */}
-          {userLocation && (
-            <div className="px-4 pb-2.5">
-              <RadiusControl radiusKm={radiusKm} onChange={setRadiusKm} />
-            </div>
-          )}
 
           {/* Categories */}
           <div className="border-t border-white/50">
