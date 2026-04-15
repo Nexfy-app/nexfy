@@ -70,7 +70,7 @@ export default function Home() {
   const handleSelectPro = (pro) => {
     setMapSelectedPro(pro);
     setEta(null);
-    setSelectedPro(pro);
+    setSelectedPro({ ...pro, _distFormatted: pro._dist ? formatDistance(pro._dist) : null });
     setSheetOpen(true);
   };
 
@@ -106,25 +106,8 @@ export default function Home() {
               }
             </div>
             <p className="text-[11px] font-medium text-foreground flex-1 truncate">
-              {userLocation ? `GPS ativo · ${radiusKm}km` : locationError ? 'GPS negado' : 'Obtendo GPS...'}
+              {userLocation ? 'GPS ativo' : locationError ? 'GPS negado' : 'Obtendo GPS...'}
             </p>
-            {userLocation && (
-              <div className="flex gap-1">
-                {[1, 5, 10, 25].map(km => (
-                  <button
-                    key={km}
-                    onClick={() => setRadiusKm(km)}
-                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full transition-all ${
-                      radiusKm === km
-                        ? 'bg-foreground text-white'
-                        : 'bg-white/60 text-muted-foreground border border-border'
-                    }`}
-                  >
-                    {km}km
-                  </button>
-                ))}
-              </div>
-            )}
             <div className="bg-green-500/15 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-green-200 shrink-0">
               {availableWithDist.length} online
             </div>
@@ -192,7 +175,7 @@ export default function Home() {
                     {/* Header com fechar */}
                     <div className="flex items-center justify-between px-3 py-2 border-b border-white/40">
                       <span className="text-xs font-bold text-foreground">
-                        {availableWithDist.length} disponíveis{userLocation ? ` · ${radiusKm}km` : ''}
+                        {availableWithDist.length} disponíveis próximos
                       </span>
                       <button onClick={() => setListExpanded(false)} className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition">
                         <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
@@ -219,7 +202,8 @@ export default function Home() {
       <ProfessionalSheet
         professional={selectedPro}
         open={sheetOpen}
-        onClose={() => { setSheetOpen(false); setSelectedPro(null); }}
+        onClose={() => { setSheetOpen(false); setSelectedPro(null); setMapSelectedPro(null); }}
+        eta={eta}
       />
     </div>
   );

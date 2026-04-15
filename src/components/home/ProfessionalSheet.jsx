@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Award, Zap, Clock, Shield, X, CheckCircle } from 'lucide-react';
+import { Star, Award, Zap, Clock, Shield, X, CheckCircle, Navigation, MapPin, Timer } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -14,7 +14,7 @@ function generateCode() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
-export default function ProfessionalSheet({ professional, open, onClose }) {
+export default function ProfessionalSheet({ professional, open, onClose, eta }) {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [isUrgent, setIsUrgent] = useState(false);
@@ -99,6 +99,41 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 bg-slate-200 rounded-full" />
         </div>
+
+        {/* Distância / ETA — estilo Uber */}
+        {(professional._distFormatted || eta) && (
+          <div className="mx-5 mb-3 mt-1 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}>
+            <div className="flex items-center divide-x divide-white/10">
+              {professional._distFormatted && (
+                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <Navigation className="w-3.5 h-3.5 text-blue-400" />
+                    <span className="text-white font-black text-xl">{professional._distFormatted}</span>
+                  </div>
+                  <span className="text-white/50 text-[10px] font-medium">de distância</span>
+                </div>
+              )}
+              {eta && (
+                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <Timer className="w-3.5 h-3.5 text-green-400" />
+                    <span className="text-white font-black text-xl">{eta} min</span>
+                  </div>
+                  <span className="text-white/50 text-[10px] font-medium">tempo estimado</span>
+                </div>
+              )}
+              {professional.latitude && professional.longitude && (
+                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-white font-black text-xl">{professional.is_available ? 'Online' : 'Offline'}</span>
+                  </div>
+                  <span className="text-white/50 text-[10px] font-medium">status atual</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Hero section */}
         <div className="px-5 pb-4 pt-2">
