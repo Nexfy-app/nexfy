@@ -78,8 +78,8 @@ function SafetyBanner() {
           <Shield className="text-slate-50 lucide lucide-shield w-3.5 h-3.5" />
         </div>
         <div>
-          <p className="text-slate-50 mb-0.5 text-xs font-bold">Dica de Segurança</p>
-          <p className="text-gray-400 leading-relaxed">Sempre pague após o serviço concluído. Nunca envie dinheiro antecipado.
+          <p className="text-slate-900 mb-0.5 text-xs font-bold">Dica de Segurança</p>
+          <p className="text-gray-500 leading-relaxed">Sempre pague após o serviço concluído. Nunca envie dinheiro antecipado.
 
           </p>
         </div>
