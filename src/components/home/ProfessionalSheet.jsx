@@ -10,7 +10,14 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-function generateCode() {
+function generateCode(clientPhone, proPhone) {
+  // 4 últimos dígitos do telefone do cliente + profissional (só números)
+  const digits = (s) => (s || '').replace(/\D/g, '').slice(-4).padStart(4, '0');
+  const c = digits(clientPhone);
+  const p = digits(proPhone);
+  // Se ambos disponíveis, usa 2 do cliente + 2 do profissional
+  if (clientPhone && proPhone) return c.slice(-2) + p.slice(-2);
+  // Fallback: 4 dígitos aleatórios
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
@@ -47,8 +54,12 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
     setLoading(true);
     try {
       const user = await base44.auth.me();
-      const code = generateCode();
-      await base44.entities.ServiceRequest.create({
+      // Busca o telefone do profissional para gerar o código
+      const proPhone = professional.phone || '';
+      const clientPhone = user.phone || '';
+      const code = generateCode(clientPhone, proPhone);
+
+      const newRequest = await base44.entities.ServiceRequest.create({
         client_email: user.email,
         client_name: user.full_name || user.email,
         professional_id: professional.id,
@@ -64,25 +75,27 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
 
       createNotification({
         user_email: professional.user_email,
-        title: `Novo pedido de ${user.full_name || user.email}`,
-        body: description?.slice(0, 80) || `Serviço: ${effectiveCategoryLabel}`,
+        title: `🔔 Novo pedido de ${user.full_name || user.email}`,
+        body: `${effectiveCategoryLabel}: ${description?.slice(0, 80)}`,
         type: 'new_request',
         link: '/requests',
       });
       sendEmailIfEnabled(professional.user_email, 'new_request', {
         to: professional.user_email,
-        subject: `🔔 Novo pedido de serviço — ${user.full_name || user.email}`,
-        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAcesse o ServiçosJá para aceitar ou recusar.`,
+        subject: `🔔 Novo pedido — ${user.full_name || user.email}`,
+        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAbra o ServiçosJá agora para aceitar ou recusar.`,
       });
 
-      toast.success('Pedido enviado!');
       setDescription('');
       setAddress('');
       setIsUrgent(false);
       setSelectedCategory(null);
       setOtherCategoryText('');
       onClose();
-      navigate('/requests');
+
+      // Redireciona para o chat com o profissional
+      toast.success('✅ Pedido enviado! Aguarde a confirmação do profissional.', { duration: 3000 });
+      navigate(`/chat/${newRequest.id}`);
     } finally {
       setLoading(false);
     }

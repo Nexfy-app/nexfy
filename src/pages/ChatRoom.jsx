@@ -225,22 +225,67 @@ export default function ChatRoom() {
         </div>
       </div>
 
-      {/* Security notice + PIX CTA */}
-      <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center gap-2 shrink-0">
-        <span className="text-xs">ℹ️</span>
-        <p className="text-[10px] text-slate-600 flex-1">
-          Este app <strong>não processa pagamentos</strong>. Pagamentos são realizados diretamente entre as partes.
-        </p>
-        {otherPro?.pix_key && request?.client_email === user?.email && (
-          <button
-            onClick={() => setShowPix(true)}
-            className="shrink-0 flex items-center gap-1 bg-green-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-green-700 transition"
-          >
-            <QrCode className="w-3 h-3" />
-            Pagar PIX
-          </button>
-        )}
-      </div>
+      {/* Status banner — guia o usuário */}
+      {request && (
+        <div className={`border-b px-4 py-2.5 shrink-0 ${
+          request.status === 'pending' ? 'bg-amber-50 border-amber-100' :
+          request.status === 'accepted' ? 'bg-blue-50 border-blue-100' :
+          request.status === 'in_progress' ? 'bg-indigo-50 border-indigo-100' :
+          request.status === 'completed' ? 'bg-green-50 border-green-100' :
+          'bg-slate-50 border-slate-200'
+        }`}>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className="text-base shrink-0">
+                {request.status === 'pending' ? '⏳' :
+                 request.status === 'accepted' ? '✅' :
+                 request.status === 'in_progress' ? '🔧' :
+                 request.status === 'completed' ? '🎉' : '❌'}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold text-foreground">
+                  {request.status === 'pending' ? 'Aguardando confirmação do profissional...' :
+                   request.status === 'accepted' ? 'Pedido aceito! Mostre o código ao profissional.' :
+                   request.status === 'in_progress' ? 'Serviço em andamento.' :
+                   request.status === 'completed' ? 'Serviço concluído! Avalie o profissional.' :
+                   'Pedido cancelado.'}
+                </p>
+                <p className="text-[9px] text-muted-foreground mt-0.5">
+                  Este app não processa pagamentos — pague diretamente ao profissional.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {otherPro?.pix_key && request?.client_email === user?.email && request.status === 'completed' && (
+                <button
+                  onClick={() => setShowPix(true)}
+                  className="flex items-center gap-1 bg-green-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-green-700 transition"
+                >
+                  <QrCode className="w-3 h-3" />
+                  Pagar PIX
+                </button>
+              )}
+              {request.status === 'completed' && request.client_email === user?.email && (
+                <button
+                  onClick={() => navigate(`/review/${request.id}`)}
+                  className="flex items-center gap-1 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-amber-600 transition"
+                >
+                  ★ Avaliar
+                </button>
+              )}
+            </div>
+          </div>
+          {/* Confirmation code inline */}
+          {request.status === 'accepted' && request.client_email === user?.email && request.confirmation_code && (
+            <div className="mt-2 flex items-center gap-1.5 bg-white/70 rounded-xl px-3 py-1.5 border border-blue-100">
+              <span className="text-[10px] text-blue-700 font-medium">Código:</span>
+              {request.confirmation_code.split('').map((d, i) => (
+                <span key={i} className="w-7 h-7 bg-blue-600 text-white rounded-lg flex items-center justify-center font-black text-sm">{d}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
