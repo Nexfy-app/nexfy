@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch } from "@/components/ui/switch";
 import {
   User, Settings, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, MapPin, Bell
+  Shield, Award, MapPin, Bell, BarChart2
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { Link, useNavigate } from 'react-router-dom';
@@ -37,9 +37,9 @@ export default function Profile() {
 
   const menuItems = [
     { label: professional ? "Editar Perfil Profissional" : "Cadastrar como Profissional", icon: Briefcase, path: "/professional/edit", show: true },
+    { label: "Meu Painel", icon: BarChart2, path: "/professional/dashboard", show: !!professional },
     { label: "Minhas Avaliações", icon: Star, path: "/reviews", show: !!professional },
     { label: "Notificações", icon: Bell, path: "/notifications/settings", show: true },
-    { label: "Configurações", icon: Settings, path: "/settings", show: true },
   ];
 
   return (
