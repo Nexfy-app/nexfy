@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Mail, Bell } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const EMAIL_SETTINGS = [
@@ -68,9 +68,9 @@ export default function NotificationSettings() {
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-10 bg-background border-b px-4 pt-safe">
         <div className="flex items-center gap-3 py-3">
-          <button onClick={() => navigate(-1)}>
+          <Link to="/" className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-secondary transition">
             <ArrowLeft className="w-5 h-5" />
-          </button>
+          </Link>
           <h1 className="font-bold">Notificações</h1>
         </div>
       </div>

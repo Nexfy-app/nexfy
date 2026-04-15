@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Star, Award, Zap, Clock, Shield, X, CheckCircle, Navigation, MapPin, Timer } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { PRICE_TYPE_LABELS, SERVICE_CATEGORIES } from '@/lib/constants';
 import { base44 } from '@/api/base44Client';
 import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
@@ -95,6 +95,7 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
         className="p-0 border-0 rounded-t-[2rem] max-h-[92vh] overflow-y-auto"
         style={{ background: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(40px)' }}
       >
+        <SheetTitle className="sr-only">Perfil do Profissional</SheetTitle>
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 bg-slate-200 rounded-full" />

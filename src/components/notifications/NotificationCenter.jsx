@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Bell, X, CheckCheck, Inbox } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -65,6 +65,7 @@ export default function NotificationCenter({ userEmail }) {
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-full max-w-sm p-0 flex flex-col" hideCloseButton>
+          <SheetTitle className="sr-only">Notificações</SheetTitle>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-4 border-b">
             <div className="flex items-center gap-2">
