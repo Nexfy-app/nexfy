@@ -146,64 +146,65 @@ export default function Home() {
       )}
 
       {/* Bottom professionals panel */}
-      <motion.div
-        className="absolute bottom-24 left-0 right-0 z-10 px-3"
-        animate={{ height: listExpanded ? '50vh' : 'auto' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        <div className="glass-strong rounded-2xl overflow-hidden">
-          {/* Handle + header */}
-          <button
-            onClick={() => setListExpanded(!listExpanded)}
-            className="w-full flex flex-col items-center pt-2.5 pb-1 active:bg-slate-50/50 transition"
-          >
-            <div className="w-10 h-1 bg-slate-200 rounded-full mb-2" />
-            <div className="w-full px-4 flex items-center justify-between pb-1">
-              <div>
-                <h2 className="text-sm font-bold text-foreground text-left">
-                  {availableWithDist.length} disponíveis{userLocation ? ` em ${radiusKm}km` : ' agora'}
-                </h2>
-              </div>
-              <div className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100">
-                {listExpanded
-                  ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                  : <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                }
-              </div>
-            </div>
-          </button>
-
-          {/* List */}
-          <div className={`overflow-y-auto px-3 pb-3 space-y-2 ${listExpanded ? 'max-h-[calc(50vh-80px)]' : 'max-h-[136px]'}`}>
-            <AnimatePresence>
-              {availableWithDist.length > 0 ? availableWithDist.map(pro => (
-                <ProfessionalCard
-                  key={pro.id}
-                  professional={pro}
-                  onClick={handleSelectPro}
-                  distance={pro._dist ? formatDistance(pro._dist) : null}
-                />
-              )) : (
-                <div className="text-center py-5">
-                  <p className="text-sm text-muted-foreground">
-                    {userLocation
-                      ? `Nenhum profissional em ${radiusKm}km`
-                      : 'Nenhum profissional disponível'}
-                  </p>
-                  {userLocation && (
-                    <button
-                      onClick={() => setRadiusKm(r => Math.min(r * 2, 50))}
-                      className="text-xs font-semibold mt-1.5 text-blue-600 underline"
-                    >
-                      Ampliar para {Math.min(radiusKm * 2, 50)}km
-                    </button>
-                  )}
-                </div>
-              )}
-            </AnimatePresence>
+      <div className="absolute bottom-24 left-0 right-0 z-10 px-3">
+        {/* Collapsed pill — always visible */}
+        <button
+          onClick={() => setListExpanded(!listExpanded)}
+          className="w-full glass-strong rounded-2xl flex items-center justify-between px-4 py-3 active:scale-[0.98] transition-all"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full" />
+            <span className="text-sm font-bold text-foreground">
+              {availableWithDist.length} disponíveis{userLocation ? ` · ${radiusKm}km` : ''}
+            </span>
           </div>
-        </div>
-      </motion.div>
+          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-100">
+            {listExpanded
+              ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+              : <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
+            }
+          </div>
+        </button>
+
+        {/* Expanded list */}
+        <AnimatePresence>
+          {listExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: 10 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: 10 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+              className="overflow-hidden mt-2"
+            >
+              <div className="glass-strong rounded-2xl overflow-hidden max-h-[45vh] overflow-y-auto px-3 pb-3 pt-2 space-y-2">
+                {availableWithDist.length > 0 ? availableWithDist.map(pro => (
+                  <ProfessionalCard
+                    key={pro.id}
+                    professional={pro}
+                    onClick={(p) => { handleSelectPro(p); setListExpanded(false); }}
+                    distance={pro._dist ? formatDistance(pro._dist) : null}
+                  />
+                )) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">
+                      {userLocation ? `Nenhum profissional em ${radiusKm}km` : 'Nenhum profissional disponível'}
+                    </p>
+                    {userLocation && (
+                      <button
+                        onClick={() => setRadiusKm(r => Math.min(r * 2, 50))}
+                        className="text-xs font-semibold mt-1.5 text-blue-600 underline"
+                      >
+                        Ampliar para {Math.min(radiusKm * 2, 50)}km
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <ProfessionalSheet
         professional={selectedPro}
