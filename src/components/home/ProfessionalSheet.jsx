@@ -131,7 +131,7 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
                 <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
                   <div className="flex items-center gap-1.5">
                     <Timer className="w-3.5 h-3.5 text-green-400" />
-                    <span className="text-white font-black text-xl">{eta} min</span>
+                    <span className="text-white font-black text-xl">{eta?.minutes ?? eta} min</span>
                   </div>
                   <span className="text-white/50 text-[10px] font-medium">tempo estimado</span>
                 </div>
