@@ -72,7 +72,7 @@ function TrackingSteps({ status }) {
 
 function SafetyBanner() {
   return (
-    <div className="bg-[#e6e6e6] mb-4 p-3.5 opacity-100 rounded-[28px] border border-amber-100">
+    <div className="bg-[#e6e6e6] mb-4 p-3.5 opacity-100 rounded-[28px] border border-slate-200/50">
       <div className="flex gap-2.5">
         <div className="bg-[#13be69] rounded-xl w-7 h-7 flex items-center justify-center shrink-0">
           <Shield className="text-slate-50 lucide lucide-shield w-3.5 h-3.5" />
