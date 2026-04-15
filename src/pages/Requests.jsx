@@ -74,11 +74,11 @@ function SafetyBanner() {
   return (
     <div className="bg-gray-900 mb-4 p-3.5 rounded-2xl border border-amber-100">
       <div className="flex gap-2.5">
-        <div className="w-7 h-7 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+        <div className="bg-[#26cf5e] rounded-xl w-7 h-7 flex items-center justify-center shrink-0">
           <Shield className="w-3.5 h-3.5 text-amber-600" />
         </div>
         <div>
-          <p className="text-xs font-bold text-amber-900 mb-0.5">Dica de Segurança</p>
+          <p className="text-slate-50 mb-0.5 text-xs font-bold">Dica de Segurança</p>
           <p className="text-slate-100 leading-relaxed">Sempre pague após o serviço concluído. Nunca envie dinheiro antecipado.
 
           </p>
