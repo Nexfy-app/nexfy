@@ -5,6 +5,7 @@ import ProfessionalMarker from './ProfessionalMarker';
 import UserLocationMarker from './UserLocationMarker';
 import RouteOverlay from './RouteOverlay';
 import MapController from './MapController';
+import LocateMeButton from './LocateMeButton';
 import 'leaflet/dist/leaflet.css';
 
 export default function MapView({
@@ -26,32 +27,37 @@ export default function MapView({
       : null;
 
   return (
-    <MapContainer
-      center={center}
-      zoom={14}
-      className="w-full h-full"
-      zoomControl={false}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-      />
-
-      <MapController center={center} zoom={14} fly />
-
-      <UserLocationMarker location={userLocation} radiusKm={radiusKm} />
-
-      {professionals?.map((pro) => (
-        <ProfessionalMarker
-          key={pro.id}
-          professional={pro}
-          onClick={onMarkerClick}
+    <div className="relative w-full h-full">
+      <MapContainer
+        center={center}
+        zoom={14}
+        className="w-full h-full"
+        zoomControl={false}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
-      ))}
 
-      {routeFrom && routeTo && (
-        <RouteOverlay from={routeFrom} to={routeTo} onEta={onEta} />
-      )}
-    </MapContainer>
+        <MapController center={center} zoom={14} fly />
+
+        <UserLocationMarker location={userLocation} radiusKm={radiusKm} />
+
+        {professionals?.map((pro) => (
+          <ProfessionalMarker
+            key={pro.id}
+            professional={pro}
+            onClick={onMarkerClick}
+            isSelected={selectedPro?.id === pro.id}
+          />
+        ))}
+
+        {routeFrom && routeTo && (
+          <RouteOverlay from={routeFrom} to={routeTo} onEta={onEta} />
+        )}
+
+        <LocateMeButton userLocation={userLocation} />
+      </MapContainer>
+    </div>
   );
 }

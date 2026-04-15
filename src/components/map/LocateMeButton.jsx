@@ -1,0 +1,23 @@
+import { useMap } from 'react-leaflet';
+import { LocateFixed } from 'lucide-react';
+
+export default function LocateMeButton({ userLocation }) {
+  const map = useMap();
+
+  const handleClick = () => {
+    if (userLocation) {
+      map.flyTo([userLocation.lat, userLocation.lng], 16, { duration: 1.2 });
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      title="Centralizar minha localização"
+      className="absolute bottom-36 right-3 z-[999] w-11 h-11 bg-white rounded-xl shadow-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all"
+      style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.14)' }}
+    >
+      <LocateFixed className="w-5 h-5 text-blue-600" />
+    </button>
+  );
+}

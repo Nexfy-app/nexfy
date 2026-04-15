@@ -7,7 +7,7 @@ import MapView from '../components/map/MapView';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
-import EtaCard from '../components/home/EtaCard';
+import EtaOverlay from '../components/map/EtaOverlay';
 import useUserLocation from '../hooks/useUserLocation';
 
 function haversine(lat1, lng1, lat2, lng2) {
@@ -136,18 +136,14 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* ETA Card */}
-      <AnimatePresence>
-        {eta && mapSelectedPro && (
-          <div className="absolute z-20 left-4 right-4" style={{ bottom: listExpanded ? 'calc(50vh + 12px)' : '220px' }}>
-            <EtaCard
-              eta={eta}
-              professionalName={mapSelectedPro.name}
-              onClose={() => { setEta(null); setMapSelectedPro(null); }}
-            />
-          </div>
-        )}
-      </AnimatePresence>
+      {/* ETA Overlay (estilo Uber) */}
+      {eta && mapSelectedPro && (
+        <EtaOverlay
+          eta={eta}
+          professional={mapSelectedPro}
+          onClose={() => { setEta(null); setMapSelectedPro(null); }}
+        />
+      )}
 
       {/* Bottom professionals panel */}
       <motion.div
