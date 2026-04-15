@@ -64,7 +64,7 @@ export default function NotificationCenter({ userEmail }) {
       </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="right" className="w-full max-w-sm p-0 flex flex-col">
+        <SheetContent side="right" className="w-full max-w-sm p-0 flex flex-col" hideCloseButton>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-4 border-b">
             <div className="flex items-center gap-2">
