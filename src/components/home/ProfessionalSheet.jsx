@@ -268,11 +268,11 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
             </div>
           </button>
 
-          {/* Safety */}
-          <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-100 rounded-2xl p-3">
-            <Shield className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-            <p className="text-[11px] text-amber-800 leading-relaxed">
-              <strong>Pagamento seguro:</strong> Pague apenas após o serviço ser concluído. Combine tudo pelo app.
+          {/* Legal disclaimer */}
+          <div className="flex items-start gap-2.5 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+            <Shield className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              <strong>Este app não processa pagamentos.</strong> Somos apenas uma plataforma de conexão entre clientes e profissionais. Valores, condições e formas de pagamento são acordados e realizados <strong>diretamente entre as partes</strong>.
             </p>
           </div>
 

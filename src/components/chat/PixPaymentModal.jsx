@@ -116,11 +116,17 @@ export default function PixPaymentModal({ professional, request, onClose }) {
             ))}
           </div>
 
-          {/* Warning */}
+          {/* Legal disclaimer */}
+          <div className="flex items-start gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+            <AlertCircle className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              <strong>Aviso importante:</strong> Este app <strong>não processa, intermedia nem garante pagamentos</strong>. Somos apenas uma plataforma de conexão entre clientes e profissionais. O pagamento é realizado <strong>diretamente entre as partes</strong>, sem qualquer participação ou responsabilidade do ServiçosJá.
+            </p>
+          </div>
           <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-2xl p-3">
             <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
             <p className="text-[11px] text-amber-800 leading-relaxed">
-              <strong>Atenção:</strong> Pague somente após o serviço ser concluído e aprovado por você.
+              <strong>Atenção:</strong> Pague somente após o serviço ser concluído e aprovado por você. Verifique sempre os dados antes de transferir.
             </p>
           </div>
 
