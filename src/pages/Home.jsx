@@ -8,6 +8,7 @@ import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import EtaOverlay from '../components/map/EtaOverlay';
+import NotificationCenter from '../components/notifications/NotificationCenter';
 import useUserLocation from '../hooks/useUserLocation';
 
 function haversine(lat1, lng1, lat2, lng2) {
@@ -24,6 +25,7 @@ function formatDistance(km) {
 }
 
 export default function Home() {
+  const [userEmail, setUserEmail] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [otherCategoryText, setOtherCategoryText] = useState('');
   const [selectedPro, setSelectedPro] = useState(null);
@@ -34,6 +36,10 @@ export default function Home() {
   const [mapSelectedPro, setMapSelectedPro] = useState(null);
 
   const { location: userLocation, error: locationError } = useUserLocation();
+
+  React.useEffect(() => {
+    base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {});
+  }, []);
 
   const { data: professionals = [] } = useQuery({
     queryKey: ['professionals'],
@@ -122,6 +128,7 @@ export default function Home() {
             <div className="bg-green-500/15 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-green-200 shrink-0">
               {availableWithDist.length} online
             </div>
+            {userEmail && <NotificationCenter userEmail={userEmail} />}
           </div>
 
           {/* Categories */}

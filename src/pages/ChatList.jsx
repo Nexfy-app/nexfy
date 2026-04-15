@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { MessageSquare } from 'lucide-react';
+import NotificationCenter from '../components/notifications/NotificationCenter';
 
 const STATUS_LABELS = {
   pending: 'Aguardando',
@@ -79,7 +80,10 @@ export default function ChatList() {
               </span>
             )}
           </div>
-          <span className="text-xs text-muted-foreground font-medium">{requests.length} conversa{requests.length !== 1 ? 's' : ''}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground font-medium">{requests.length} conversa{requests.length !== 1 ? 's' : ''}</span>
+            {user?.email && <NotificationCenter userEmail={user.email} />}
+          </div>
         </div>
       </div>
 

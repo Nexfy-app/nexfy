@@ -14,11 +14,7 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {userEmail && (
-        <div className="fixed top-4 right-4 z-50">
-          <NotificationCenter userEmail={userEmail} />
-        </div>
-      )}
+
       <main className="pb-24">
         <Outlet />
       </main>

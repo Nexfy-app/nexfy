@@ -5,12 +5,15 @@ import { Search } from 'lucide-react';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
+import NotificationCenter from '../components/notifications/NotificationCenter';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Explore() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPro, setSelectedPro] = useState(null);
+  const [userEmail, setUserEmail] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {}); }, []);
 
   const { data: professionals = [], isLoading } = useQuery({
     queryKey: ['professionals-all'],
@@ -29,7 +32,10 @@ export default function Explore() {
       {/* Sticky header */}
       <div className="sticky top-0 z-10" style={{ background: 'rgba(245,247,250,0.88)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 pt-12 pb-3">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Encontrar</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold text-foreground">Encontrar</h1>
+            {userEmail && <NotificationCenter userEmail={userEmail} />}
+          </div>
 
           {/* Search bar */}
           <div className="relative mb-3">

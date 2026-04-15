@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight, Briefcase } from 'lucide-react';
+import NotificationCenter from '../components/notifications/NotificationCenter';
 import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -312,11 +313,14 @@ export default function Requests() {
       <div className="sticky top-0 z-10 px-4" style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}>
         <div className="pt-12 pb-3 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Pedidos</h1>
-          {pendingCount > 0 &&
-          <span className="bg-foreground text-white text-xs font-bold px-3 py-1 rounded-full">
-              {pendingCount} novo{pendingCount > 1 ? 's' : ''}
-            </span>
-          }
+          <div className="flex items-center gap-2">
+            {pendingCount > 0 &&
+            <span className="bg-foreground text-white text-xs font-bold px-3 py-1 rounded-full">
+                {pendingCount} novo{pendingCount > 1 ? 's' : ''}
+              </span>
+            }
+            {user?.email && <NotificationCenter userEmail={user.email} />}
+          </div>
         </div>
       </div>
 

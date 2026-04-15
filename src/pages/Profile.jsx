@@ -6,6 +6,7 @@ import {
   User, Settings, Star, Briefcase, LogOut, ChevronRight,
   Shield, Award, MapPin, Bell
 } from 'lucide-react';
+import NotificationCenter from '../components/notifications/NotificationCenter';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -44,8 +45,9 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="px-4 pt-12 pb-4">
+      <div className="px-4 pt-12 pb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Perfil</h1>
+        {user?.email && <NotificationCenter userEmail={user.email} />}
       </div>
 
       <div className="px-4 space-y-3 pb-8">
