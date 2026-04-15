@@ -55,7 +55,7 @@ export default function NotificationCenter({ userEmail }) {
         onClick={() => setOpen(true)}
         className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary transition">
         
-        <Bell className="lucide lucide-bell w-5 h-5 hidden" />
+        
         {unread > 0 &&
         <span className="absolute top-1 right-1 w-4 h-4 bg-foreground text-background text-[9px] font-bold rounded-full flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
