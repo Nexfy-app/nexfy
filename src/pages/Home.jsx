@@ -145,66 +145,69 @@ export default function Home() {
         />
       )}
 
-      {/* Bottom professionals panel */}
-      <div className="absolute bottom-24 left-0 right-0 z-10 px-3">
-        {/* Collapsed pill — always visible */}
-        <button
-          onClick={() => setListExpanded(!listExpanded)}
-          className="w-full glass-strong rounded-2xl flex items-center justify-between px-4 py-3 active:scale-[0.98] transition-all"
-          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-sm font-bold text-foreground">
-              {availableWithDist.length} disponíveis{userLocation ? ` · ${radiusKm}km` : ''}
-            </span>
-          </div>
-          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-100">
-            {listExpanded
-              ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              : <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
-            }
-          </div>
-        </button>
+      {/* Bottom professionals panel — só aparece se há profissionais disponíveis */}
+      <AnimatePresence>
+        {availableWithDist.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-24 left-0 right-0 z-10 px-3"
+          >
+            {/* Collapsed pill */}
+            {!listExpanded && (
+              <button
+                onClick={() => setListExpanded(true)}
+                className="w-full glass-strong rounded-2xl flex items-center justify-between px-3 py-2 active:scale-[0.98] transition-all"
+                style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-bold text-foreground">
+                    {availableWithDist.length} profissional{availableWithDist.length > 1 ? 'is' : ''} próximo{availableWithDist.length > 1 ? 's' : ''}
+                  </span>
+                </div>
+                <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            )}
 
-        {/* Expanded list */}
-        <AnimatePresence>
-          {listExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0, y: 10 }}
-              animate={{ opacity: 1, height: 'auto', y: 0 }}
-              exit={{ opacity: 0, height: 0, y: 10 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-              className="overflow-hidden mt-2"
-            >
-              <div className="glass-strong rounded-2xl overflow-hidden max-h-[45vh] overflow-y-auto px-3 pb-3 pt-2 space-y-2">
-                {availableWithDist.length > 0 ? availableWithDist.map(pro => (
-                  <ProfessionalCard
-                    key={pro.id}
-                    professional={pro}
-                    onClick={(p) => { handleSelectPro(p); setListExpanded(false); }}
-                    distance={pro._dist ? formatDistance(pro._dist) : null}
-                  />
-                )) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground">
-                      {userLocation ? `Nenhum profissional em ${radiusKm}km` : 'Nenhum profissional disponível'}
-                    </p>
-                    {userLocation && (
-                      <button
-                        onClick={() => setRadiusKm(r => Math.min(r * 2, 50))}
-                        className="text-xs font-semibold mt-1.5 text-blue-600 underline"
-                      >
-                        Ampliar para {Math.min(radiusKm * 2, 50)}km
+            {/* Expanded list */}
+            <AnimatePresence>
+              {listExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                  className="overflow-hidden"
+                >
+                  <div className="glass-strong rounded-2xl overflow-hidden">
+                    {/* Header com fechar */}
+                    <div className="flex items-center justify-between px-3 py-2 border-b border-white/40">
+                      <span className="text-xs font-bold text-foreground">
+                        {availableWithDist.length} disponíveis{userLocation ? ` · ${radiusKm}km` : ''}
+                      </span>
+                      <button onClick={() => setListExpanded(false)} className="w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition">
+                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                       </button>
-                    )}
+                    </div>
+                    <div className="max-h-[40vh] overflow-y-auto px-3 pb-3 pt-2 space-y-2">
+                      {availableWithDist.map(pro => (
+                        <ProfessionalCard
+                          key={pro.id}
+                          professional={pro}
+                          onClick={(p) => { handleSelectPro(p); setListExpanded(false); }}
+                          distance={pro._dist ? formatDistance(pro._dist) : null}
+                        />
+                      ))}
+                    </div>
                   </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ProfessionalSheet
         professional={selectedPro}
