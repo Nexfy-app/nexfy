@@ -5,16 +5,17 @@ import { useMap } from 'react-leaflet';
 export default function MapController({ center, zoom, fly = false }) {
   const map = useMap();
 
+  const lat = center ? (Array.isArray(center) ? center[0] : center.lat) : null;
+  const lng = center ? (Array.isArray(center) ? center[1] : center.lng) : null;
+
   useEffect(() => {
-    if (!center) return;
-    const [lat, lng] = Array.isArray(center) ? center : [center.lat, center.lng];
-    if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
+    if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) return;
     if (fly) {
       map.flyTo([lat, lng], zoom || map.getZoom(), { duration: 1.2 });
     } else {
       map.setView([lat, lng], zoom || map.getZoom());
     }
-  }, [center?.[0], center?.[1], zoom]);
+  }, [lat, lng, zoom]);
 
   return null;
 }
