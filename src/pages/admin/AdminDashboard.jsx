@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users, Briefcase, Star, MapPin, ArrowLeft,
-  TrendingUp, Clock, CheckCircle2, AlertTriangle,
-  DollarSign, QrCode, MousePointerClick, Activity, Shield
+  Users, Briefcase, Star, ArrowLeft,
+  TrendingUp, CheckCircle2, AlertTriangle,
+  DollarSign, QrCode, MousePointerClick, Activity, Shield, Trash2, UserX, UserCheck, ShieldCheck, ShieldOff
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subDays, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 function StatCard({ title, value, icon: Icon, colorClass, sub }) {
   return (
@@ -32,7 +32,9 @@ function StatCard({ title, value, icon: Icon, colorClass, sub }) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null); // { action, label, onConfirm }
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -69,12 +71,37 @@ export default function AdminDashboard() {
     });
   }, [requests, pixClicks]);
 
-  const handleSuspend = async (proId) => {
+  const confirm = (label, onConfirm) => setConfirmDialog({ label, onConfirm });
+
+  const handleSuspendPro = (proId) => confirm('Suspender este profissional?', async () => {
     await base44.entities.Professional.update(proId, { status: 'suspended', is_available: false });
-  };
-  const handleActivate = async (proId) => {
+    queryClient.invalidateQueries({ queryKey: ['admin-pros'] });
+    toast.success('Profissional suspenso.');
+  });
+
+  const handleActivatePro = (proId) => confirm('Ativar este profissional?', async () => {
     await base44.entities.Professional.update(proId, { status: 'active' });
-  };
+    queryClient.invalidateQueries({ queryKey: ['admin-pros'] });
+    toast.success('Profissional ativado.');
+  });
+
+  const handleDeletePro = (proId) => confirm('Remover permanentemente este profissional?', async () => {
+    await base44.entities.Professional.delete(proId);
+    queryClient.invalidateQueries({ queryKey: ['admin-pros'] });
+    toast.success('Profissional removido.');
+  });
+
+  const handlePromoteUser = (userId) => confirm('Promover este usuário a admin?', async () => {
+    await base44.entities.User.update(userId, { role: 'admin' });
+    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    toast.success('Usuário promovido a admin.');
+  });
+
+  const handleDemoteUser = (userId) => confirm('Rebaixar este admin para usuário comum?', async () => {
+    await base44.entities.User.update(userId, { role: 'user' });
+    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    toast.success('Usuário rebaixado.');
+  });
 
   const STATUS_PT = { pending: 'Pendente', accepted: 'Aceito', in_progress: 'Em andamento', completed: 'Concluído', cancelled: 'Cancelado' };
   const STATUS_COLOR = { pending: 'bg-amber-100 text-amber-700', accepted: 'bg-blue-100 text-blue-700', in_progress: 'bg-blue-100 text-blue-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' };
@@ -83,6 +110,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background pb-10">
+      {/* Confirm Dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setConfirmDialog(null)}>
+          <div className="bg-white rounded-t-3xl w-full max-w-md p-6 pb-10" onClick={e => e.stopPropagation()}>
+            <p className="font-bold text-foreground text-base mb-1">Confirmar ação</p>
+            <p className="text-sm text-muted-foreground mb-5">{confirmDialog.label}</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmDialog(null)} className="flex-1 h-11 rounded-2xl border border-slate-200 text-sm font-semibold hover:bg-slate-50 transition">Cancelar</button>
+              <button
+                onClick={async () => { await confirmDialog.onConfirm(); setConfirmDialog(null); }}
+                className="flex-1 h-11 rounded-2xl bg-foreground text-white text-sm font-bold hover:bg-foreground/80 transition"
+              >Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="sticky top-0 z-10 px-4" style={{ background: 'rgba(245,247,250,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="flex items-center gap-3 py-3 pt-12">
@@ -159,33 +202,36 @@ export default function AdminDashboard() {
 
           {/* Users */}
           <TabsContent value="users">
-            <div className="bg-white rounded-2xl overflow-hidden mt-3" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead className="text-xs">Nome</TableHead>
-                    <TableHead className="text-xs">Email</TableHead>
-                    <TableHead className="text-xs">Role</TableHead>
-                    <TableHead className="text-xs">Desde</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map(u => (
-                    <TableRow key={u.id}>
-                      <TableCell className="text-xs font-medium">{u.full_name || '-'}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground truncate max-w-[120px]">{u.email}</TableCell>
-                      <TableCell>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-foreground text-white' : 'bg-slate-100 text-slate-600'}`}>
-                          {u.role}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {u.created_date ? format(new Date(u.created_date), 'dd/MM/yy') : '-'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="space-y-2 mt-3">
+              {users.map(u => (
+                <div key={u.id} className="bg-white rounded-2xl p-4 flex items-center gap-3" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+                  <div className="w-10 h-10 rounded-full bg-foreground text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    {u.full_name?.charAt(0) || u.email?.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">{u.full_name || '-'}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{u.email}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-foreground text-white' : 'bg-slate-100 text-slate-600'}`}>
+                        {u.role}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground">{u.created_date ? format(new Date(u.created_date), 'dd/MM/yy') : ''}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    {u.role !== 'admin' && u.email !== user?.email ? (
+                      <button onClick={() => handlePromoteUser(u.id)} className="h-8 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1 text-[10px] font-semibold text-foreground">
+                        <ShieldCheck className="w-3 h-3" /> Admin
+                      </button>
+                    ) : u.role === 'admin' && u.email !== user?.email ? (
+                      <button onClick={() => handleDemoteUser(u.id)} className="h-8 px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 transition flex items-center gap-1 text-[10px] font-semibold text-amber-700">
+                        <ShieldOff className="w-3 h-3" /> Rebaixar
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+              {users.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Nenhum usuário encontrado</p>}
             </div>
           </TabsContent>
 
@@ -215,14 +261,20 @@ export default function AdminDashboard() {
                       <span className="text-[9px] text-muted-foreground">★ {p.rating_avg?.toFixed(1) || '0.0'}</span>
                     </div>
                   </div>
-                  {p.status !== 'suspended'
-                    ? <Button size="sm" variant="outline" className="text-[10px] h-7 text-destructive border-destructive/30" onClick={() => handleSuspend(p.id)}>
-                        <AlertTriangle className="w-3 h-3 mr-1" /> Suspender
-                      </Button>
-                    : <Button size="sm" variant="outline" className="text-[10px] h-7 text-green-700 border-green-200" onClick={() => handleActivate(p.id)}>
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Ativar
-                      </Button>
-                  }
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    {p.status !== 'suspended' ? (
+                      <button onClick={() => handleSuspendPro(p.id)} className="h-7 px-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-semibold flex items-center gap-1 hover:bg-amber-100 transition">
+                        <UserX className="w-3 h-3" /> Suspender
+                      </button>
+                    ) : (
+                      <button onClick={() => handleActivatePro(p.id)} className="h-7 px-2.5 rounded-lg bg-green-50 border border-green-200 text-green-700 text-[10px] font-semibold flex items-center gap-1 hover:bg-green-100 transition">
+                        <UserCheck className="w-3 h-3" /> Ativar
+                      </button>
+                    )}
+                    <button onClick={() => handleDeletePro(p.id)} className="h-7 px-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] font-semibold flex items-center gap-1 hover:bg-red-100 transition">
+                      <Trash2 className="w-3 h-3" /> Remover
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
