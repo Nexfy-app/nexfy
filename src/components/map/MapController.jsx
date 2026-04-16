@@ -7,10 +7,12 @@ export default function MapController({ center, zoom, fly = false }) {
 
   useEffect(() => {
     if (!center) return;
+    const [lat, lng] = Array.isArray(center) ? center : [center.lat, center.lng];
+    if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
     if (fly) {
-      map.flyTo(center, zoom || map.getZoom(), { duration: 1.2 });
+      map.flyTo([lat, lng], zoom || map.getZoom(), { duration: 1.2 });
     } else {
-      map.setView(center, zoom || map.getZoom());
+      map.setView([lat, lng], zoom || map.getZoom());
     }
   }, [center?.[0], center?.[1], zoom]);
 
