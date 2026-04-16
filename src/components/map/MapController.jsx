@@ -9,11 +9,18 @@ export default function MapController({ center, zoom, fly = false }) {
   const lng = center ? (Array.isArray(center) ? center[1] : center.lng) : null;
 
   useEffect(() => {
-    if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) return;
-    if (fly) {
-      map.flyTo([lat, lng], zoom || map.getZoom(), { duration: 1.2 });
-    } else {
-      map.setView([lat, lng], zoom || map.getZoom());
+    if (!map) return;
+    if (lat == null || lng == null) return;
+    if (typeof lat !== 'number' || typeof lng !== 'number') return;
+    if (!isFinite(lat) || !isFinite(lng)) return;
+    try {
+      if (fly) {
+        map.flyTo([lat, lng], zoom || map.getZoom(), { duration: 1.2 });
+      } else {
+        map.setView([lat, lng], zoom || map.getZoom());
+      }
+    } catch (e) {
+      // ignore invalid latlng
     }
   }, [lat, lng, zoom]);
 
