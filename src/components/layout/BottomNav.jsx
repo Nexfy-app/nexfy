@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Map, Search, Briefcase, MessageSquare, User } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,6 @@ const navItems = [
 
 export default function BottomNav() {
   const location = useLocation();
-  const navigate = useNavigate();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 px-3 pb-3 pt-1">
@@ -22,9 +21,9 @@ export default function BottomNav() {
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path;
             return (
-              <button
+              <Link
                 key={path}
-                onClick={() => navigate(path, { replace: isActive })}
+                to={path}
                 className="flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-200 min-w-[52px]"
               >
                 <div className={cn(
@@ -45,7 +44,7 @@ export default function BottomNav() {
                 )}>
                   {label}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>

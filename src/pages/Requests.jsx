@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import usePullToRefresh from '../hooks/usePullToRefresh';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -305,13 +304,6 @@ export default function Requests() {
     if (newStatus === 'in_progress') toast.success('Serviço iniciado!');
     if (newStatus === 'completed') toast.success('Serviço concluído! Aguarde avaliação.');
   };
-
-  usePullToRefresh(async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['client-requests'] }),
-      queryClient.invalidateQueries({ queryKey: ['pro-requests'] }),
-    ]);
-  });
 
   const pendingCount = proRequests.filter((r) => r.status === 'pending').length;
 

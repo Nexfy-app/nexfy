@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import usePullToRefresh from '../hooks/usePullToRefresh';
+import { useQuery } from '@tanstack/react-query';
 import { LocateFixed, MapPin, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/map/MapView';
@@ -35,13 +34,8 @@ export default function Home() {
   const [radiusKm, setRadiusKm] = useState(5);
   const [eta, setEta] = useState(null);
   const [mapSelectedPro, setMapSelectedPro] = useState(null);
-  const queryClient = useQueryClient();
 
   const { location: userLocation, error: locationError } = useUserLocation();
-
-  const refreshing = usePullToRefresh(async () => {
-    await queryClient.invalidateQueries({ queryKey: ['professionals'] });
-  });
 
   React.useEffect(() => {
     base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {});
