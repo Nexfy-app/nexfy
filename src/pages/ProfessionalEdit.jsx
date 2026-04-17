@@ -24,6 +24,7 @@ export default function ProfessionalEdit() {
     latitude: SANTA_MARIA_CENTER.lat,
     longitude: SANTA_MARIA_CENTER.lng,
   });
+  const [otherCategory, setOtherCategory] = useState('');
 
 
   useEffect(() => {
