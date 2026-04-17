@@ -7,6 +7,7 @@ import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { MessageSquare } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
+import ChatSearchBar from '../components/chat/ChatSearchBar';
 
 const STATUS_LABELS = {
   pending: 'Aguardando',
@@ -87,6 +88,9 @@ export default function ChatList() {
         </div>
       </div>
 
+      {/* Search Bar */}
+      {user?.email && <ChatSearchBar userEmail={user.email} />}
+
       {/* List */}
       <div className="px-4 space-y-2 pt-2 pb-6">
         {requests.length > 0 ? requests.map((r, i) => {
@@ -128,6 +132,7 @@ export default function ChatList() {
                     <p className={cn("text-sm truncate", unread > 0 ? "font-bold text-foreground" : "font-semibold text-foreground")}>
                       {otherName}
                     </p>
+                    {unread > 0 && <span className="w-2 h-2 bg-blue-600 rounded-full shrink-0 mx-2" />}
                     <span className="text-[10px] text-muted-foreground shrink-0 ml-2 font-medium">{dateLabel}</span>
                   </div>
                   <div className="flex items-center justify-between">

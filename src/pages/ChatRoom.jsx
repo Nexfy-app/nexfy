@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useChatSound } from '@/hooks/useChatSound';
+import TypingIndicator from '@/components/chat/TypingIndicator';
 
 function MessageBubble({ msg, isMe }) {
   const time = msg.created_date
@@ -85,11 +88,15 @@ export default function ChatRoom() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [showAttach, setShowAttach] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isTyping, setTypingTrue } = useTypingIndicator(requestId, user?.email);
+  const { playSound } = useChatSound();
+  const lastMessageCountRef = useRef(0);
 
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
@@ -97,7 +104,7 @@ export default function ChatRoom() {
     queryKey: ['chat-messages', requestId],
     queryFn: () => base44.entities.ChatMessage.filter({ service_request_id: requestId }, 'created_date'),
     enabled: !!requestId,
-    refetchInterval: 3000,
+    refetchInterval: 2000,
   });
 
   const { data: request } = useQuery({
@@ -117,18 +124,38 @@ export default function ChatRoom() {
 
   const otherPro = proData?.[0];
 
-  // Mark received messages as read
+  // Mark received messages as read and play sound
   useEffect(() => {
     if (!user || !messages.length) return;
+    const newMessages = messages.slice(lastMessageCountRef.current);
     const unread = messages.filter(m => m.receiver_email === user.email && !m.is_read);
+    
+    // Toca som apenas para novas mensagens recebidas
+    if (newMessages.length > 0 && newMessages.some(m => m.sender_email !== user.email && !m._optimistic)) {
+      playSound();
+    }
+    
+    lastMessageCountRef.current = messages.length;
     unread.forEach(m => {
       base44.entities.ChatMessage.update(m.id, { is_read: true }).catch(() => {});
     });
-  }, [messages, user]);
+  }, [messages, user, playSound]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Simular indicador de digitação do outro usuário
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.sender_email !== user?.email) {
+        setOtherUserTyping(true);
+        const timer = setTimeout(() => setOtherUserTyping(false), 2000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [messages, user?.email]);
 
   const getReceiverEmail = () => {
     if (!request || !user) return '';
@@ -182,7 +209,13 @@ export default function ChatRoom() {
     if (!message.trim() || sending) return;
     const text = message.trim();
     setMessage('');
+    setTypingTrue();
     await sendMessage(text, 'text');
+  };
+
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+    setTypingTrue();
   };
 
   const handleFileUpload = async (e, type) => {
@@ -308,6 +341,11 @@ export default function ChatRoom() {
             ? <DateDivider key={`d-${i}`} label={item.label} />
             : <MessageBubble key={item.msg.id} msg={item.msg} isMe={item.msg.sender_email === user?.email} />
         )}
+        {otherUserTyping && (
+          <div className="py-2">
+            <TypingIndicator name={request?.client_email === user?.email ? request?.professional_name : request?.client_name} />
+          </div>
+        )}
         <div ref={scrollRef} />
       </div>
 
@@ -363,11 +401,14 @@ export default function ChatRoom() {
           <div className="flex-1 bg-slate-100 rounded-full px-4 py-2 min-h-[40px] flex items-center">
             <input
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
               placeholder="Mensagem..."
               className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
+            {isTyping && (
+              <span className="text-[8px] text-muted-foreground ml-1 px-1">digitando...</span>
+            )}
           </div>
 
           <button
