@@ -93,7 +93,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl overflow-hidden"
+          className="glass rounded-2xl"
         >
           {/* Location bar */}
           <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
