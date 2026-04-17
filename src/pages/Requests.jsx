@@ -72,10 +72,17 @@ function SafetyBanner() {
 
 }
 
-function RequestCard({ request, isProvider, onAction, onRefetch }) {
+function RequestCard({ request, isProvider, onAction, userEmail }) {
   const navigate = useNavigate();
   const isCancelled = request.status === 'cancelled';
   const isCompleted = request.status === 'completed';
+
+  const { data: existingReview } = useQuery({
+    queryKey: ['review-check', request.id, userEmail],
+    queryFn: () => base44.entities.Review.filter({ service_request_id: request.id, client_email: userEmail }),
+    enabled: !isProvider && isCompleted && !!userEmail,
+  });
+  const alreadyReviewed = existingReview && existingReview.length > 0;
 
   const handleAction = async (newStatus) => {
     await onAction(request, newStatus);
@@ -233,13 +240,17 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
             Concluir ✓
           </button>
         }
-        {!isProvider && isCompleted &&
+        {!isProvider && isCompleted && !alreadyReviewed &&
         <button
           onClick={() => navigate(`/review/${request.id}`)}
           className="flex-1 h-9 rounded-xl bg-foreground text-white text-sm font-bold flex items-center justify-center gap-1.5 hover:bg-foreground/80 transition shadow-sm">
-          
             <Star className="w-3.5 h-3.5" /> Avaliar
           </button>
+        }
+        {!isProvider && isCompleted && alreadyReviewed &&
+        <div className="flex-1 h-9 rounded-xl bg-amber-50 border border-amber-100 text-amber-700 text-xs font-semibold flex items-center justify-center gap-1.5">
+            <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> Avaliado
+          </div>
         }
       </div>
     </motion.div>);
@@ -337,7 +348,7 @@ export default function Requests() {
 
           <TabsContent value="client">
             {clientRequests.length > 0 ? clientRequests.map((r) =>
-            <RequestCard key={r.id} request={r} isProvider={false} onAction={handleAction} />
+            <RequestCard key={r.id} request={r} isProvider={false} onAction={handleAction} userEmail={user?.email} />
             ) :
             <div className="text-center py-16">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
