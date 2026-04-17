@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 import { Search } from 'lucide-react';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
@@ -14,6 +15,11 @@ export default function Explore() {
   const [selectedPro, setSelectedPro] = useState(null);
   const [userEmail, setUserEmail] = React.useState(null);
   React.useEffect(() => { base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {}); }, []);
+
+  const queryClient = useQueryClient();
+  usePullToRefresh(async () => {
+    await queryClient.invalidateQueries({ queryKey: ['professionals-all'] });
+  });
 
   const { data: professionals = [], isLoading } = useQuery({
     queryKey: ['professionals-all'],

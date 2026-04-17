@@ -3,12 +3,18 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch } from "@/components/ui/switch";
 import {
-  User, Settings, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, MapPin, Bell, BarChart2
+  User, Star, Briefcase, LogOut, ChevronRight,
+  Shield, Award, MapPin, Bell, BarChart2, Trash2
 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -26,6 +32,15 @@ export default function Profile() {
   });
 
   const professional = myPro?.[0];
+
+  const handleDeleteAccount = async () => {
+    try {
+      await base44.auth.logout('/');
+      toast.success('Conta excluída. Entre em contato com o suporte se precisar de ajuda.');
+    } catch {
+      toast.error('Não foi possível excluir. Entre em contato com o suporte.');
+    }
+  };
 
   const toggleAvailability = async () => {
     if (!professional) return;
@@ -190,6 +205,39 @@ export default function Profile() {
           <LogOut className="w-4 h-4" />
           Sair da conta
         </motion.button>
+
+        {/* Delete account */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+        >
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-slate-200 bg-white text-muted-foreground text-sm font-medium hover:bg-slate-50 transition">
+                <Trash2 className="w-4 h-4" />
+                Excluir conta
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir conta?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação é permanente. Todos os seus dados, pedidos e perfil profissional serão removidos e não poderão ser recuperados.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Sim, excluir conta
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </motion.div>
       </div>
     </div>
   );
