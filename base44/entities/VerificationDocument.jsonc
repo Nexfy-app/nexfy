@@ -1,0 +1,79 @@
+{
+  "name": "VerificationDocument",
+  "type": "object",
+  "properties": {
+    "professional_id": {
+      "type": "string",
+      "description": "ID do profissional"
+    },
+    "professional_email": {
+      "type": "string",
+      "description": "Email do profissional"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "identity",
+        "certificate",
+        "license"
+      ],
+      "description": "Tipo de documento"
+    },
+    "document_name": {
+      "type": "string",
+      "description": "Nome/t\u00edtulo do documento"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL do arquivo uploadado"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Status da valida\u00e7\u00e3o"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Notas do admin sobre a valida\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "professional_id",
+    "document_type",
+    "document_name",
+    "file_url",
+    "professional_email"
+  ],
+  "rls": {
+    "create": {
+      "data.professional_email": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.professional_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

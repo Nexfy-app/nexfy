@@ -68,6 +68,7 @@ export default function Profile() {
 
   const menuItems = [
     { label: professional ? "Editar Perfil Profissional" : "Cadastrar como Profissional", icon: Briefcase, path: "/professional/edit", show: true },
+    { label: "Validação de Documentos", icon: Shield, path: "/verify-documents", show: !!professional },
     { label: "Meu Painel", icon: BarChart2, path: "/professional/dashboard", show: !!professional },
     { label: "Minhas Avaliações", icon: Star, path: "/reviews", show: !!professional },
     { label: "Notificações", icon: Bell, path: "/notifications/settings", show: true },
