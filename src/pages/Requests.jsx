@@ -271,6 +271,7 @@ export default function Requests() {
   const [user, setUser] = useState(null);
   const [professional, setProfessional] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {base44.auth.me().then(setUser);}, []);
 
