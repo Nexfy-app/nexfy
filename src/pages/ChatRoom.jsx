@@ -207,6 +207,7 @@ export default function ChatRoom() {
   const unreadCount = messages.filter(m => m.receiver_email === user?.email && !m.is_read).length;
 
   return (
+    <>
     {showPayment && request && (
       <StripePaymentModal
         professionalId={request.professional_id}
@@ -214,7 +215,6 @@ export default function ChatRoom() {
         onClose={() => setShowPayment(false)}
       />
     )}
-
     <div className="h-screen flex flex-col bg-slate-50">
       {/* Header */}
       <div
@@ -385,5 +385,6 @@ export default function ChatRoom() {
         </div>
       </div>
     </div>
+    </>
   );
 }
