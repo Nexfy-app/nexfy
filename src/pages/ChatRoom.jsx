@@ -139,18 +139,36 @@ export default function ChatRoom() {
   };
 
   const sendMessage = async (content, type = 'text', fileUrl = null, fileName = null) => {
+    const receiverEmail = getReceiverEmail();
+    const optimisticMsg = {
+      id: `opt-${Date.now()}`,
+      service_request_id: requestId,
+      sender_email: user.email,
+      receiver_email: receiverEmail,
+      message: content || '',
+      message_type: type,
+      file_url: fileUrl,
+      file_name: fileName,
+      is_read: false,
+      created_date: new Date().toISOString(),
+      _optimistic: true,
+    };
+
+    // Optimistic update
+    queryClient.setQueryData(['chat-messages', requestId], (old = []) => [...old, optimisticMsg]);
     setSending(true);
+
     await base44.entities.ChatMessage.create({
       service_request_id: requestId,
       sender_email: user.email,
-      receiver_email: getReceiverEmail(),
+      receiver_email: receiverEmail,
       message: content || '',
       message_type: type,
       file_url: fileUrl,
       file_name: fileName,
       is_read: false,
     });
-    const receiverEmail = getReceiverEmail();
+
     if (receiverEmail && type === 'text') {
       base44.integrations.Core.SendEmail({
         to: receiverEmail,
@@ -337,7 +355,7 @@ export default function ChatRoom() {
       </AnimatePresence>
 
       {/* Input bar */}
-      <div className="bg-white border-t border-slate-100 px-3 py-2 pb-safe shrink-0" style={{ boxShadow: '0 -1px 12px rgba(0,0,0,0.04)' }}>
+      <div className="bg-white border-t border-slate-100 px-3 py-2 shrink-0" style={{ paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', boxShadow: '0 -1px 12px rgba(0,0,0,0.04)' }}>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAttach(!showAttach)}

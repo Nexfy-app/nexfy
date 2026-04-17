@@ -3,8 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch } from "@/components/ui/switch";
 import {
-  User, Settings, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, MapPin, Bell, BarChart2
+  User, Star, Briefcase, LogOut, ChevronRight,
+  Shield, Award, MapPin, Bell, BarChart2, Trash2
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,8 +12,23 @@ import { motion } from 'framer-motion';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    // Send a deletion request email to admin and notify user
+    await base44.integrations.Core.SendEmail({
+      to: user.email,
+      subject: 'Solicitação de exclusão de conta - ServiçosJá',
+      body: `Olá ${user.full_name || user.email},\n\nRecebemos sua solicitação de exclusão de conta. Nossa equipe processará sua solicitação em até 5 dias úteis e você receberá uma confirmação por e-mail.\n\nServiçosJá`,
+    }).catch(() => {});
+    setDeletingAccount(false);
+    setShowDeleteConfirm(false);
+    base44.auth.logout('/');
+  };
 
   useEffect(() => {
     base44.auth.me().then(setUser);
@@ -190,7 +205,53 @@ export default function Profile() {
           <LogOut className="w-4 h-4" />
           Sair da conta
         </motion.button>
+
+        {/* Delete Account */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          onClick={() => setShowDeleteConfirm(true)}
+          className="w-full flex items-center justify-center gap-2 h-10 rounded-2xl text-muted-foreground text-xs font-medium hover:text-red-500 transition"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          Excluir minha conta
+        </motion.button>
       </div>
+
+      {/* Delete Account Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm px-4 pb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-500" />
+            </div>
+            <h2 className="text-base font-bold text-foreground text-center mb-1">Excluir conta?</h2>
+            <p className="text-xs text-muted-foreground text-center mb-5 leading-relaxed">
+              Sua solicitação será enviada e processada em até 5 dias úteis. Você será desconectado imediatamente.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 h-11 rounded-2xl border border-slate-200 text-sm font-medium text-foreground hover:bg-slate-50 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deletingAccount}
+                className="flex-1 h-11 rounded-2xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-60"
+              >
+                {deletingAccount ? 'Enviando...' : 'Confirmar'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

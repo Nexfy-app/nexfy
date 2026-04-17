@@ -67,10 +67,24 @@
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 999px; }
+/* Disable rubber-banding / overscroll */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Hide scrollbars everywhere */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar { display: none; }
+
+/* User select none for interactive elements */
+button, a, nav {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
 
 /* Leaflet overrides */
 .leaflet-container {
