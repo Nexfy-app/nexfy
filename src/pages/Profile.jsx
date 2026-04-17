@@ -164,8 +164,8 @@ export default function Profile() {
               className="flex items-center gap-3.5 px-4 py-3.5 hover:bg-slate-50 transition"
               style={{ borderBottom: i < arr.length - 1 ? '1px solid #f1f5f9' : 'none' }}
             >
-              <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                <item.icon className="w-4 h-4 text-foreground" />
+              <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center">
+                <item.icon className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-medium text-foreground flex-1">{item.label}</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -200,7 +200,7 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => base44.auth.logout('/')}
-          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-100 bg-red-50 text-red-600 text-sm font-semibold hover:bg-red-100 transition"
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition"
         >
           <LogOut className="w-4 h-4" />
           Sair da conta
