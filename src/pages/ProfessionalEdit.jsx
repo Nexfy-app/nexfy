@@ -188,7 +188,15 @@ export default function ProfessionalEdit() {
               </button>
             ))}
             <button
-              onClick={() => handleOtherCategory(otherCategory || ' ')}
+              onClick={() => {
+                const hasOther = form.categories.some(c => c.startsWith('outros:'));
+                if (hasOther) {
+                  setOtherCategory('');
+                  setForm(prev => ({ ...prev, categories: prev.categories.filter(c => !c.startsWith('outros:')) }));
+                } else {
+                  setForm(prev => ({ ...prev, categories: [...prev.categories, 'outros:'] }));
+                }
+              }}
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
                 form.categories.some(c => c.startsWith('outros:'))

@@ -10,7 +10,6 @@ export const SERVICE_CATEGORIES = [
   { id: "mudanca", label: "Mudança", icon: "Truck" },
   { id: "informatica", label: "Informática", icon: "Monitor" },
   { id: "ar_condicionado", label: "Ar Condicionado", icon: "Wind" },
-  { id: "outros", label: "Outros", icon: "MoreHorizontal" },
 ];
 
 export const SANTA_MARIA_CENTER = { lat: -29.6842, lng: -53.8069 };
