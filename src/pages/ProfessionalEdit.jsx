@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { SERVICE_CATEGORIES, SANTA_MARIA_CENTER } from '@/lib/constants';
 import { cn } from "@/lib/utils";
-import StripeConnectBanner from '@/components/professional/StripeConnectBanner';
 
 export default function ProfessionalEdit() {
   const navigate = useNavigate();
@@ -259,9 +258,6 @@ export default function ProfessionalEdit() {
             </p>
           )}
         </div>
-
-        {/* Stripe Connect — só mostra se já tem perfil salvo */}
-        {existing?.[0] && <StripeConnectBanner />}
 
         <Button onClick={handleSave} disabled={saving} className="w-full h-12 rounded-xl font-semibold">
           <Save className="w-4 h-4 mr-2" /> {saving ? 'Salvando...' : 'Salvar Perfil'}

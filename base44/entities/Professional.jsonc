@@ -102,45 +102,11 @@
         "random"
       ],
       "description": "Tipo da chave PIX"
-    },
-    "stripe_account_id": {
-      "type": "string",
-      "description": "ID da conta Stripe Connect do profissional"
     }
   },
   "required": [
     "name",
     "user_email",
     "categories"
-  ],
-  "rls": {
-    "create": {
-      "data.user_email": "{{user.email}}"
-    },
-    "read": {},
-    "update": {
-      "$or": [
-        {
-          "data.user_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "delete": {
-      "$or": [
-        {
-          "data.user_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    }
-  }
+  ]
 }
