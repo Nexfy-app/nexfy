@@ -9,9 +9,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 const DOCUMENT_TYPES = [
-  { id: 'identity', label: 'RG ou CNH', description: 'Documento de identidade válido' },
   { id: 'certificate', label: 'Certificado', description: 'Certificado de curso ou especialização' },
-  { id: 'license', label: 'Licença/Permissão', description: 'Licença profissional ou permissão para exercer' },
 ];
 
 const STATUS_COLORS = {
@@ -70,7 +68,7 @@ export default function VerifyDocuments() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [professional, setProfessional] = useState(null);
-  const [selectedType, setSelectedType] = useState('identity');
+  const [selectedType, setSelectedType] = useState('certificate');
   const [docName, setDocName] = useState('');
   const [uploading, setUploading] = useState(false);
 
@@ -115,7 +113,7 @@ export default function VerifyDocuments() {
 
     toast.success('Documento enviado para validação!');
     setDocName('');
-    setSelectedType('identity');
+    setSelectedType('certificate');
     queryClient.invalidateQueries({ queryKey: ['my-docs'] });
     setUploading(false);
   };
@@ -148,12 +146,12 @@ export default function VerifyDocuments() {
 
       <div className="p-4 space-y-6">
         {/* Info banner */}
-        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-blue-900 mb-1">🔒 Por que validar?</p>
-          <p className="text-xs text-blue-700 leading-relaxed">
-            Clientes confiam mais em profissionais verificados. Envie seus documentos para ganhar um selo de "Verificado" no seu perfil.
-          </p>
-        </div>
+         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+           <p className="text-sm font-semibold text-blue-900 mb-1">🔒 Por que validar?</p>
+           <p className="text-xs text-blue-700 leading-relaxed">
+             Envie certificados de cursos, especialização ou qualificação profissional para gerar confiança nos clientes. Após aprovação do admin, seu perfil receberá um selo de "Verificado".
+           </p>
+         </div>
 
         {/* Approved documents */}
         {approvedDocs.length > 0 && (
@@ -229,11 +227,11 @@ export default function VerifyDocuments() {
             <div>
               <label className="text-xs font-semibold text-foreground mb-1.5 block">Descrição</label>
               <Input
-                value={docName}
-                onChange={e => setDocName(e.target.value)}
-                placeholder="Ex: RG - CPF 123.456.789-00"
-                className="rounded-xl"
-              />
+                  value={docName}
+                  onChange={e => setDocName(e.target.value)}
+                  placeholder="Ex: Certificado de Python - Coursera"
+                  className="rounded-xl"
+                />
             </div>
 
             <label className="block">
@@ -260,10 +258,10 @@ export default function VerifyDocuments() {
         <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
           <p className="text-xs font-semibold text-foreground mb-2">📋 Como funciona?</p>
           <ul className="text-[11px] text-muted-foreground space-y-1 leading-relaxed">
-            <li>• Envie fotos claras e legíveis dos seus documentos</li>
+            <li>• Envie certificados de cursos, especialização ou qualificação</li>
             <li>• Nosso time valida em até 48 horas</li>
             <li>• Após aprovação, seu perfil ganha o selo "Verificado" ✓</li>
-            <li>• Informações são confidenciais e nunca compartilhadas</li>
+            <li>• Aumente sua credibilidade com clientes</li>
           </ul>
         </div>
       </div>

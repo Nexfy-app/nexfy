@@ -54,13 +54,12 @@ export default function Home() {
   const available = useMemo(() => {
     return categoryFiltered.filter(p => {
       if (!p.is_available) return false;
-      // Se o profissional não tem coordenadas próprias, não exibe
       if (!p.latitude || !p.longitude) return false;
-      // Se o usuário não tem GPS ainda, mostra todos com coordenadas válidas
+      if (p.user_email === userEmail) return false;
       if (!userLocation) return true;
       return haversine(userLocation.lat, userLocation.lng, p.latitude, p.longitude) <= radiusKm;
     });
-  }, [categoryFiltered, userLocation, radiusKm]);
+  }, [categoryFiltered, userLocation, radiusKm, userEmail]);
 
   const availableWithDist = useMemo(() => {
     return available.map(p => {

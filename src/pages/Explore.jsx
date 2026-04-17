@@ -24,7 +24,8 @@ export default function Explore() {
     const matchCategory = !selectedCategory || p.categories?.includes(selectedCategory);
     const matchSearch = !search || p.name?.toLowerCase().includes(search.toLowerCase()) ||
       p.bio?.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
+    const isNotCurrentUser = p.user_email !== userEmail;
+    return matchCategory && matchSearch && isNotCurrentUser;
   });
 
   return (

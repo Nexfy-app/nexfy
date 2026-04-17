@@ -17,6 +17,7 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [otherCategoryText, setOtherCategoryText] = useState('');
+  const [showRouteInfo, setShowRouteInfo] = useState(false);
   const navigate = useNavigate();
 
   if (!professional) return null;
@@ -43,6 +44,11 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
     setLoading(true);
     try {
       const user = await base44.auth.me();
+      if (user.email === professional.user_email) {
+        toast.error('Você não pode contratar a si mesmo');
+        setLoading(false);
+        return;
+      }
 
       const newRequest = await base44.entities.ServiceRequest.create({
         client_email: user.email,
@@ -98,9 +104,9 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
           <div className="w-10 h-1 bg-slate-200 rounded-full" />
         </div>
 
-        {/* Distância / ETA — estilo Uber */}
-        {(professional._distFormatted || eta) && (
-          <div className="mx-5 mb-3 mt-1 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}>
+        {/* Route info section - shown when user clicks to see route */}
+        {showRouteInfo && (professional._distFormatted || eta) && (
+          <div className="mx-5 mb-4 mt-2 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}>
             <div className="flex items-center divide-x divide-white/10">
               {professional._distFormatted && (
                 <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
@@ -273,23 +279,32 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
             </p>
           </div>
 
-          {/* CTA */}
-          <button
-            type="button"
-            onClick={handleHire}
-            disabled={loading}
-            className="w-full h-14 bg-foreground text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
-            style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
-          >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                Contratar Agora
-              </>
-            )}
-          </button>
+          {/* CTA Buttons */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowRouteInfo(!showRouteInfo)}
+              className="flex-1 h-12 border border-slate-200 text-foreground rounded-2xl font-bold text-sm hover:bg-slate-50 active:scale-[0.98] transition-all"
+            >
+              {showRouteInfo ? 'Ocultar Rota' : '🗺️ Ver Rota'}
+            </button>
+            <button
+              type="button"
+              onClick={handleHire}
+              disabled={loading}
+              className="flex-1 h-12 bg-foreground text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
+              style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
+            >
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  Contratar
+                </>
+              )}
+            </button>
+          </div>
 
 
         </div>
