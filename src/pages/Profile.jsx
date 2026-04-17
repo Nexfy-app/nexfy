@@ -9,11 +9,17 @@ import {
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Input } from "@/components/ui/input";
+import { Pencil, Check, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const [savingName, setSavingName] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -33,6 +39,16 @@ export default function Profile() {
   useEffect(() => {
     base44.auth.me().then(setUser);
   }, []);
+
+  const handleSaveName = async () => {
+    if (!nameInput.trim()) return;
+    setSavingName(true);
+    await base44.auth.updateMe({ full_name: nameInput.trim() });
+    setUser(prev => ({ ...prev, full_name: nameInput.trim() }));
+    setEditingName(false);
+    setSavingName(false);
+    toast.success('Nome atualizado!');
+  };
 
   const { data: myPro } = useQuery({
     queryKey: ['my-pro', user?.email],
@@ -89,7 +105,32 @@ export default function Profile() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-bold text-foreground truncate">{user?.full_name || 'Usuário'}</h2>
+              {user?.role === 'admin' && editingName ? (
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Input
+                    value={nameInput}
+                    onChange={e => setNameInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') setEditingName(false); }}
+                    className="h-8 text-sm rounded-xl px-2 py-1"
+                    autoFocus
+                  />
+                  <button onClick={handleSaveName} disabled={savingName} className="w-7 h-7 bg-green-500 text-white rounded-lg flex items-center justify-center shrink-0">
+                    <Check className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => setEditingName(false)} className="w-7 h-7 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center shrink-0">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <h2 className="font-bold text-foreground truncate">{user?.full_name || 'Usuário'}</h2>
+                  {user?.role === 'admin' && (
+                    <button onClick={() => { setNameInput(user?.full_name || ''); setEditingName(true); }} className="w-5 h-5 text-muted-foreground hover:text-foreground transition shrink-0">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              )}
               <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
               {professional && (
                 <div className="flex items-center gap-1 mt-1.5">
