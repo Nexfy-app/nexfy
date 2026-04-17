@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check } from 'lucide-react';
+import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check, CreditCard } from 'lucide-react';
+import StripePaymentModal from '@/components/chat/StripePaymentModal';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -85,6 +86,7 @@ export default function ChatRoom() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [showAttach, setShowAttach] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
@@ -205,6 +207,14 @@ export default function ChatRoom() {
   const unreadCount = messages.filter(m => m.receiver_email === user?.email && !m.is_read).length;
 
   return (
+    {showPayment && request && (
+      <StripePaymentModal
+        professionalId={request.professional_id}
+        serviceRequestId={request.id}
+        onClose={() => setShowPayment(false)}
+      />
+    )}
+
     <div className="h-screen flex flex-col bg-slate-50">
       {/* Header */}
       <div
@@ -229,6 +239,17 @@ export default function ChatRoom() {
               {request?.category?.startsWith('outros:') ? request.category.replace('outros:', '') : request?.category?.replace(/_/g, ' ')} · {request?.status === 'in_progress' ? '🟢 Em andamento' : request?.status === 'completed' ? '✅ Concluído' : '⏳ Aguardando'}
             </p>
           </div>
+
+          {/* Botão de pagamento — apenas para o profissional */}
+          {request && otherPro?.user_email === user?.email && (
+            <button
+              onClick={() => setShowPayment(true)}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-foreground hover:bg-foreground/80 transition"
+              title="Gerar link de pagamento"
+            >
+              <CreditCard className="w-4 h-4 text-white" />
+            </button>
+          )}
 
           {otherPhone && (
             <a
