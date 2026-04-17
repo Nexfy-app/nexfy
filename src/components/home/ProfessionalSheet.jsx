@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Award, Zap, Clock, Shield, X, CheckCircle, Navigation, MapPin, Timer } from 'lucide-react';
+import { Star, Award, Zap, Clock, Shield, X, CheckCircle } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -10,14 +10,13 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-export default function ProfessionalSheet({ professional, open, onClose, eta }) {
+export default function ProfessionalSheet({ professional, open, onClose }) {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [isUrgent, setIsUrgent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [otherCategoryText, setOtherCategoryText] = useState('');
-  const [showRouteInfo, setShowRouteInfo] = useState(false);
   const navigate = useNavigate();
 
   if (!professional) return null;
@@ -103,41 +102,6 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 bg-slate-200 rounded-full" />
         </div>
-
-        {/* Route info section - shown when user clicks to see route */}
-        {showRouteInfo && (professional._distFormatted || eta) && (
-          <div className="mx-5 mb-4 mt-2 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}>
-            <div className="flex items-center divide-x divide-white/10">
-              {professional._distFormatted && (
-                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <Navigation className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-white font-black text-xl">{professional._distFormatted}</span>
-                  </div>
-                  <span className="text-white/50 text-[10px] font-medium">de distância</span>
-                </div>
-              )}
-              {eta && (
-                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <Timer className="w-3.5 h-3.5 text-green-400" />
-                    <span className="text-white font-black text-xl">{eta?.minutes ?? eta} min</span>
-                  </div>
-                  <span className="text-white/50 text-[10px] font-medium">tempo estimado</span>
-                </div>
-              )}
-              {professional.latitude && professional.longitude && (
-                <div className="flex-1 flex flex-col items-center py-3 px-4 gap-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-orange-400" />
-                    <span className="text-white font-black text-xl">{professional.is_available ? 'Online' : 'Offline'}</span>
-                  </div>
-                  <span className="text-white/50 text-[10px] font-medium">status atual</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Hero section */}
         <div className="px-5 pb-4 pt-2">
@@ -279,32 +243,23 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
             </p>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setShowRouteInfo(!showRouteInfo)}
-              className="flex-1 h-12 border border-slate-200 text-foreground rounded-2xl font-bold text-sm hover:bg-slate-50 active:scale-[0.98] transition-all"
-            >
-              {showRouteInfo ? 'Ocultar Rota' : '🗺️ Ver Rota'}
-            </button>
-            <button
-              type="button"
-              onClick={handleHire}
-              disabled={loading}
-              className="flex-1 h-12 bg-foreground text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
-              style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <CheckCircle className="w-4 h-4" />
-                  Contratar
-                </>
-              )}
-            </button>
-          </div>
+          {/* CTA */}
+          <button
+            type="button"
+            onClick={handleHire}
+            disabled={loading}
+            className="w-full h-14 bg-foreground text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
+            style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.2)' }}
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5" />
+                Confirmar Contratação
+              </>
+            )}
+          </button>
 
 
         </div>
