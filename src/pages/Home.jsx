@@ -121,6 +121,7 @@ export default function Home() {
               onSelect={setSelectedCategory}
               otherText={otherCategoryText}
               onOtherText={setOtherCategoryText}
+              professionals={availableWithDist}
             />
           </div>
         </motion.div>
