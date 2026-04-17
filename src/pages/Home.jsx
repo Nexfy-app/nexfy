@@ -78,19 +78,17 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col relative overflow-hidden">
-      {/* Full-screen map — always show if professionals available */}
-      {availableWithDist.length > 0 && (
-        <div className="absolute inset-0 z-0">
-          <MapView
-            professionals={availableWithDist}
-            onMarkerClick={handleSelectPro}
-            userLocation={userLocation}
-            radiusKm={radiusKm}
-            selectedPro={sheetOpen ? null : mapSelectedPro}
-            onEta={setEta}
-          />
-        </div>
-      )}
+      {/* Full-screen map */}
+      <div className="absolute inset-0">
+        <MapView
+          professionals={availableWithDist}
+          onMarkerClick={handleSelectPro}
+          userLocation={userLocation}
+          radiusKm={radiusKm}
+          selectedPro={mapSelectedPro}
+          onEta={setEta}
+        />
+      </div>
 
       {/* Top glass header */}
       <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3">
@@ -129,33 +127,18 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Route Info Overlay — shows route details and hire button */}
-      {eta && mapSelectedPro && !sheetOpen && (
-        <div className="absolute bottom-0 left-0 right-0 z-20 px-4 py-4 bg-gradient-to-t from-white via-white to-transparent">
-          <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xl">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">Tempo de deslocamento</p>
-                <p className="text-2xl font-black text-foreground">{eta.minutes} min</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground font-medium">Distância</p>
-                <p className="text-2xl font-black text-foreground">{eta.distKm} km</p>
-              </div>
-            </div>
-            <button
-              onClick={() => { setEta(null); setSheetOpen(true); }}
-              className="w-full h-12 bg-foreground text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
-            >
-              Contratar Agora
-            </button>
-          </div>
-        </div>
+      {/* ETA Overlay (estilo Uber) */}
+      {eta && mapSelectedPro && (
+        <EtaOverlay
+          eta={eta}
+          professional={mapSelectedPro}
+          onClose={() => { setEta(null); setMapSelectedPro(null); }}
+        />
       )}
 
-      {/* Bottom professionals panel — só aparece se nenhum profissional está selecionado */}
+      {/* Bottom professionals panel — só aparece se há profissionais disponíveis */}
       <AnimatePresence>
-        {availableWithDist.length > 0 && !mapSelectedPro && (
+        {availableWithDist.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -220,7 +203,8 @@ export default function Home() {
       <ProfessionalSheet
         professional={selectedPro}
         open={sheetOpen}
-        onClose={() => { setSheetOpen(false); setSelectedPro(null); setMapSelectedPro(null); setEta(null); }}
+        onClose={() => { setSheetOpen(false); setSelectedPro(null); setMapSelectedPro(null); }}
+        eta={eta}
       />
     </div>
   );
