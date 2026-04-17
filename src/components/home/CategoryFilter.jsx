@@ -13,7 +13,7 @@ function useAnchoredPosition(ref, visible) {
   useEffect(() => {
     if (!visible || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    setPos({ top: rect.bottom + 6, left: rect.left });
+    setPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
   }, [visible, ref]);
 
   return pos;
@@ -251,7 +251,7 @@ export default function CategoryFilter({ selected, onSelect, professionals = [] 
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
             className="fixed bg-white rounded-2xl border border-slate-200 z-[100]"
-            style={{ top: searchPos.top, left: searchPos.left, right: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+            style={{ top: searchPos.top, left: searchPos.left, width: searchPos.width, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
           >
             {liveSuggestions.map(s => (
               <button
@@ -277,7 +277,7 @@ export default function CategoryFilter({ selected, onSelect, professionals = [] 
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
             className="fixed bg-white rounded-2xl border border-slate-200 z-[100]"
-            style={{ top: searchPos.top, left: searchPos.left, right: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
+            style={{ top: searchPos.top, left: searchPos.left, width: searchPos.width, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
           >
             {searchResult.length > 0 ? searchResult.map(s => (
               <button
