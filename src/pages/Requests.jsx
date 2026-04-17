@@ -107,7 +107,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       sendEmailIfEnabled(request.client_email, 'request_accepted', {
         to: request.client_email,
         subject: `✅ Pedido aceito — ${request.professional_name}`,
-        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nSeu código de confirmação: ${request.confirmation_code}\n\nAcompanhe no ServiçosJá.`
+        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nSeu código de confirmação: ${request.confirmation_code}\n\nAcompanhe no SERV.`
       });
     }
     if (newStatus === 'in_progress') {
@@ -121,7 +121,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       sendEmailIfEnabled(request.client_email, 'request_in_progress', {
         to: request.client_email,
         subject: `🔧 Serviço iniciado — ${request.professional_name}`,
-        emailBody: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no ServiçosJá.`
+        emailBody: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no SERV.`
       });
     }
     if (newStatus === 'completed') {
@@ -135,7 +135,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       sendEmailIfEnabled(request.client_email, 'request_completed', {
         to: request.client_email,
         subject: `🎉 Serviço concluído!`,
-        emailBody: `${request.professional_name} concluiu o serviço. Avalie sua experiência no ServiçosJá!`
+        emailBody: `${request.professional_name} concluiu o serviço. Avalie sua experiência no SERV!`
       });
     }
     if (newStatus === 'cancelled') {
@@ -328,7 +328,7 @@ export default function Requests() {
       <div className="px-4 pb-6">
         <SafetyBanner />
 
-        {/* PIX Support shortcut */}
+        {/* Support shortcut */}
         <button
           onClick={() => navigate('/pix-support')}
           className="w-full flex items-center gap-3 bg-white rounded-2xl px-4 py-3 mb-4 border border-slate-100 hover:border-slate-300 transition"
@@ -338,7 +338,7 @@ export default function Requests() {
             <HelpCircle className="w-4 h-4 text-white" />
           </div>
           <div className="flex-1 text-left">
-            <p className="text-sm font-semibold text-foreground">Problemas com PIX?</p>
+            <p className="text-sm font-semibold text-foreground">Precisa de ajuda?</p>
             <p className="text-[11px] text-muted-foreground">Fale com nosso assistente de suporte</p>
           </div>
           <ChevronRight className="w-4 h-4 text-muted-foreground" />

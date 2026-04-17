@@ -123,8 +123,8 @@ export default function PixSupport() {
           <Shield className="w-4.5 h-4.5 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-sm text-foreground">Suporte PIX</p>
-          <p className="text-[11px] text-muted-foreground">Assistente de pagamentos</p>
+          <p className="font-bold text-sm text-foreground">Suporte SERV</p>
+          <p className="text-[11px] text-muted-foreground">Assistente de pedidos</p>
         </div>
       </div>
 
@@ -144,13 +144,13 @@ export default function PixSupport() {
               <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
-              <p className="font-bold text-foreground text-base">Suporte PIX</p>
+              <p className="font-bold text-foreground text-base">Suporte SERV</p>
               <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                Problemas com pagamento via PIX ou pedido de serviço? Estou aqui para ajudar!
+                Problemas com algum pedido de serviço? Estou aqui para ajudar!
               </p>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              {['Não recebi o pagamento PIX', 'Meu código de confirmação não funciona', 'Quero cancelar meu pedido'].map(s => (
+              {['Meu código de confirmação não funciona', 'Quero cancelar meu pedido', 'Tenho um problema com o profissional'].map(s => (
                 <button
                   key={s}
                   onClick={() => setInput(s)}

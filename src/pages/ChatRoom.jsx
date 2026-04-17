@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check, QrCode } from 'lucide-react';
+import { ArrowLeft, Send, Paperclip, Image, Phone, X, CheckCheck, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import PixPaymentModal from '../components/chat/PixPaymentModal';
 
 function MessageBubble({ msg, isMe }) {
   const time = msg.created_date
@@ -86,7 +85,6 @@ export default function ChatRoom() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [showAttach, setShowAttach] = useState(false);
-  const [showPix, setShowPix] = useState(false);
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
@@ -173,7 +171,7 @@ export default function ChatRoom() {
       base44.integrations.Core.SendEmail({
         to: receiverEmail,
         subject: `💬 Nova mensagem de ${user.full_name || user.email}`,
-        body: `"${content}"\n\nAbra o ServiçosJá para responder.`,
+        body: `"${content}"\n\nAbra o SERV para responder.`,
       }).catch(() => {});
     }
     queryClient.invalidateQueries({ queryKey: ['chat-messages', requestId] });
@@ -269,20 +267,11 @@ export default function ChatRoom() {
                    'Pedido cancelado.'}
                 </p>
                 <p className="text-[9px] text-muted-foreground mt-0.5">
-                  Este app não processa pagamentos — pague diretamente ao profissional.
+                  O SERV não processa pagamentos — pague diretamente ao profissional.
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
-              {otherPro?.pix_key && request?.client_email === user?.email && request.status === 'completed' && (
-                <button
-                  onClick={() => setShowPix(true)}
-                  className="flex items-center gap-1 bg-green-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-green-700 transition"
-                >
-                  <QrCode className="w-3 h-3" />
-                  Pagar PIX
-                </button>
-              )}
               {request.status === 'completed' && request.client_email === user?.email && (
                 <button
                   onClick={() => navigate(`/review/${request.id}`)}
@@ -314,15 +303,6 @@ export default function ChatRoom() {
         )}
         <div ref={scrollRef} />
       </div>
-
-      {/* PIX Modal */}
-      {showPix && otherPro && (
-        <PixPaymentModal
-          professional={otherPro}
-          request={request}
-          onClose={() => setShowPix(false)}
-        />
-      )}
 
       {/* Attach panel */}
       <AnimatePresence>
