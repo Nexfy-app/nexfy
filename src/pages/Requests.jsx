@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import usePullToRefresh from '../hooks/usePullToRefresh';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -272,7 +271,6 @@ export default function Requests() {
   const [user, setUser] = useState(null);
   const [professional, setProfessional] = useState(null);
   const queryClient = useQueryClient();
-  const scrollRef = useRef(null);
 
   useEffect(() => {base44.auth.me().then(setUser);}, []);
 
@@ -298,12 +296,6 @@ export default function Requests() {
     enabled: !!professional?.id
   });
 
-  const handleRefresh = useCallback(async () => {
-    await Promise.all([refetchClient(), refetchPro()]);
-  }, [refetchClient, refetchPro]);
-
-  const { pulling, pullY, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(handleRefresh, scrollRef);
-
   const handleAction = async (request, newStatus) => {
     await base44.entities.ServiceRequest.update(request.id, { status: newStatus });
     queryClient.invalidateQueries({ queryKey: ['client-requests'] });
@@ -316,21 +308,7 @@ export default function Requests() {
   const pendingCount = proRequests.filter((r) => r.status === 'pending').length;
 
   return (
-    <div
-      ref={scrollRef}
-      className="min-h-screen bg-background"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
-      {/* Pull indicator */}
-      {(pulling || refreshing) && (
-        <div className="flex justify-center pt-4 pb-1" style={{ transform: `translateY(${Math.min(pullY, 60)}px)` }}>
-          <div className={`w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center ${refreshing ? 'animate-spin' : ''}`}>
-            <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          </div>
-        </div>
-      )}
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="sticky top-0 z-10 px-4" style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}>
         <div className="pt-12 pb-3 flex items-center justify-between">

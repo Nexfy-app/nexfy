@@ -62,19 +62,6 @@
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0,0,0,0.05);
 }
 
-/* Dark mode glass overrides */
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(20, 24, 32, 0.78);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-  .glass-strong {
-    background: rgba(20, 24, 32, 0.92);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0,0,0,0.2);
-  }
-}
-
 /* Online glow */
 .online-dot {
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
