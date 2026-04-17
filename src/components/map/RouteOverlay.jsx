@@ -13,12 +13,16 @@ function haversine(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+function isValidCoord(arr) {
+  return Array.isArray(arr) && arr.length === 2 && arr.every(v => typeof v === 'number' && isFinite(v));
+}
+
 export default function RouteOverlay({ from, to, onEta }) {
   const map = useMap();
   const [routePoints, setRoutePoints] = useState(null);
 
   useEffect(() => {
-    if (!from || !to) return;
+    if (!isValidCoord(from) || !isValidCoord(to)) return;
     setRoutePoints(null);
 
     const url = `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;

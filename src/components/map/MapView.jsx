@@ -20,11 +20,12 @@ export default function MapView({
     ? [userLocation.lat, userLocation.lng]
     : [SANTA_MARIA_CENTER.lat, SANTA_MARIA_CENTER.lng];
 
-  const routeFrom = userLocation ? [userLocation.lat, userLocation.lng] : null;
-  const routeTo =
-    selectedPro?.latitude && selectedPro?.longitude
-      ? [selectedPro.latitude, selectedPro.longitude]
-      : null;
+  const routeFrom = userLocation && isFinite(userLocation.lat) && isFinite(userLocation.lng)
+    ? [userLocation.lat, userLocation.lng]
+    : null;
+  const routeTo = selectedPro?.latitude && selectedPro?.longitude && isFinite(selectedPro.latitude) && isFinite(selectedPro.longitude)
+    ? [selectedPro.latitude, selectedPro.longitude]
+    : null;
 
   return (
     <div className="relative w-full h-full">
