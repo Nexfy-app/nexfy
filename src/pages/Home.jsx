@@ -7,7 +7,7 @@ import MapView from '../components/map/MapView';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
-import EtaOverlay from '../components/map/EtaOverlay';
+
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useUserLocation from '../hooks/useUserLocation';
 
@@ -32,8 +32,6 @@ export default function Home() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [listExpanded, setListExpanded] = useState(false);
   const [radiusKm, setRadiusKm] = useState(5);
-  const [eta, setEta] = useState(null);
-  const [mapSelectedPro, setMapSelectedPro] = useState(null);
 
   const { location: userLocation, error: locationError } = useUserLocation();
 
@@ -70,8 +68,6 @@ export default function Home() {
   }, [available, userLocation]);
 
   const handleSelectPro = (pro) => {
-    setMapSelectedPro(pro);
-    setEta(null);
     setSelectedPro({ ...pro, _distFormatted: pro._dist ? formatDistance(pro._dist) : null });
     setSheetOpen(true);
   };
@@ -85,8 +81,6 @@ export default function Home() {
           onMarkerClick={handleSelectPro}
           userLocation={userLocation}
           radiusKm={radiusKm}
-          selectedPro={mapSelectedPro}
-          onEta={setEta}
         />
       </div>
 
@@ -127,14 +121,7 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* ETA Overlay (estilo Uber) */}
-      {eta && mapSelectedPro && (
-        <EtaOverlay
-          eta={eta}
-          professional={mapSelectedPro}
-          onClose={() => { setEta(null); setMapSelectedPro(null); }}
-        />
-      )}
+
 
       {/* Bottom professionals panel — só aparece se há profissionais disponíveis */}
       <AnimatePresence>
@@ -203,8 +190,7 @@ export default function Home() {
       <ProfessionalSheet
         professional={selectedPro}
         open={sheetOpen}
-        onClose={() => { setSheetOpen(false); setSelectedPro(null); setMapSelectedPro(null); }}
-        eta={eta}
+        onClose={() => { setSheetOpen(false); setSelectedPro(null); }}
       />
     </div>
   );

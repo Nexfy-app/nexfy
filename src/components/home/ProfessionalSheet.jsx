@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Award, Zap, Clock, Shield, X, CheckCircle, Navigation, MapPin, Timer } from 'lucide-react';
+import { Star, Award, Zap, Clock, Shield, X, CheckCircle } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-export default function ProfessionalSheet({ professional, open, onClose, eta }) {
+export default function ProfessionalSheet({ professional, open, onClose }) {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [isUrgent, setIsUrgent] = useState(false);
