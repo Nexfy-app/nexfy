@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
+import { Search, RefreshCw } from 'lucide-react';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { motion, AnimatePresence } from 'framer-motion';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 
 export default function Explore() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPro, setSelectedPro] = useState(null);
   const [userEmail, setUserEmail] = React.useState(null);
+  const scrollRef = useRef(null);
   React.useEffect(() => { base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {}); }, []);
 
-  const { data: professionals = [], isLoading } = useQuery({
+  const { data: professionals = [], isLoading, refetch } = useQuery({
     queryKey: ['professionals-all'],
     queryFn: () => base44.entities.Professional.filter({ status: 'active' }),
   });
+
+  const { pulling, pullY, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refetch, scrollRef);
 
   const filtered = professionals.filter(p => {
     const matchCategory = !selectedCategory || p.categories?.includes(selectedCategory);
@@ -28,7 +32,21 @@ export default function Explore() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      ref={scrollRef}
+      className="min-h-screen bg-background"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      {/* Pull indicator */}
+      {(pulling || refreshing) && (
+        <div className="flex justify-center pt-4 pb-1" style={{ transform: `translateY(${Math.min(pullY, 60)}px)` }}>
+          <div className={`w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center ${refreshing ? 'animate-spin' : ''}`}>
+            <RefreshCw className="w-4 h-4 text-muted-foreground" />
+          </div>
+        </div>
+      )}
       {/* Sticky header */}
       <div className="sticky top-0 z-10" style={{ background: 'rgba(245,247,250,0.88)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 pt-12 pb-3">
