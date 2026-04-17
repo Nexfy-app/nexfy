@@ -18,6 +18,7 @@ import ReviewPage from './pages/ReviewPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NotificationSettings from './pages/NotificationSettings';
 import ProfessionalDashboard from './pages/ProfessionalDashboard';
+import PixSupport from './pages/PixSupport';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -59,6 +60,7 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/notifications/settings" element={<NotificationSettings />} />
       <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
+      <Route path="/pix-support" element={<PixSupport />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

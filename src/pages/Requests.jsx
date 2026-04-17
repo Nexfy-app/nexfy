@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight, Briefcase } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight, Briefcase, HelpCircle } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
 import { format } from 'date-fns';
@@ -326,6 +326,22 @@ export default function Requests() {
 
       <div className="px-4 pb-6">
         <SafetyBanner />
+
+        {/* PIX Support shortcut */}
+        <button
+          onClick={() => navigate('/pix-support')}
+          className="w-full flex items-center gap-3 bg-white rounded-2xl px-4 py-3 mb-4 border border-slate-100 hover:border-slate-300 transition"
+          style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+        >
+          <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center shrink-0">
+            <HelpCircle className="w-4 h-4 text-white" />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-semibold text-foreground">Problemas com PIX?</p>
+            <p className="text-[11px] text-muted-foreground">Fale com nosso assistente de suporte</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        </button>
 
         <Tabs defaultValue="client">
           <TabsList className="w-full rounded-2xl bg-white border border-slate-200 h-11 mb-4 p-1 shadow-sm">
