@@ -76,19 +76,17 @@ export default function Home() {
     setSheetOpen(true);
   };
 
-  const showMap = !!mapSelectedPro && !sheetOpen;
-
   return (
     <div className="h-screen flex flex-col relative overflow-hidden">
-      {/* Full-screen map — only show if a professional is selected and sheet isn't showing hire form */}
-      {showMap && (
+      {/* Full-screen map — always show if professionals available */}
+      {availableWithDist.length > 0 && (
         <div className="absolute inset-0 z-0">
           <MapView
             professionals={availableWithDist}
             onMarkerClick={handleSelectPro}
             userLocation={userLocation}
             radiusKm={radiusKm}
-            selectedPro={mapSelectedPro}
+            selectedPro={sheetOpen ? null : mapSelectedPro}
             onEta={setEta}
           />
         </div>
@@ -132,7 +130,7 @@ export default function Home() {
       </div>
 
       {/* Route Info Overlay — shows route details and hire button */}
-      {showMap && eta && mapSelectedPro && (
+      {eta && mapSelectedPro && !sheetOpen && (
         <div className="absolute bottom-0 left-0 right-0 z-20 px-4 py-4 bg-gradient-to-t from-white via-white to-transparent">
           <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xl">
             <div className="flex items-center justify-between mb-3">
@@ -155,9 +153,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* Bottom professionals panel — só aparece se não há mapa com rota visível */}
+      {/* Bottom professionals panel — só aparece se nenhum profissional está selecionado */}
       <AnimatePresence>
-        {availableWithDist.length > 0 && !showMap && (
+        {availableWithDist.length > 0 && !mapSelectedPro && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
