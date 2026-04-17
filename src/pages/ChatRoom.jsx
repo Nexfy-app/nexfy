@@ -243,47 +243,62 @@ export default function ChatRoom() {
 
       {/* Status banner — guia o usuário */}
       {request && (
-        <div className={`border-b px-4 py-2.5 shrink-0 ${
-          request.status === 'pending' ? 'bg-amber-50 border-amber-100' :
-          request.status === 'accepted' ? 'bg-blue-50 border-blue-100' :
-          request.status === 'in_progress' ? 'bg-indigo-50 border-indigo-100' :
-          request.status === 'completed' ? 'bg-green-50 border-green-100' :
-          'bg-slate-50 border-slate-200'
-        }`}>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className="text-base shrink-0">
-                {request.status === 'pending' ? '⏳' :
-                 request.status === 'accepted' ? '✅' :
-                 request.status === 'in_progress' ? '🔧' :
-                 request.status === 'completed' ? '🎉' : '❌'}
-              </span>
-              <div className="min-w-0">
-                <p className="text-[11px] font-bold text-foreground">
-                  {request.status === 'pending' ? 'Aguardando confirmação do profissional...' :
-                   request.status === 'accepted' ? 'Pedido aceito! Mostre o código ao profissional.' :
-                   request.status === 'in_progress' ? 'Serviço em andamento.' :
-                   request.status === 'completed' ? 'Serviço concluído! Avalie o profissional.' :
-                   'Pedido cancelado.'}
-                </p>
-                <p className="text-[9px] text-muted-foreground mt-0.5">
-                  O SERV não processa pagamentos — pague diretamente ao profissional.
-                </p>
+        <>
+          <div className={`border-b px-4 py-2.5 shrink-0 ${
+            request.status === 'pending' ? 'bg-amber-50 border-amber-100' :
+            request.status === 'accepted' ? 'bg-blue-50 border-blue-100' :
+            request.status === 'in_progress' ? 'bg-indigo-50 border-indigo-100' :
+            request.status === 'completed' ? 'bg-green-50 border-green-100' :
+            'bg-slate-50 border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-base shrink-0">
+                  {request.status === 'pending' ? '⏳' :
+                   request.status === 'accepted' ? '✅' :
+                   request.status === 'in_progress' ? '🔧' :
+                   request.status === 'completed' ? '🎉' : '❌'}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold text-foreground">
+                    {request.status === 'pending' ? 'Aguardando confirmação do profissional...' :
+                     request.status === 'accepted' ? 'Pedido aceito! Mostre o código ao profissional.' :
+                     request.status === 'in_progress' ? 'Serviço em andamento.' :
+                     request.status === 'completed' ? 'Serviço concluído! Avalie o profissional.' :
+                     'Pedido cancelado.'}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground mt-0.5">
+                    O SERV não processa pagamentos — pague diretamente ao profissional.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {request.status === 'completed' && request.client_email === user?.email && (
+                  <button
+                    onClick={() => navigate(`/review/${request.id}`)}
+                    className="flex items-center gap-1 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-amber-600 transition"
+                  >
+                    ★ Avaliar
+                  </button>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              {request.status === 'completed' && request.client_email === user?.email && (
-                <button
-                  onClick={() => navigate(`/review/${request.id}`)}
-                  className="flex items-center gap-1 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full hover:bg-amber-600 transition"
-                >
-                  ★ Avaliar
-                </button>
-              )}
-            </div>
+
           </div>
 
-        </div>
+          {/* Tip for clients before acceptance */}
+          {request.status === 'pending' && request.client_email === user?.email && (
+            <div className="bg-blue-50 border-b border-blue-100 px-4 py-2.5 shrink-0">
+              <div className="flex items-start gap-2">
+                <span className="text-sm mt-0.5">📸</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-bold text-blue-900">Envie fotos do problema!</p>
+                  <p className="text-[10px] text-blue-700 mt-0.5">Clique no ícone de anexo abaixo para enviar fotos. Isso ajuda o profissional a fazer um orçamento mais preciso.</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Messages */}
@@ -303,25 +318,34 @@ export default function ChatRoom() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
-            className="bg-white border-t border-slate-100 px-4 py-3 flex gap-4 shrink-0"
+            className="bg-white border-t border-slate-100 px-4 py-3 flex flex-col gap-3 shrink-0"
           >
-            <label className="flex flex-col items-center gap-1.5 cursor-pointer">
-              <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center">
-                <Image className="w-5 h-5 text-purple-600" />
+            <div className="flex gap-4">
+              <label className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+                <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
+                <div className="w-14 h-14 rounded-2xl bg-purple-50 border-2 border-purple-200 flex items-center justify-center hover:border-purple-400 transition">
+                  <Image className="w-6 h-6 text-purple-600" />
+                </div>
+                <span className="text-[11px] text-foreground font-semibold">Foto</span>
+                <span className="text-[9px] text-muted-foreground">do problema/local</span>
+              </label>
+              <label className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+                <input ref={fileInputRef} type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 border-2 border-blue-200 flex items-center justify-center hover:border-blue-400 transition">
+                  <Paperclip className="w-6 h-6 text-blue-600" />
+                </div>
+                <span className="text-[11px] text-foreground font-semibold">Arquivo</span>
+                <span className="text-[9px] text-muted-foreground">PDF, documento...</span>
+              </label>
+              <button onClick={() => setShowAttach(false)} className="self-start mt-1 text-muted-foreground hover:text-foreground transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {request?.status === 'pending' && request.client_email === user?.email && (
+              <div className="text-[10px] text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-2.5 py-1.5">
+                💡 <strong>Dica:</strong> Fotos do problema ajudam o profissional a fazer um orçamento mais preciso antes de aceitar.
               </div>
-              <span className="text-[10px] text-muted-foreground font-medium">Foto</span>
-            </label>
-            <label className="flex flex-col items-center gap-1.5 cursor-pointer">
-              <input ref={fileInputRef} type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
-                <Paperclip className="w-5 h-5 text-blue-600" />
-              </div>
-              <span className="text-[10px] text-muted-foreground font-medium">Arquivo</span>
-            </label>
-            <button onClick={() => setShowAttach(false)} className="ml-auto text-muted-foreground self-center">
-              <X className="w-5 h-5" />
-            </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
