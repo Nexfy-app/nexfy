@@ -71,7 +71,7 @@ export default function CategoryFilter({ selected, onSelect, professionals = [] 
               "flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all border whitespace-nowrap",
               showAllDropdown || selected
                 ? "bg-foreground text-white border-foreground"
-                : "bg-white/70 text-muted-foreground border-border hover:bg-white"
+                : "bg-foreground text-white border-foreground"
             )}
           >
             {selected ? (selectedCat?.label || selected) : 'Todos'}
