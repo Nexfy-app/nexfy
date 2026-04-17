@@ -119,8 +119,6 @@ export default function Home() {
             <CategoryFilter
               selected={selectedCategory}
               onSelect={setSelectedCategory}
-              otherText={otherCategoryText}
-              onOtherText={setOtherCategoryText}
               professionals={availableWithDist}
             />
           </div>
