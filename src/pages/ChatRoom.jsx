@@ -282,15 +282,7 @@ export default function ChatRoom() {
               )}
             </div>
           </div>
-          {/* Confirmation code inline */}
-          {request.status === 'accepted' && request.client_email === user?.email && request.confirmation_code && (
-            <div className="mt-2 flex items-center gap-1.5 bg-white/70 rounded-xl px-3 py-1.5 border border-blue-100">
-              <span className="text-[10px] text-blue-700 font-medium">Código:</span>
-              {request.confirmation_code.split('').map((d, i) => (
-                <span key={i} className="w-7 h-7 bg-blue-600 text-white rounded-lg flex items-center justify-center font-black text-sm">{d}</span>
-              ))}
-            </div>
-          )}
+
         </div>
       )}
 

@@ -10,17 +10,6 @@ import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-function generateCode(clientPhone, proPhone) {
-  // 4 últimos dígitos do telefone do cliente + profissional (só números)
-  const digits = (s) => (s || '').replace(/\D/g, '').slice(-4).padStart(4, '0');
-  const c = digits(clientPhone);
-  const p = digits(proPhone);
-  // Se ambos disponíveis, usa 2 do cliente + 2 do profissional
-  if (clientPhone && proPhone) return c.slice(-2) + p.slice(-2);
-  // Fallback: 4 dígitos aleatórios
-  return String(Math.floor(1000 + Math.random() * 9000));
-}
-
 export default function ProfessionalSheet({ professional, open, onClose, eta }) {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
@@ -54,10 +43,6 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
     setLoading(true);
     try {
       const user = await base44.auth.me();
-      // Busca o telefone do profissional para gerar o código
-      const proPhone = professional.phone || '';
-      const clientPhone = user.phone || '';
-      const code = generateCode(clientPhone, proPhone);
 
       const newRequest = await base44.entities.ServiceRequest.create({
         client_email: user.email,
@@ -70,7 +55,6 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
         address,
         is_urgent: isUrgent,
         status: 'pending',
-        confirmation_code: code,
       });
 
       createNotification({
@@ -307,9 +291,7 @@ export default function ProfessionalSheet({ professional, open, onClose, eta }) 
             )}
           </button>
 
-          <p className="text-[10px] text-center text-muted-foreground">
-            Um código de confirmação será gerado ao contratar
-          </p>
+
         </div>
       </SheetContent>
     </Sheet>

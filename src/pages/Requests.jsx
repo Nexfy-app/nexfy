@@ -20,24 +20,7 @@ const STATUS_STEPS = [
 { key: 'completed', label: 'Concluído', icon: CheckCircle2 }];
 
 
-function ConfirmationCode({ code }) {
-  return (
-    <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-      <div className="flex items-center gap-2 mb-3">
-        <Shield className="w-3.5 h-3.5 text-white/70" />
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/60">Código de Confirmação</p>
-      </div>
-      <div className="flex gap-2">
-        {code?.split('').map((digit, i) =>
-        <div key={i} className="w-12 h-14 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-            <span className="text-2xl font-black text-white">{digit}</span>
-          </div>
-        )}
-      </div>
-      <p className="text-[10px] text-white/40 mt-2.5">Informe este código ao profissional para iniciar o serviço</p>
-    </div>);
 
-}
 
 function TrackingSteps({ status }) {
   const steps = STATUS_STEPS;
@@ -100,14 +83,14 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
       createNotification({
         user_email: request.client_email,
         title: `Pedido aceito por ${request.professional_name}`,
-        body: `Seu código de confirmação é ${request.confirmation_code}`,
+        body: `${request.professional_name} aceitou seu pedido. Acesse o chat para combinar os detalhes.`,
         type: 'request_accepted',
         link: '/requests'
       });
       sendEmailIfEnabled(request.client_email, 'request_accepted', {
         to: request.client_email,
         subject: `✅ Pedido aceito — ${request.professional_name}`,
-        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nSeu código de confirmação: ${request.confirmation_code}\n\nAcompanhe no SERV.`
+        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nAcompanhe no SERV.`
       });
     }
     if (newStatus === 'in_progress') {
@@ -195,11 +178,7 @@ function RequestCard({ request, isProvider, onAction, onRefetch }) {
         </div>
       }
 
-      {!isProvider && request.confirmation_code && request.status === 'accepted' &&
-      <div className="px-4">
-          <ConfirmationCode code={request.confirmation_code} />
-        </div>
-      }
+
 
       {request.description &&
       <div className="mx-4 mb-3 bg-slate-50 rounded-xl px-3 py-2.5 border border-slate-100">

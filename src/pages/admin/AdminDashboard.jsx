@@ -4,8 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Users, Briefcase, Star, ArrowLeft,
-  TrendingUp, CheckCircle2, AlertTriangle,
-  DollarSign, QrCode, MousePointerClick, Activity, Shield, Trash2, UserX, UserCheck, ShieldCheck, ShieldOff
+  TrendingUp, Activity, Shield, Trash2, UserX, UserCheck, ShieldCheck, ShieldOff
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -49,13 +48,10 @@ export default function AdminDashboard() {
   const { data: professionals = [] } = useQuery({ queryKey: ['admin-pros'], queryFn: () => base44.entities.Professional.list(), enabled });
   const { data: requests = [] } = useQuery({ queryKey: ['admin-requests'], queryFn: () => base44.entities.ServiceRequest.list('-created_date', 200), enabled });
   const { data: reviews = [] } = useQuery({ queryKey: ['admin-reviews'], queryFn: () => base44.entities.Review.list('-created_date', 50), enabled });
-  const { data: pixClicks = [] } = useQuery({ queryKey: ['admin-pix'], queryFn: () => base44.entities.PixClick.list('-created_date', 200), enabled });
-
   const onlinePros = professionals.filter(p => p.is_available).length;
   const completedRequests = requests.filter(r => r.status === 'completed');
   const totalEarnings = completedRequests.reduce((s, r) => s + (r.price_agreed || 0), 0);
   const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
-  const prosWithPix = professionals.filter(p => p.pix_key).length;
 
   // Last 7 days registrations
   const last7Days = useMemo(() => {
@@ -66,10 +62,9 @@ export default function AdminDashboard() {
       return {
         dia: format(day, 'EEE', { locale: ptBR }),
         pedidos: requests.filter(r => r.created_date && new Date(r.created_date) >= start && new Date(r.created_date) < end).length,
-        pix: pixClicks.filter(c => c.created_date && new Date(c.created_date) >= start && new Date(c.created_date) < end).length,
       };
     });
-  }, [requests, pixClicks]);
+  }, [requests]);
 
   const confirm = (label, onConfirm) => setConfirmDialog({ label, onConfirm });
 
@@ -145,7 +140,7 @@ export default function AdminDashboard() {
         {/* Main stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatCard title="Total de usuários" value={users.length} icon={Users} colorClass="bg-blue-600" />
-          <StatCard title="Profissionais" value={professionals.length} icon={Briefcase} colorClass="bg-foreground" sub={`${prosWithPix} com PIX`} />
+          <StatCard title="Profissionais" value={professionals.length} icon={Briefcase} colorClass="bg-foreground" />
           <StatCard title="Online agora" value={onlinePros} icon={Activity} colorClass="bg-green-600" />
           <StatCard title="Avaliação média" value={avgRating !== '—' ? `${avgRating} ★` : '—'} icon={Star} colorClass="bg-amber-500" sub={`${reviews.length} avaliações`} />
         </div>
@@ -153,18 +148,14 @@ export default function AdminDashboard() {
         {/* Financial */}
         <div className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Financeiro</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <div className="text-center">
               <p className="text-xl font-black text-green-700">R$ {totalEarnings.toFixed(0)}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Volume total</p>
             </div>
-            <div className="text-center border-x border-slate-100">
+            <div className="text-center border-l border-slate-100">
               <p className="text-xl font-black text-foreground">{completedRequests.length}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Concluídos</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xl font-black text-blue-600">{pixClicks.length}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Cliques PIX</p>
             </div>
           </div>
         </div>
@@ -182,22 +173,19 @@ export default function AdminDashboard() {
               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', fontSize: 12 }} />
               <Bar dataKey="pedidos" fill="#0f172a" radius={[5, 5, 0, 0]} name="Pedidos" />
-              <Bar dataKey="pix" fill="#22c55e" radius={[5, 5, 0, 0]} name="Cliques PIX" />
             </BarChart>
           </ResponsiveContainer>
           <div className="flex items-center gap-4 justify-center mt-1">
             <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-foreground" /><span className="text-[10px] text-muted-foreground">Pedidos</span></div>
-            <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-sm bg-green-500" /><span className="text-[10px] text-muted-foreground">Cliques PIX</span></div>
           </div>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="users">
-          <TabsList className="w-full rounded-xl bg-secondary h-10 grid grid-cols-4">
+          <TabsList className="w-full rounded-xl bg-secondary h-10 grid grid-cols-3">
             <TabsTrigger value="users" className="rounded-lg text-[11px]">Usuários</TabsTrigger>
             <TabsTrigger value="pros" className="rounded-lg text-[11px]">Profissionais</TabsTrigger>
             <TabsTrigger value="requests" className="rounded-lg text-[11px]">Pedidos</TabsTrigger>
-            <TabsTrigger value="pix" className="rounded-lg text-[11px]">PIX</TabsTrigger>
           </TabsList>
 
           {/* Users */}
@@ -248,7 +236,7 @@ export default function AdminDashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p className="font-semibold text-sm truncate">{p.name}</p>
-                      {p.pix_key && <QrCode className="w-3 h-3 text-green-600 shrink-0" />}
+  
                     </div>
                     <p className="text-[10px] text-muted-foreground truncate">{p.user_email}</p>
                     <div className="flex items-center gap-1.5 mt-1">
@@ -316,59 +304,7 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
-          {/* PIX Analytics */}
-          <TabsContent value="pix">
-            <div className="mt-3 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white rounded-2xl p-4 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-                  <MousePointerClick className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                  <p className="text-2xl font-black text-foreground">{pixClicks.length}</p>
-                  <p className="text-[10px] text-muted-foreground">Total cliques PIX</p>
-                </div>
-                <div className="bg-white rounded-2xl p-4 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-                  <DollarSign className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                  <p className="text-2xl font-black text-foreground">
-                    R$ {pixClicks.reduce((s, c) => s + (c.amount || 0), 0).toFixed(0)}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">Volume intencionado</p>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50">
-                      <TableHead className="text-xs">Cliente</TableHead>
-                      <TableHead className="text-xs">Profissional</TableHead>
-                      <TableHead className="text-xs">Valor</TableHead>
-                      <TableHead className="text-xs">Data</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pixClicks.map(c => (
-                      <TableRow key={c.id}>
-                        <TableCell className="text-xs">{c.client_email?.split('@')[0]}</TableCell>
-                        <TableCell className="text-xs font-medium">{c.professional_name || '-'}</TableCell>
-                        <TableCell className="text-xs font-semibold text-green-700">
-                          {c.amount ? `R$ ${c.amount}` : '-'}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {c.created_date ? format(new Date(c.created_date), 'dd/MM/yy HH:mm') : '-'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {pixClicks.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center text-xs text-muted-foreground py-8">
-                          Nenhum clique PIX registrado ainda
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
