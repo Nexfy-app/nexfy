@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Polyline, useMap } from 'react-leaflet';
+import { Polyline, CircleMarker, useMap } from 'react-leaflet';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -19,8 +19,8 @@ export default function RouteOverlay({ from, to, onEta }) {
 
   useEffect(() => {
     if (!from || !to) return;
+    setRoutePoints(null);
 
-    // Try OSRM real routing first
     const url = `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;
 
     fetch(url)
@@ -33,7 +33,7 @@ export default function RouteOverlay({ from, to, onEta }) {
           const distKm = (route.distance / 1000).toFixed(1);
           const minutes = Math.round(route.duration / 60);
           onEta({ distKm, minutes });
-          map.fitBounds(coords, { padding: [100, 100] });
+          map.fitBounds(coords, { padding: [120, 80] });
         } else {
           fallback();
         }
@@ -45,7 +45,7 @@ export default function RouteOverlay({ from, to, onEta }) {
       const minutes = Math.round((distKm / 30) * 60);
       onEta({ distKm: distKm.toFixed(1), minutes });
       setRoutePoints([from, to]);
-      map.fitBounds([from, to], { padding: [100, 100] });
+      map.fitBounds([from, to], { padding: [120, 80] });
     }
   }, [from?.[0], from?.[1], to?.[0], to?.[1]]);
 
@@ -53,20 +53,39 @@ export default function RouteOverlay({ from, to, onEta }) {
 
   return (
     <>
-      {/* Shadow line */}
+      {/* Glow/shadow layer */}
       <Polyline
         positions={routePoints}
-        pathOptions={{ color: '#000', weight: 8, opacity: 0.12, lineCap: 'round', lineJoin: 'round' }}
+        pathOptions={{ color: '#1d4ed8', weight: 14, opacity: 0.08, lineCap: 'round', lineJoin: 'round' }}
       />
-      {/* Main route line */}
+      {/* Main route — estilo Uber */}
       <Polyline
         positions={routePoints}
         pathOptions={{ color: '#1d4ed8', weight: 5, opacity: 1, lineCap: 'round', lineJoin: 'round' }}
       />
-      {/* Highlight line */}
+      {/* Highlight top line */}
       <Polyline
         positions={routePoints}
-        pathOptions={{ color: '#60a5fa', weight: 2, opacity: 0.7, lineCap: 'round', lineJoin: 'round' }}
+        pathOptions={{ color: '#93c5fd', weight: 2, opacity: 0.9, lineCap: 'round', lineJoin: 'round' }}
+      />
+
+      {/* Ponto de origem (usuário) */}
+      <CircleMarker
+        center={from}
+        radius={8}
+        pathOptions={{ color: '#fff', weight: 3, fillColor: '#1d4ed8', fillOpacity: 1 }}
+      />
+
+      {/* Ponto de destino (profissional) */}
+      <CircleMarker
+        center={to}
+        radius={10}
+        pathOptions={{ color: '#fff', weight: 3, fillColor: '#0f172a', fillOpacity: 1 }}
+      />
+      <CircleMarker
+        center={to}
+        radius={4}
+        pathOptions={{ color: '#fff', weight: 0, fillColor: '#fff', fillOpacity: 1 }}
       />
     </>
   );
