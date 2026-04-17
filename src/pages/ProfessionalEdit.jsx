@@ -40,11 +40,14 @@ export default function ProfessionalEdit() {
   useEffect(() => {
     if (existing?.[0]) {
       const pro = existing[0];
+      const cats = pro.categories || [];
+      const otherCat = cats.find(c => c.startsWith('outros:'));
+      if (otherCat) setOtherCategory(otherCat.replace('outros:', ''));
       setForm({
         name: pro.name || '',
         phone: pro.phone || '',
         bio: pro.bio || '',
-        categories: pro.categories || [],
+        categories: cats,
         price_type: pro.price_type || 'budget',
         price_min: pro.price_min || '',
         price_max: pro.price_max || '',
@@ -64,6 +67,17 @@ export default function ProfessionalEdit() {
         ? prev.categories.filter(c => c !== catId)
         : [...prev.categories, catId]
     }));
+  };
+
+  const handleOtherCategory = (value) => {
+    setOtherCategory(value);
+    setForm(prev => {
+      const withoutOther = prev.categories.filter(c => !c.startsWith('outros:'));
+      return {
+        ...prev,
+        categories: value.trim() ? [...withoutOther, `outros:${value.trim()}`] : withoutOther
+      };
+    });
   };
 
   const handlePhoto = async (e) => {
@@ -173,7 +187,36 @@ export default function ProfessionalEdit() {
                 {cat.label}
               </button>
             ))}
+            <button
+              onClick={() => handleOtherCategory(otherCategory || ' ')}
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                form.categories.some(c => c.startsWith('outros:'))
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-muted-foreground"
+              )}
+            >
+              Outros
+            </button>
           </div>
+
+          {/* Campo "Outros" expandido */}
+          {form.categories.some(c => c.startsWith('outros:')) && (
+            <div className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <Label className="text-xs text-muted-foreground mb-1 block">
+                Qual serviço você oferece?
+              </Label>
+              <Input
+                value={otherCategory}
+                onChange={e => handleOtherCategory(e.target.value)}
+                className="rounded-xl"
+                placeholder="Ex: Jardinagem, Pintura Artística, Aula de Música..."
+              />
+              <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+                💡 Preencha por <strong>categoria</strong> para facilitar a busca dos clientes. Ex: "Jardinagem" ao invés de "Faço jardins".
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Pricing */}
