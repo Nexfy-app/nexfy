@@ -88,11 +88,11 @@ export default function AppTutorial() {
       {/* Trigger button — small and unobtrusive */}
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors font-medium"
+        className="flex items-center gap-1.5 bg-white/80 border border-slate-200 rounded-full px-2.5 py-1 text-[10px] text-slate-500 hover:text-foreground hover:border-slate-400 transition-all shadow-sm font-medium"
         title="Como usar o SERV"
       >
-        <span className="w-4 h-4 rounded-full border border-muted-foreground/40 flex items-center justify-center text-[9px] font-bold leading-none">?</span>
-        <span className="hidden sm:inline">Tutorial</span>
+        <span className="text-[11px]">📖</span>
+        Como usar
       </button>
 
       {/* Overlay */}
