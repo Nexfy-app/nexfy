@@ -102,7 +102,7 @@ export default function AppTutorial() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-end justify-center px-4"
+            className="fixed inset-0 z-[200] flex items-center justify-center px-4"
             style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
             onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
           >
@@ -111,7 +111,7 @@ export default function AppTutorial() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-              className="w-full max-w-sm mb-8 rounded-3xl overflow-hidden shadow-2xl"
+              className="w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl"
               style={{ background: 'rgba(255,255,255,0.98)' }}
             >
               {/* Header gradient */}
