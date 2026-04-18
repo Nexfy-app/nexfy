@@ -10,6 +10,7 @@ import ProfessionalSheet from '../components/home/ProfessionalSheet';
 
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useUserLocation from '../hooks/useUserLocation';
+import AppTutorial from '../components/tutorial/AppTutorial';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -107,6 +108,7 @@ export default function Home() {
             <div className="bg-green-500/15 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-green-200 shrink-0">
               {availableWithDist.length} online
             </div>
+            <AppTutorial />
             {userEmail && <NotificationCenter userEmail={userEmail} />}
           </div>
 
