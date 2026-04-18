@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, Map, Search, Briefcase, MessageSquare, User, ToggleRight, Camera, Star, Zap, Shield } from 'lucide-react';
 
@@ -95,24 +96,22 @@ export default function AppTutorial() {
         Como usar
       </button>
 
-      {/* Overlay */}
-      <AnimatePresence>
-        {open && (
+      {/* Overlay via portal para cobrir tudo */}
+      {open && createPortal(
+        <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-center justify-center px-4"
-            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
             onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
           >
             <motion.div
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-              className="w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl"
-              style={{ background: 'rgba(255,255,255,0.98)' }}
+              style={{ width: '100%', maxWidth: '384px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.3)', background: 'white' }}
             >
               {/* Header gradient */}
               <div className={`bg-gradient-to-br ${current.color} p-6 pb-8 relative`}>
@@ -187,8 +186,9 @@ export default function AppTutorial() {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
