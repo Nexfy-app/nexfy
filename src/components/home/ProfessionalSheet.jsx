@@ -42,6 +42,12 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
     }
     setLoading(true);
     try {
+      const authed = await base44.auth.isAuthenticated();
+      if (!authed) {
+        base44.auth.redirectToLogin(window.location.href);
+        setLoading(false);
+        return;
+      }
       const user = await base44.auth.me();
       if (user.email === professional.user_email) {
         toast.error('Você não pode contratar a si mesmo');

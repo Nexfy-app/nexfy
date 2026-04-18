@@ -42,8 +42,8 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
+      // Don't auto-redirect — let the user browse the map freely
+      // Login will be triggered on demand when protected actions are taken
     }
   }
 
