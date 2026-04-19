@@ -150,7 +150,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mb-10"
+              className="mb-4"
             >
               <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
                 <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shrink-0">
