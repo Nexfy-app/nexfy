@@ -7,6 +7,7 @@ import {
   Shield, Award, MapPin, Bell, BarChart2, Trash2
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
+import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,9 @@ export default function Profile() {
   });
 
   const professional = myPro?.[0];
+
+  // Atualiza localização automaticamente enquanto estiver online
+  useProfessionalLocationSync(professional);
 
   const toggleAvailability = async () => {
     if (!professional) return;
