@@ -59,8 +59,11 @@ export default function Profile() {
 
   const professional = myPro?.[0];
 
-  // Atualiza localização automaticamente enquanto estiver online
-  useProfessionalLocationSync(professional);
+  // Atualiza localização e gerencia auto-offline
+  const { minutesLeft } = useProfessionalLocationSync(professional, () => {
+    queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+    toast('⏰ Você foi colocado offline automaticamente após 2h. Ative novamente se ainda estiver disponível.', { duration: 8000 });
+  });
 
   const toggleAvailability = async () => {
     if (!professional) return;
@@ -191,6 +194,23 @@ export default function Profile() {
             </div>
           )}
         </motion.div>
+
+        {/* Aviso de auto-offline */}
+        {minutesLeft !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3"
+          >
+            <span className="text-lg shrink-0">⏰</span>
+            <div>
+              <p className="text-sm font-bold text-amber-800">Você será colocado offline em breve</p>
+              <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+                Após 2h online, o sistema desativa automaticamente sua disponibilidade. Toque em "Disponível agora" para renovar mais 2h.
+              </p>
+            </div>
+          </motion.div>
+        )}
 
         {/* Availability toggle */}
         {professional && (
