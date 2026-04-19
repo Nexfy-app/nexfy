@@ -100,7 +100,7 @@ export default function Home() {
 
       {/* Top glass header */}
       <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 flex justify-center">
-        <div className="w-full max-w-lg">
+        <div className="w-full max-w-lg md:max-w-2xl lg:max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
