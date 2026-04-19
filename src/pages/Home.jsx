@@ -99,7 +99,8 @@ export default function Home() {
       </div>
 
       {/* Top glass header */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3">
+      <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 flex justify-center">
+        <div className="w-full max-w-lg">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -134,15 +135,17 @@ export default function Home() {
             />
           </div>
         </motion.div>
+        </div>
       </div>
 
 
 
       {/* Área inferior fixa — empilhada acima da BottomNav */}
       <div
-        className="fixed left-0 right-0 z-50 px-3 flex flex-col gap-2"
+        className="fixed left-0 right-0 z-50 px-3 flex justify-center"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
       >
+        <div className="w-full max-w-lg flex flex-col gap-2">
         {/* Banner: cadastrar como profissional */}
         <AnimatePresence>
           {userEmail && isUserPro === false && !dismissedProBanner && (
@@ -238,6 +241,7 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       <ProfessionalSheet
