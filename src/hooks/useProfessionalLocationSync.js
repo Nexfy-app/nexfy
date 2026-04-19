@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 
+const APP_ID = import.meta.env.VITE_APP_ID;
+
 const SYNC_INTERVAL_MS = 60 * 1000;        // atualiza localização a cada 1 min
 const AUTO_OFFLINE_MS = 2 * 60 * 60 * 1000; // desativa online após 2h
 const WARN_BEFORE_MS = 15 * 60 * 1000;      // avisa 15 min antes
@@ -57,6 +59,20 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
       clearTimeout(warnTimerRef.current);
       setMinutesLeft(null);
     };
+  }, [professional?.id, professional?.is_available]);
+
+  // Marca offline ao fechar/recarregar a página
+  useEffect(() => {
+    if (!professional?.id || !professional?.is_available) return;
+
+    const handleBeforeUnload = () => {
+      const url = `https://api.base44.com/api/apps/${APP_ID}/functions/setOffline`;
+      const data = JSON.stringify({ professional_id: professional.id });
+      navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [professional?.id, professional?.is_available]);
 
   return { minutesLeft };
