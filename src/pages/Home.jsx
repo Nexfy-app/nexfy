@@ -11,6 +11,8 @@ import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useUserLocation from '../hooks/useUserLocation';
 import AppTutorial from '../components/tutorial/AppTutorial';
+import { Link } from 'react-router-dom';
+import { Briefcase, X } from 'lucide-react';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -27,6 +29,8 @@ function formatDistance(km) {
 
 export default function Home() {
   const [userEmail, setUserEmail] = useState(null);
+  const [isUserPro, setIsUserPro] = useState(null); // null = loading
+  const [dismissedProBanner, setDismissedProBanner] = useState(() => sessionStorage.getItem('dismissedProBanner') === '1');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [otherCategoryText, setOtherCategoryText] = useState('');
   const [selectedPro, setSelectedPro] = useState(null);
@@ -37,7 +41,16 @@ export default function Home() {
   const { location: userLocation, error: locationError } = useUserLocation();
 
   React.useEffect(() => {
-    base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {});
+    base44.auth.me().then(u => {
+      if (u?.email) {
+        setUserEmail(u.email);
+        base44.entities.Professional.filter({ user_email: u.email })
+          .then(res => setIsUserPro(res?.length > 0))
+          .catch(() => setIsUserPro(false));
+      } else {
+        setIsUserPro(false);
+      }
+    }).catch(() => setIsUserPro(false));
   }, []);
 
   const { data: professionals = [] } = useQuery({
@@ -124,6 +137,40 @@ export default function Home() {
       </div>
 
 
+
+      {/* Banner: cadastrar como profissional */}
+      <AnimatePresence>
+        {userEmail && isUserPro === false && !dismissedProBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-28 left-3 right-3 z-10"
+          >
+            <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
+              <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shrink-0">
+                <Briefcase className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-foreground leading-tight">Você é um profissional?</p>
+                <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">Cadastre-se e apareça no mapa para clientes próximos.</p>
+              </div>
+              <Link
+                to="/professional/edit"
+                className="shrink-0 bg-foreground text-white text-[11px] font-bold px-3 py-1.5 rounded-xl hover:opacity-80 transition"
+              >
+                Cadastrar
+              </Link>
+              <button
+                onClick={() => { setDismissedProBanner(true); sessionStorage.setItem('dismissedProBanner', '1'); }}
+                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition shrink-0"
+              >
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Bottom professionals panel — só aparece se há profissionais disponíveis */}
       <AnimatePresence>
