@@ -140,7 +140,7 @@ export default function Home() {
 
       {/* Área inferior fixa — empilhada acima da BottomNav */}
       <div
-        className="fixed left-0 right-0 z-50 px-3 flex flex-col gap-8"
+        className="fixed left-0 right-0 z-50 px-3 flex flex-col gap-2"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
       >
         {/* Banner: cadastrar como profissional */}
@@ -150,6 +150,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
+              className="mb-10"
             >
               <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
                 <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shrink-0">
