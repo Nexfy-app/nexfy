@@ -145,7 +145,8 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-28 left-3 right-3 z-10"
+            className="absolute bottom-28 left-3 right-3 z-20"
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 88px)' }}
           >
             <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
               <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shrink-0">
