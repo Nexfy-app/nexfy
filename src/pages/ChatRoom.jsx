@@ -295,7 +295,7 @@ export default function ChatRoom() {
                 <div className="min-w-0">
                   <p className="text-[11px] font-bold text-foreground">
                     {request.status === 'pending' ? 'Aguardando confirmação do profissional...' :
-                     request.status === 'accepted' ? 'Pedido aceito! Mostre o código ao profissional.' :
+                     request.status === 'accepted' ? 'Pedido aceito! Aguarde o profissional chegar.' :
                      request.status === 'in_progress' ? 'Serviço em andamento.' :
                      request.status === 'completed' ? 'Serviço concluído! Avalie o profissional.' :
                      'Pedido cancelado.'}

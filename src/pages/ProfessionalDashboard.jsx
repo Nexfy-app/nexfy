@@ -94,18 +94,7 @@ function RequestActionCard({ request, onAction, navigate }) {
         </p>
       )}
 
-      {/* Confirmation code for provider */}
-      {request.status === 'in_progress' && request.confirmation_code && (
-        <div className="mx-4 mb-3 bg-indigo-50 border border-indigo-100 rounded-xl p-3">
-          <p className="text-[10px] text-indigo-700 font-semibold mb-1.5">Código de confirmação do cliente:</p>
-          <div className="flex gap-1.5">
-            {request.confirmation_code.split('').map((d, i) => (
-              <div key={i} className="w-9 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-black text-lg">{d}</div>
-            ))}
-          </div>
-          <p className="text-[9px] text-indigo-500 mt-1.5">Peça ao cliente para confirmar este código antes de iniciar</p>
-        </div>
-      )}
+
 
       {/* Actions */}
       <div className="px-4 pb-4 flex gap-2">
@@ -193,7 +182,7 @@ export default function ProfessionalDashboard() {
     queryClient.invalidateQueries({ queryKey: ['pro-requests'] });
 
     const msgs = {
-      accepted: { title: `✅ Pedido aceito por ${professional?.name}`, body: `Seu código: ${request.confirmation_code}`, type: 'request_accepted', subject: `✅ Pedido aceito — ${professional?.name}`, emailBody: `${professional?.name} aceitou seu pedido!\n\nCódigo de confirmação: ${request.confirmation_code}\n\nAbre o ServiçosJá para acompanhar.` },
+      accepted: { title: `✅ Pedido aceito por ${professional?.name}`, body: `${professional?.name} aceitou seu pedido!`, type: 'request_accepted', subject: `✅ Pedido aceito — ${professional?.name}`, emailBody: `${professional?.name} aceitou seu pedido! Abre o ServiçosJá para acompanhar.` },
       in_progress: { title: `🔧 Serviço iniciado`, body: `${professional?.name} está a caminho.`, type: 'request_in_progress', subject: `🔧 Serviço iniciado`, emailBody: `${professional?.name} iniciou o serviço! Acompanhe no ServiçosJá.` },
       completed: { title: `🎉 Serviço concluído!`, body: `Avalie ${professional?.name} agora.`, type: 'request_completed', subject: `🎉 Serviço concluído!`, emailBody: `${professional?.name} concluiu o serviço. Acesse o app para avaliar!` },
       cancelled: { title: `❌ Pedido recusado`, body: `${professional?.name} não pôde atender.`, type: 'request_cancelled', subject: `Pedido recusado`, emailBody: `Infelizmente ${professional?.name} não pôde atender seu pedido. Procure outro profissional no ServiçosJá.` },
