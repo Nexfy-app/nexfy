@@ -140,8 +140,8 @@ export default function Home() {
 
       {/* Área inferior fixa — empilhada acima da BottomNav */}
       <div
-        className="fixed left-0 right-0 z-50 px-3 flex flex-col gap-2"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)' }}
+        className="fixed left-0 right-0 z-50 px-3 flex flex-col gap-3"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
       >
         {/* Banner: cadastrar como profissional */}
         <AnimatePresence>
