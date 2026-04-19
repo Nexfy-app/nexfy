@@ -101,11 +101,7 @@ export default function Home() {
       {/* Top glass header */}
       <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 flex justify-center">
         <div className="w-full max-w-lg md:max-w-2xl lg:max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl"
-        >
+        <div className="glass rounded-2xl">
           {/* Location bar */}
           <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
             <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
@@ -134,7 +130,7 @@ export default function Home() {
               professionals={availableWithDist}
             />
           </div>
-        </motion.div>
+        </div>
         </div>
       </div>
 
@@ -150,9 +146,10 @@ export default function Home() {
         <AnimatePresence>
           {userEmail && isUserPro === false && !dismissedProBanner && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
               className="mb-4"
             >
               <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
@@ -184,9 +181,10 @@ export default function Home() {
         <AnimatePresence>
           {availableWithDist.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
             >
               {/* Collapsed pill */}
               {!listExpanded && (
@@ -212,7 +210,7 @@ export default function Home() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
                     className="overflow-hidden"
                   >
                     <div className="glass-strong rounded-2xl overflow-hidden">
