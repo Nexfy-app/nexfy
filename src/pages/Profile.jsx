@@ -60,10 +60,35 @@ export default function Profile() {
 
   const toggleAvailability = async () => {
     if (!professional) return;
-    await base44.entities.Professional.update(professional.id, {
-      is_available: !professional.is_available,
-    });
-    queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+    const newAvailable = !professional.is_available;
+
+    // Ao ficar online, tenta capturar a localização atual do profissional
+    if (newAvailable && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          await base44.entities.Professional.update(professional.id, {
+            is_available: true,
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          });
+          queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+          queryClient.invalidateQueries({ queryKey: ['professionals'] });
+          toast.success('✅ Você está online! Localização atualizada.');
+        },
+        async () => {
+          // Se negar GPS, fica online mas sem atualizar localização
+          await base44.entities.Professional.update(professional.id, { is_available: true });
+          queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+          queryClient.invalidateQueries({ queryKey: ['professionals'] });
+          toast.success('Você está online! (GPS negado — localização pode estar desatualizada)');
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    } else {
+      await base44.entities.Professional.update(professional.id, { is_available: false });
+      queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+      queryClient.invalidateQueries({ queryKey: ['professionals'] });
+    }
   };
 
   const menuItems = [
