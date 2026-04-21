@@ -101,14 +101,17 @@ export default function CategoryFilter({ selected, onSelect, professionals = [] 
     setShowAllDropdown(false);
     setShowOtherSearch(false);
     setOtherQuery('');
-    setQuery('');
     setSearchResult(null);
+    // Preenche o campo de busca com o label da categoria selecionada
+    const cat = SERVICE_CATEGORIES.find(c => c.id === catId);
+    setQuery(cat?.label || catId);
   };
 
   const handleClear = () => {
     onSelect(null);
     setQuery('');
     setSearchResult(null);
+    setShowAllDropdown(false);
   };
 
   const handleSearch = () => {
