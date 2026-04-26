@@ -21,6 +21,8 @@ import ProfessionalDashboard from './pages/ProfessionalDashboard';
 import PixSupport from './pages/PixSupport';
 import VerifyDocuments from './pages/VerifyDocuments';
 import ProfessionalReviews from './pages/ProfessionalReviews';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -65,6 +67,8 @@ const AuthenticatedApp = () => {
       <Route path="/verify-documents" element={<VerifyDocuments />} />
       <Route path="/professional/reviews" element={<ProfessionalReviews />} />
       <Route path="/pix-support" element={<PixSupport />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
