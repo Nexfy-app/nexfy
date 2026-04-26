@@ -30,9 +30,48 @@
       "type": "boolean",
       "default": false,
       "description": "Email para cada nova mensagem no chat"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Descri\u00e7\u00e3o das prefer\u00eancias de notifica\u00e7\u00e3o do usu\u00e1rio"
     }
   },
   "required": [
     "user_email"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "data.user_email": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

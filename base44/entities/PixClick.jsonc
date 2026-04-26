@@ -20,10 +20,42 @@
     "amount": {
       "type": "number",
       "description": "Valor combinado do servi\u00e7o"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Descri\u00e7\u00e3o do pagamento Pix realizado"
     }
   },
   "required": [
     "client_email",
     "professional_id"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "data.client_email": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }
