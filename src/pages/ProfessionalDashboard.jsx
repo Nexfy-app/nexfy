@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, TrendingUp, CheckCircle2, Star, DollarSign,
-  Clock, Briefcase, MessageSquare, XCircle, Zap, Bell, ChevronRight, RefreshCw
+  Clock, Briefcase, MessageSquare, XCircle, Zap, Bell, ChevronRight, RefreshCw, Eye
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
@@ -152,6 +153,7 @@ export default function ProfessionalDashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
@@ -256,12 +258,23 @@ export default function ProfessionalDashboard() {
               <p className="text-xs text-muted-foreground">{professional?.name || '...'}</p>
             </div>
           </div>
-          {pendingReqs.length > 0 && (
-            <div className="flex items-center gap-1.5 bg-amber-500 text-white px-3 py-1.5 rounded-full">
-              <Bell className="w-3.5 h-3.5" />
-              <span className="text-xs font-bold">{pendingReqs.length} novo{pendingReqs.length > 1 ? 's' : ''}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {professional && (
+              <button
+                onClick={() => setPreviewOpen(true)}
+                className="flex items-center gap-1.5 bg-white border border-slate-200 text-foreground px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-slate-50 transition shadow-sm"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                Ver perfil
+              </button>
+            )}
+            {pendingReqs.length > 0 && (
+              <div className="flex items-center gap-1.5 bg-amber-500 text-white px-3 py-1.5 rounded-full">
+                <Bell className="w-3.5 h-3.5" />
+                <span className="text-xs font-bold">{pendingReqs.length} novo{pendingReqs.length > 1 ? 's' : ''}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -394,6 +407,13 @@ export default function ProfessionalDashboard() {
           </div>
         )}
       </div>
+
+      {/* Public profile preview */}
+      <ProfessionalSheet
+        professional={previewOpen ? professional : null}
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   );
 }
