@@ -18,7 +18,6 @@ import ReviewPage from './pages/ReviewPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NotificationSettings from './pages/NotificationSettings';
 import ProfessionalDashboard from './pages/ProfessionalDashboard';
-import PixSupport from './pages/PixSupport';
 import VerifyDocuments from './pages/VerifyDocuments';
 import ProfessionalReviews from './pages/ProfessionalReviews';
 import About from './pages/About';
@@ -66,7 +65,6 @@ const AuthenticatedApp = () => {
       <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
       <Route path="/verify-documents" element={<VerifyDocuments />} />
       <Route path="/professional/reviews" element={<ProfessionalReviews />} />
-      <Route path="/pix-support" element={<PixSupport />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<PageNotFound />} />
