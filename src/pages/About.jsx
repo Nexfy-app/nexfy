@@ -9,10 +9,10 @@ export default function About() {
         <ArrowLeft className="w-4 h-4" /> Voltar
       </Link>
 
-      <h1 className="text-3xl font-black text-foreground mb-4">Sobre o SERV</h1>
+      <h1 className="text-3xl font-black text-foreground mb-4">Sobre o Serfy</h1>
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-        O <strong>SERV</strong> é uma plataforma brasileira que conecta clientes a profissionais de serviços locais em tempo real. Nossa missão é simples: tornar a contratação de um eletricista, encanador, pintor, diarista ou qualquer outro profissional tão fácil quanto pedir uma pizza.
+        O <strong>Serfy</strong> é uma plataforma brasileira que conecta clientes a profissionais de serviços locais em tempo real. Nossa missão é simples: tornar a contratação de um eletricista, encanador, pintor, diarista ou qualquer outro profissional tão fácil quanto pedir uma pizza.
       </p>
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-4">
@@ -20,11 +20,11 @@ export default function About() {
       </p>
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-        Para os profissionais, o SERV oferece visibilidade gratuita no mapa da região, painel de desempenho com histórico de serviços e avaliações, além de um sistema de verificação de documentos e certificados que transmite mais confiança aos clientes. Basta ativar a disponibilidade e começar a receber pedidos.
+        Para os profissionais, o Serfy oferece visibilidade gratuita no mapa da região, painel de desempenho com histórico de serviços e avaliações, além de um sistema de verificação de documentos e certificados que transmite mais confiança aos clientes. Basta ativar a disponibilidade e começar a receber pedidos.
       </p>
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-8">
-        O SERV é desenvolvido e mantido por uma equipe apaixonada por tecnologia e por melhorar a vida de trabalhadores autônomos e de quem precisa de serviços de qualidade no Brasil. Acreditamos que a tecnologia deve aproximar pessoas e criar oportunidades reais para profissionais qualificados em todo o país.
+        O Serfy é desenvolvido e mantido por uma equipe apaixonada por tecnologia e por melhorar a vida de trabalhadores autônomos e de quem precisa de serviços de qualidade no Brasil. Acreditamos que a tecnologia deve aproximar pessoas e criar oportunidades reais para profissionais qualificados em todo o país.
       </p>
 
       <div className="grid grid-cols-2 gap-3 mb-8">
