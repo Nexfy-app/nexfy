@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle2, XCircle, Zap, Star, MessageSquare, Shield, ChevronRight, Briefcase, HelpCircle } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { createNotification, sendEmailIfEnabled } from '@/lib/notifications';
+import CompleteServiceModal from '../components/dashboard/CompleteServiceModal';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
@@ -260,6 +261,7 @@ function RequestCard({ request, isProvider, onAction, userEmail }) {
 export default function Requests() {
   const [user, setUser] = useState(null);
   const [professional, setProfessional] = useState(null);
+  const [completeRequest, setCompleteRequest] = useState(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -288,12 +290,32 @@ export default function Requests() {
   });
 
   const handleAction = async (request, newStatus) => {
+    if (newStatus === 'completed') {
+      setCompleteRequest(request);
+      return;
+    }
     await base44.entities.ServiceRequest.update(request.id, { status: newStatus });
     queryClient.invalidateQueries({ queryKey: ['client-requests'] });
     queryClient.invalidateQueries({ queryKey: ['pro-requests'] });
     if (newStatus === 'accepted') toast.success('Pedido aceito! Cliente notificado.');
     if (newStatus === 'in_progress') toast.success('Serviço iniciado!');
-    if (newStatus === 'completed') toast.success('Serviço concluído! Aguarde avaliação.');
+  };
+
+  const handleComplete = async (request, price) => {
+    await base44.entities.ServiceRequest.update(request.id, {
+      status: 'completed',
+      price_agreed: price,
+      completed_date: new Date().toISOString().split('T')[0],
+    });
+    if (professional) {
+      await base44.entities.Professional.update(professional.id, {
+        services_completed: (professional.services_completed || 0) + 1,
+      });
+    }
+    queryClient.invalidateQueries({ queryKey: ['client-requests'] });
+    queryClient.invalidateQueries({ queryKey: ['pro-requests'] });
+    setCompleteRequest(null);
+    toast.success(`🎉 Concluído!${price > 0 ? ` R$ ${price.toFixed(2)} registrado nos seus ganhos.` : ''}`);
   };
 
   const pendingCount = proRequests.filter((r) => r.status === 'pending').length;
@@ -377,6 +399,14 @@ export default function Requests() {
           }
         </Tabs>
       </div>
+
+      {completeRequest && (
+        <CompleteServiceModal
+          request={completeRequest}
+          onConfirm={handleComplete}
+          onCancel={() => setCompleteRequest(null)}
+        />
+      )}
     </div>);
 
 }

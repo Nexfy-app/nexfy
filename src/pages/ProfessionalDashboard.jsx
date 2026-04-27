@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
+import CompleteServiceModal from '../components/dashboard/CompleteServiceModal';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -154,6 +155,7 @@ export default function ProfessionalDashboard() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [completeRequest, setCompleteRequest] = useState(null);
 
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
@@ -179,29 +181,60 @@ export default function ProfessionalDashboard() {
   });
 
   const handleAction = async (request, newStatus) => {
+    // Intercept "completed" to open the price modal
+    if (newStatus === 'completed') {
+      setCompleteRequest(request);
+      return;
+    }
     await base44.entities.ServiceRequest.update(request.id, { status: newStatus });
     queryClient.invalidateQueries({ queryKey: ['pro-requests-dashboard'] });
     queryClient.invalidateQueries({ queryKey: ['pro-requests'] });
 
     const msgs = {
-      accepted: { title: `✅ Pedido aceito por ${professional?.name}`, body: `${professional?.name} aceitou seu pedido!`, type: 'request_accepted', subject: `✅ Pedido aceito — ${professional?.name}`, emailBody: `${professional?.name} aceitou seu pedido! Abre o ServiçosJá para acompanhar.` },
-      in_progress: { title: `🔧 Serviço iniciado`, body: `${professional?.name} está a caminho.`, type: 'request_in_progress', subject: `🔧 Serviço iniciado`, emailBody: `${professional?.name} iniciou o serviço! Acompanhe no ServiçosJá.` },
-      completed: { title: `🎉 Serviço concluído!`, body: `Avalie ${professional?.name} agora.`, type: 'request_completed', subject: `🎉 Serviço concluído!`, emailBody: `${professional?.name} concluiu o serviço. Acesse o app para avaliar!` },
-      cancelled: { title: `❌ Pedido recusado`, body: `${professional?.name} não pôde atender.`, type: 'request_cancelled', subject: `Pedido recusado`, emailBody: `Infelizmente ${professional?.name} não pôde atender seu pedido. Procure outro profissional no ServiçosJá.` },
+      accepted: { title: `✅ Pedido aceito por ${professional?.name}`, body: `${professional?.name} aceitou seu pedido!`, type: 'request_accepted', subject: `✅ Pedido aceito — ${professional?.name}`, emailBody: `${professional?.name} aceitou seu pedido!` },
+      in_progress: { title: `🔧 Serviço iniciado`, body: `${professional?.name} está a caminho.`, type: 'request_in_progress', subject: `🔧 Serviço iniciado`, emailBody: `${professional?.name} iniciou o serviço!` },
+      cancelled: { title: `❌ Pedido recusado`, body: `${professional?.name} não pôde atender.`, type: 'request_cancelled', subject: `Pedido recusado`, emailBody: `Infelizmente ${professional?.name} não pôde atender seu pedido.` },
     };
 
     const m = msgs[newStatus];
     if (m) {
       createNotification({ user_email: request.client_email, title: m.title, body: m.body, type: m.type, link: `/chat/${request.id}` });
-      sendEmailIfEnabled(request.client_email, m.type === 'request_cancelled' ? 'request_accepted' : m.type, {
-        to: request.client_email,
-        subject: m.subject,
-        emailBody: m.emailBody,
-      });
+      sendEmailIfEnabled(request.client_email, m.type, { to: request.client_email, subject: m.subject, emailBody: m.emailBody });
     }
 
-    const toastMsgs = { accepted: '✅ Pedido aceito! Cliente notificado.', in_progress: '🔧 Serviço iniciado!', completed: '🎉 Concluído! Aguarde a avaliação.', cancelled: 'Pedido recusado.' };
+    const toastMsgs = { accepted: '✅ Pedido aceito! Cliente notificado.', in_progress: '🔧 Serviço iniciado!', cancelled: 'Pedido recusado.' };
     toast.success(toastMsgs[newStatus] || 'Atualizado!');
+  };
+
+  const handleComplete = async (request, price) => {
+    await base44.entities.ServiceRequest.update(request.id, {
+      status: 'completed',
+      price_agreed: price,
+      completed_date: new Date().toISOString().split('T')[0],
+    });
+    if (professional) {
+      await base44.entities.Professional.update(professional.id, {
+        services_completed: (professional.services_completed || 0) + 1,
+      });
+    }
+    queryClient.invalidateQueries({ queryKey: ['pro-requests-dashboard'] });
+    queryClient.invalidateQueries({ queryKey: ['pro-requests'] });
+    queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+    queryClient.invalidateQueries({ queryKey: ['my-pro-dashboard'] });
+    setCompleteRequest(null);
+    createNotification({
+      user_email: request.client_email,
+      title: '🎉 Serviço concluído!',
+      body: `${professional?.name} finalizou o serviço. Avalie sua experiência!`,
+      type: 'request_completed',
+      link: `/review/${request.id}`,
+    });
+    sendEmailIfEnabled(request.client_email, 'request_completed', {
+      to: request.client_email,
+      subject: '🎉 Serviço concluído!',
+      emailBody: `${professional?.name} concluiu o serviço. Acesse o app para avaliar!`,
+    });
+    toast.success(`🎉 Concluído!${price > 0 ? ` R$ ${price.toFixed(2)} registrado nos seus ganhos.` : ''}`);
   };
 
   // Stats
@@ -414,6 +447,15 @@ export default function ProfessionalDashboard() {
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
       />
+
+      {/* Complete service modal */}
+      {completeRequest && (
+        <CompleteServiceModal
+          request={completeRequest}
+          onConfirm={handleComplete}
+          onCancel={() => setCompleteRequest(null)}
+        />
+      )}
     </div>
   );
 }
