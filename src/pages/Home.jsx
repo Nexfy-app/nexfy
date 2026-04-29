@@ -12,7 +12,7 @@ import NotificationCenter from '../components/notifications/NotificationCenter';
 import useUserLocation from '../hooks/useUserLocation';
 import AppTutorial from '../components/tutorial/AppTutorial';
 import { Link } from 'react-router-dom';
-import { Briefcase, X, Sparkles } from 'lucide-react';
+import { Briefcase, X } from 'lucide-react';
 import { useEffect } from 'react';
 
 function haversine(lat1, lng1, lat2, lng2) {
@@ -119,9 +119,6 @@ export default function Home() {
               {availableWithDist.length} online
             </div>
             <AppTutorial />
-            <Link to="/search" className="w-9 h-9 flex items-center justify-center rounded-full bg-foreground border border-foreground hover:opacity-80 transition shadow-sm shrink-0">
-              <Sparkles className="w-4 h-4 text-white" />
-            </Link>
             {userEmail && <NotificationCenter userEmail={userEmail} />}
           </div>
 

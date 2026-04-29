@@ -118,34 +118,39 @@ export default function SearchProfessionals() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const initialQuery = new URLSearchParams(window.location.search).get('q') || '';
+
   useEffect(() => {
-    initConversation();
+    initConversation(initialQuery);
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, professionals]);
 
-  const initConversation = async () => {
+  const initConversation = async (query = '') => {
     const conv = await base44.agents.createConversation({
       agent_name: 'busca_profissional',
       metadata: { name: 'Busca de Profissional' },
     });
     setConversation(conv);
 
-    // Subscribe to updates
-    const unsub = base44.agents.subscribeToConversation(conv.id, (data) => {
+    base44.agents.subscribeToConversation(conv.id, (data) => {
       setMessages(data.messages || []);
       extractProfessionals(data.messages || []);
     });
 
-    // Send greeting
-    await base44.agents.addMessage(conv, {
-      role: 'user',
-      content: '__init__',
-    });
-
-    return () => unsub();
+    if (query) {
+      // Send the query directly
+      setLoading(true);
+      await base44.agents.addMessage(conv, { role: 'user', content: query });
+      setLoading(false);
+    } else {
+      // Generic greeting
+      setLoading(true);
+      await base44.agents.addMessage(conv, { role: 'user', content: '__init__' });
+      setLoading(false);
+    }
   };
 
   const extractProfessionals = async (msgs) => {

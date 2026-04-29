@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import CategoryFilter from '../components/home/CategoryFilter';
 import ProfessionalCard from '../components/home/ProfessionalCard';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Explore() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPro, setSelectedPro] = useState(null);
   const [userEmail, setUserEmail] = React.useState(null);
+  const navigate = useNavigate();
   React.useEffect(() => { base44.auth.me().then(u => setUserEmail(u?.email)).catch(() => {}); }, []);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter' && search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    }
+  };
 
   const { data: professionals = [], isLoading } = useQuery({
     queryKey: ['professionals-all'],
@@ -44,11 +52,18 @@ export default function Explore() {
               <Search className="w-4 h-4 text-muted-foreground" />
             </div>
             <input
-              placeholder="Buscar profissional ou serviço..."
+              placeholder="Buscar serviço com IA..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition shadow-sm"
+              onKeyDown={handleSearchKeyDown}
+              className="w-full pl-10 pr-28 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition shadow-sm"
             />
+            <button
+              onClick={() => search.trim() && navigate(`/search?q=${encodeURIComponent(search.trim())}`)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-foreground text-white text-[11px] font-bold px-3 py-1.5 rounded-xl hover:opacity-80 transition"
+            >
+              <Sparkles className="w-3 h-3" /> Buscar
+            </button>
           </div>
 
           <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
