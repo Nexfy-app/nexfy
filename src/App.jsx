@@ -23,6 +23,7 @@ import ProfessionalReviews from './pages/ProfessionalReviews';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import SearchProfessionals from './pages/SearchProfessionals';
+import Support from './pages/Support';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/search" element={<SearchProfessionals />} />
+      <Route path="/support" element={<Support />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

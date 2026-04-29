@@ -342,7 +342,7 @@ export default function Requests() {
 
         {/* Support shortcut */}
         <button
-          onClick={() => navigate('/search?q=preciso+de+ajuda+com+meu+pedido')}
+          onClick={() => navigate('/support')}
           className="w-full flex items-center gap-3 bg-white rounded-2xl px-4 py-3 mb-4 border border-slate-100 hover:border-slate-300 transition"
           style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
         >
