@@ -22,6 +22,7 @@ import VerifyDocuments from './pages/VerifyDocuments';
 import ProfessionalReviews from './pages/ProfessionalReviews';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import SearchProfessionals from './pages/SearchProfessionals';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
       <Route path="/professional/reviews" element={<ProfessionalReviews />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/search" element={<SearchProfessionals />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
