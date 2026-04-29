@@ -129,6 +129,7 @@ export default function SearchProfessionals() {
   }, [messages, professionals]);
 
   const initConversation = async (query = '') => {
+    setLoading(true);
     const conv = await base44.agents.createConversation({
       agent_name: 'busca_profissional',
       metadata: { name: 'Busca de Profissional' },
@@ -136,21 +137,18 @@ export default function SearchProfessionals() {
     setConversation(conv);
 
     base44.agents.subscribeToConversation(conv.id, (data) => {
-      setMessages(data.messages || []);
-      extractProfessionals(data.messages || []);
+      const msgs = data.messages || [];
+      setMessages(msgs);
+      // Only show loading while waiting for assistant reply
+      const lastMsg = msgs[msgs.length - 1];
+      if (lastMsg?.role === 'assistant') {
+        setLoading(false);
+        extractProfessionals(msgs);
+      }
     });
 
-    if (query) {
-      // Send the query directly
-      setLoading(true);
-      await base44.agents.addMessage(conv, { role: 'user', content: query });
-      setLoading(false);
-    } else {
-      // Generic greeting
-      setLoading(true);
-      await base44.agents.addMessage(conv, { role: 'user', content: '__init__' });
-      setLoading(false);
-    }
+    const initialMsg = query || 'Olá! Que tipo de serviço você está buscando?';
+    await base44.agents.addMessage(conv, { role: 'user', content: query ? query : '__init__' });
   };
 
   const extractProfessionals = async (msgs) => {
@@ -185,7 +183,7 @@ export default function SearchProfessionals() {
     setInput('');
     setLoading(true);
     await base44.agents.addMessage(conversation, { role: 'user', content: text });
-    setLoading(false);
+    // loading will be set to false by the subscription when assistant replies
   };
 
   const handleKeyDown = (e) => {
