@@ -1,0 +1,18 @@
+{
+  "name": "Serfy - Profissionais em Santa Maria",
+  "short_name": "Serfy",
+  "description": "Encontre profissionais de serviços locais em Santa Maria, RS.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://base44.com/logo_v2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

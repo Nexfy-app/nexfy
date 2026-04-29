@@ -24,6 +24,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import SearchProfessionals from './pages/SearchProfessionals';
 import Support from './pages/Support';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -84,6 +85,7 @@ function App() {
           <AuthenticatedApp />
         </Router>
         <Toaster />
+        <PWAInstallPrompt />
       </QueryClientProvider>
     </AuthProvider>
   )
