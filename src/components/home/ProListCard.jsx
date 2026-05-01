@@ -3,6 +3,7 @@ import { Star, Navigation, Clock, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SERVICE_CATEGORIES } from '@/lib/constants';
 import ProBadges from './ProBadges';
+import TurboBadge from '../turbo/TurboBadge';
 
 const getCategoryLabel = (id) => {
   if (!id) return '';
@@ -50,9 +51,10 @@ export default function ProListCard({ professional, onClick, distance, badges = 
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-wrap">
             <p className={`text-sm font-bold truncate ${isSelected ? 'text-white' : 'text-foreground'}`}>{professional.name}</p>
             {professional.verified && <CheckCircle className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-green-300' : 'text-green-600 fill-green-600'}`} />}
+            {professional.is_premium && !isSelected && <TurboBadge size="xs" />}
           </div>
           <p className={`text-[11px] truncate ${isSelected ? 'text-white/70' : 'text-muted-foreground'}`}>{primaryCategory}</p>
 

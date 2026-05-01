@@ -78,7 +78,12 @@ export default function Home() {
       if (!userLocation || !p.latitude || !p.longitude) return { ...p, _dist: null };
       const dist = haversine(userLocation.lat, userLocation.lng, p.latitude, p.longitude);
       return { ...p, _dist: dist };
-    }).sort((a, b) => (a._dist ?? 999) - (b._dist ?? 999));
+    }).sort((a, b) => {
+      // Turbo (premium) professionals first, then by distance
+      if (a.is_premium && !b.is_premium) return -1;
+      if (!a.is_premium && b.is_premium) return 1;
+      return (a._dist ?? 999) - (b._dist ?? 999);
+    });
   }, [available, userLocation]);
 
   const handleSelectPro = (pro) => {

@@ -4,6 +4,7 @@ import { PRICE_TYPE_LABELS, SERVICE_CATEGORIES } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import TurboBadge from '../turbo/TurboBadge';
 
 const getCategoryLabel = (id) => {
   const cat = SERVICE_CATEGORIES.find(c => c.id === id);
@@ -48,10 +49,10 @@ export default function ProfessionalCard({ professional, onClick, distance }) {
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <h3 className="font-semibold text-sm text-foreground truncate">{professional.name}</h3>
             {isVerified && <CheckCircle className="w-3.5 h-3.5 text-green-600 fill-green-600 shrink-0" />}
-            {professional.is_premium && <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+            {professional.is_premium && <TurboBadge size="xs" />}
           </div>
 
           <div className="flex items-center gap-2.5 mt-0.5">

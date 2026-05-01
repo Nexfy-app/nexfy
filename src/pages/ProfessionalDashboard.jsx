@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import CompleteServiceModal from '../components/dashboard/CompleteServiceModal';
+import TurboSerfyCard from '../components/turbo/TurboSerfyCard';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -180,6 +181,29 @@ export default function ProfessionalDashboard() {
     enabled: !!professional?.id,
   });
 
+  const { data: turboData, refetch: refetchTurbo } = useQuery({
+    queryKey: ['turbo-subscription', user?.email],
+    queryFn: async () => {
+      const res = await base44.functions.invoke('turboCheckout', { action: 'get_status' });
+      return res.data;
+    },
+    enabled: !!user?.email,
+    refetchInterval: 30000,
+  });
+
+  // Handle success/cancel redirect from Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('turbo') === 'success') {
+      refetchTurbo();
+      toast.success('🚀 Turbo Serfy ativado! Seu perfil está em destaque.');
+      window.history.replaceState({}, '', '/professional/dashboard');
+    }
+    if (params.get('turbo') === 'cancel') {
+      window.history.replaceState({}, '', '/professional/dashboard');
+    }
+  }, []);
+
   const handleAction = async (request, newStatus) => {
     // Intercept "completed" to open the price modal
     if (newStatus === 'completed') {
@@ -312,6 +336,13 @@ export default function ProfessionalDashboard() {
       </div>
 
       <div className="px-4 pb-8 space-y-4">
+
+        {/* Turbo Serfy */}
+        <TurboSerfyCard
+          professional={professional}
+          subscription={turboData?.subscription || null}
+          onRefresh={refetchTurbo}
+        />
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
