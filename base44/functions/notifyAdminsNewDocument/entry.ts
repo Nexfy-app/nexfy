@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       base44.asServiceRole.integrations.Core.SendEmail({
         to: admin.email,
         subject: `📄 Novo documento para verificar — ${professionalEmail}`,
-        body: `Olá,\n\nO profissional ${professionalEmail} enviou um novo documento para verificação:\n\nNome: ${documentName}\nTipo: ${typeLabel}\n\nAcesse o painel de administração para revisar e aprovar ou rejeitar o documento.\n\nATT,\nEquipe SERV`,
+        body: `Olá,\n\nO profissional ${professionalEmail} enviou um novo documento para verificação:\n\nNome: ${documentName}\nTipo: ${typeLabel}\n\nAcesse o painel de administração para revisar e aprovar ou rejeitar o documento.\n\nATT,\nEquipe Serfy`,
       }).catch(() => {})
     ));
 

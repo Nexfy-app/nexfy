@@ -98,7 +98,7 @@ function RequestCard({ request, isProvider, onAction, userEmail }) {
       sendEmailIfEnabled(request.client_email, 'request_accepted', {
         to: request.client_email,
         subject: `✅ Pedido aceito — ${request.professional_name}`,
-        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nAcompanhe no SERV.`
+        emailBody: `Boa notícia! ${request.professional_name} aceitou seu pedido de ${request.category?.replace(/_/g, ' ')}.\n\nAcompanhe no Serfy.`
       });
     }
     if (newStatus === 'in_progress') {
@@ -112,7 +112,7 @@ function RequestCard({ request, isProvider, onAction, userEmail }) {
       sendEmailIfEnabled(request.client_email, 'request_in_progress', {
         to: request.client_email,
         subject: `🔧 Serviço iniciado — ${request.professional_name}`,
-        emailBody: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no SERV.`
+        emailBody: `${request.professional_name} iniciou o serviço!\n\nAcompanhe o andamento no Serfy.`
       });
     }
     if (newStatus === 'completed') {
@@ -126,7 +126,7 @@ function RequestCard({ request, isProvider, onAction, userEmail }) {
       sendEmailIfEnabled(request.client_email, 'request_completed', {
         to: request.client_email,
         subject: `🎉 Serviço concluído!`,
-        emailBody: `${request.professional_name} concluiu o serviço. Avalie sua experiência no SERV!`
+        emailBody: `${request.professional_name} concluiu o serviço. Avalie sua experiência no Serfy!`
       });
     }
     if (newStatus === 'cancelled') {
