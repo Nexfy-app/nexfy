@@ -15,7 +15,6 @@ import { Link } from 'react-router-dom';
 import { Briefcase, X } from 'lucide-react';
 import { useEffect } from 'react';
 import ProAvailabilityToggle from '../components/home/ProAvailabilityToggle';
-import ProTurboFloating from '../components/home/ProTurboFloating';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -186,13 +185,12 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Pro floating controls — availability toggle + turbo nudge */}
+      {/* Availability toggle flutuante no mapa — apenas para profissionais */}
       {myProfessional && (
         <div
-          className="absolute z-20 left-3 flex flex-col items-start gap-2"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)' }}
+          className="absolute z-20 left-3"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 164px)' }}
         >
-          <ProTurboFloating professional={myProfessional} turboActive={turboActive} />
           <ProAvailabilityToggle professional={myProfessional} />
         </div>
       )}

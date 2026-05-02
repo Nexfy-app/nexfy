@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
+import TurboSerfyCard from '../components/turbo/TurboSerfyCard';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,15 @@ export default function Profile() {
     queryClient.invalidateQueries({ queryKey: ['my-pro'] });
     toast('⏰ Você foi colocado offline automaticamente após 2h. Ative novamente se ainda estiver disponível.', { duration: 8000 });
   });
+
+  const [turboData, setTurboData] = React.useState(null);
+  useEffect(() => {
+    if (professional) {
+      base44.functions.invoke('turboCheckout', { action: 'get_status' })
+        .then(r => setTurboData(r?.data || null))
+        .catch(() => {});
+    }
+  }, [professional?.id]);
 
   const toggleAvailability = async () => {
     if (!professional) return;
@@ -194,6 +204,17 @@ export default function Profile() {
             </div>
           )}
         </motion.div>
+
+        {/* Turbo Serfy — visível apenas para profissionais */}
+        {professional && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+            <TurboSerfyCard
+              professional={professional}
+              subscription={turboData?.subscription || null}
+              onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}
+            />
+          </motion.div>
+        )}
 
         {/* Aviso de auto-offline */}
         {minutesLeft !== null && (
