@@ -78,7 +78,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
       sendEmailIfEnabled(professional.user_email, 'new_request', {
         to: professional.user_email,
         subject: `🔔 Novo pedido — ${user.full_name || user.email}`,
-        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAbra o ServiçosJá agora para aceitar ou recusar.`,
+        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAbra o Serfy agora para aceitar ou recusar.`,
       });
 
       setDescription('');
