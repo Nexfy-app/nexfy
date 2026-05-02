@@ -3,30 +3,31 @@ import { base44 } from '@/api/base44Client';
 
 const APP_ID = import.meta.env.VITE_APP_ID;
 
-const SYNC_INTERVAL_MS = 60 * 1000;        // atualiza localização a cada 1 min
 const AUTO_OFFLINE_MS = 2 * 60 * 60 * 1000; // desativa online após 2h
 const WARN_BEFORE_MS = 15 * 60 * 1000;      // avisa 15 min antes
 
 export default function useProfessionalLocationSync(professional, onAutoOffline) {
-  const intervalRef = useRef(null);
+  const watcherRef = useRef(null);
   const offlineTimerRef = useRef(null);
   const warnTimerRef = useRef(null);
-  const [minutesLeft, setMinutesLeft] = useState(null); // null = sem aviso ativo
+  const [minutesLeft, setMinutesLeft] = useState(null);
 
   useEffect(() => {
-    // Limpa tudo se ficar offline ou sem professional
+    // Para tudo se ficar offline ou sem professional
     if (!professional?.id || !professional?.is_available) {
-      clearInterval(intervalRef.current);
+      if (watcherRef.current !== null) {
+        navigator.geolocation?.clearWatch(watcherRef.current);
+        watcherRef.current = null;
+      }
       clearTimeout(offlineTimerRef.current);
       clearTimeout(warnTimerRef.current);
       setMinutesLeft(null);
       return;
     }
 
-    // Atualiza localização
-    const updateLocation = () => {
-      if (!navigator.geolocation) return;
-      navigator.geolocation.getCurrentPosition(
+    // watchPosition — atualiza automaticamente sempre que o usuário se move
+    if (navigator.geolocation) {
+      watcherRef.current = navigator.geolocation.watchPosition(
         (pos) => {
           base44.entities.Professional.update(professional.id, {
             latitude: pos.coords.latitude,
@@ -34,12 +35,9 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
           }).catch(() => {});
         },
         () => {},
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
       );
-    };
-
-    updateLocation();
-    intervalRef.current = setInterval(updateLocation, SYNC_INTERVAL_MS);
+    }
 
     // Aviso 15 min antes de desativar
     warnTimerRef.current = setTimeout(() => {
@@ -54,7 +52,10 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
     }, AUTO_OFFLINE_MS);
 
     return () => {
-      clearInterval(intervalRef.current);
+      if (watcherRef.current !== null) {
+        navigator.geolocation?.clearWatch(watcherRef.current);
+        watcherRef.current = null;
+      }
       clearTimeout(offlineTimerRef.current);
       clearTimeout(warnTimerRef.current);
       setMinutesLeft(null);

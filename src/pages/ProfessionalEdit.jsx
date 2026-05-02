@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Upload, Save, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
-import { SERVICE_CATEGORIES, SANTA_MARIA_CENTER } from '@/lib/constants';
+import { SERVICE_CATEGORIES } from '@/lib/constants';
 import { cn } from "@/lib/utils";
 
 export default function ProfessionalEdit() {
@@ -21,8 +21,8 @@ export default function ProfessionalEdit() {
     name: '', phone: '', bio: '', categories: [],
     price_type: 'budget', price_min: '', price_max: '',
     photo_url: '',
-    latitude: SANTA_MARIA_CENTER.lat,
-    longitude: SANTA_MARIA_CENTER.lng,
+    latitude: null,
+    longitude: null,
   });
   const [otherCategory, setOtherCategory] = useState('');
 
@@ -52,8 +52,8 @@ export default function ProfessionalEdit() {
         price_min: pro.price_min || '',
         price_max: pro.price_max || '',
         photo_url: pro.photo_url || '',
-        latitude: pro.latitude || SANTA_MARIA_CENTER.lat,
-        longitude: pro.longitude || SANTA_MARIA_CENTER.lng,
+        latitude: pro.latitude || null,
+        longitude: pro.longitude || null,
       });
     } else if (user) {
       setForm(prev => ({ ...prev, name: user.full_name || '' }));
@@ -88,19 +88,7 @@ export default function ProfessionalEdit() {
     toast.success('Foto atualizada!');
   };
 
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error('Geolocalização não suportada');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setForm(prev => ({ ...prev, latitude: pos.coords.latitude, longitude: pos.coords.longitude }));
-        toast.success('Localização atualizada!');
-      },
-      () => toast.error('Não foi possível obter sua localização')
-    );
-  };
+
 
   const handleSave = async () => {
     if (!form.name || form.categories.length === 0) {
@@ -245,26 +233,11 @@ export default function ProfessionalEdit() {
         </div>
 
         {/* Location */}
-        <div>
-          <Label className="text-xs mb-1 block">Localização GPS</Label>
-          <p className="text-[11px] text-muted-foreground mb-2">
-            Sua localização é usada para mostrar a clientes próximos a distância até você. Atualize sempre que mudar de local.
+        <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-2xl p-3">
+          <MapPin className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+          <p className="text-[11px] text-blue-700 leading-relaxed">
+            Sua localização é atualizada <strong>automaticamente</strong> enquanto você estiver online. Não é necessário nenhuma ação.
           </p>
-          <button
-            type="button"
-            onClick={handleGetLocation}
-            className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-2 text-sm font-semibold text-foreground transition-all active:scale-[0.98]"
-          >
-            <MapPin className="w-4 h-4 text-blue-600" />
-            {form.latitude && form.latitude !== SANTA_MARIA_CENTER.lat
-              ? '📍 Localização salva — Atualizar'
-              : 'Usar minha localização atual'}
-          </button>
-          {form.latitude && form.latitude !== SANTA_MARIA_CENTER.lat && (
-            <p className="text-[10px] text-green-600 font-medium mt-1 text-center">
-              ✓ GPS ativo · {form.latitude?.toFixed(4)}, {form.longitude?.toFixed(4)}
-            </p>
-          )}
         </div>
 
         <Button onClick={handleSave} disabled={saving} className="w-full h-12 rounded-xl font-semibold">
