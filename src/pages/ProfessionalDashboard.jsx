@@ -192,12 +192,30 @@ export default function ProfessionalDashboard() {
   });
 
   // Handle success/cancel redirect from Stripe
+  // After payment, poll every 3s for up to 30s until webhook updates the status
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('turbo') === 'success') {
-      refetchTurbo();
-      toast.success('🚀 Turbo Serfy ativado! Seu perfil está em destaque.');
       window.history.replaceState({}, '', '/professional/dashboard');
+      toast.success('🚀 Pagamento confirmado! Ativando Turbo Serfy...');
+
+      let attempts = 0;
+      const maxAttempts = 10; // 10 × 3s = 30s
+      const interval = setInterval(async () => {
+        attempts++;
+        const res = await base44.functions.invoke('turboCheckout', { action: 'get_status' });
+        if (res.data?.active) {
+          clearInterval(interval);
+          queryClient.invalidateQueries({ queryKey: ['turbo-subscription'] });
+          queryClient.invalidateQueries({ queryKey: ['my-pro-dashboard'] });
+          toast.success('⚡ Turbo Serfy ativo! Seu perfil está em destaque.');
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          refetchTurbo();
+        }
+      }, 3000);
+
+      return () => clearInterval(interval);
     }
     if (params.get('turbo') === 'cancel') {
       window.history.replaceState({}, '', '/professional/dashboard');
