@@ -1,6 +1,17 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import Stripe from 'npm:stripe@14.21.0';
 
+async function notifyProfessional(base44, email, title, body) {
+  await base44.asServiceRole.entities.Notification.create({
+    user_email: email,
+    title,
+    body,
+    type: 'request_accepted', // closest generic type available
+    link: '/professional/dashboard',
+    is_read: false,
+  });
+}
+
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
@@ -60,6 +71,14 @@ Deno.serve(async (req) => {
     await base44.asServiceRole.entities.Professional.update(meta.professional_id, {
       is_premium: true,
     });
+
+    // Notify professional in-app
+    await notifyProfessional(
+      base44,
+      meta.professional_email,
+      '⚡ Turbo Serfy ativado!',
+      'Seu perfil agora aparece em destaque nas buscas. Aproveite!'
+    );
   }
 
   if (event.type === 'customer.subscription.updated') {

@@ -130,9 +130,13 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
             </div>
 
             <div className="flex-1">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <h2 className="text-lg font-bold text-foreground">{professional.name}</h2>
-                {professional.is_premium && <Award className="w-4 h-4 text-amber-500" />}
+                {professional.is_premium && (
+                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full leading-none shadow-sm">
+                    <Zap className="w-2.5 h-2.5" /> TURBO
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
@@ -180,6 +184,21 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
             </div>
           )}
         </div>
+
+        {/* Turbo banner visible to clients */}
+        {professional.is_premium && (
+          <div className="mx-5 mb-3 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0d4f47 0%, #021a14 100%)' }}>
+            <div className="px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4 text-amber-300" />
+              </div>
+              <div>
+                <p className="text-white font-black text-xs">Profissional Turbo ⚡</p>
+                <p className="text-white/70 text-[11px] leading-tight mt-0.5">Perfil verificado com prioridade máxima na plataforma</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="h-px bg-slate-100 mx-5" />
 
