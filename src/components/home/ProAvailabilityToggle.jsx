@@ -1,51 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { MapPin, Loader2 } from 'lucide-react';
 
-/**
- * Minimal Apple-style availability toggle for professionals on the map.
- * Shows only when the user has a professional profile.
- */
 export default function ProAvailabilityToggle({ professional }) {
   const [loading, setLoading] = useState(false);
+  const [localIsOn, setLocalIsOn] = useState(professional?.is_available ?? false);
   const queryClient = useQueryClient();
+
+  // Sync with prop changes (e.g. after refetch)
+  useEffect(() => {
+    if (!loading) {
+      setLocalIsOn(professional?.is_available ?? false);
+    }
+  }, [professional?.is_available]);
 
   if (!professional) return null;
 
-  const isOn = professional.is_available;
-
   const toggle = async () => {
     if (loading) return;
+    const newValue = !localIsOn;
+    setLocalIsOn(newValue); // optimistic
     setLoading(true);
-    const newValue = !isOn;
 
-    if (newValue && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          await base44.entities.Professional.update(professional.id, {
-            is_available: true,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          });
-          queryClient.invalidateQueries({ queryKey: ['my-pro'] });
-          queryClient.invalidateQueries({ queryKey: ['professionals'] });
-          toast.success('Você está online!');
-          setLoading(false);
-        },
-        async () => {
-          await base44.entities.Professional.update(professional.id, { is_available: true });
-          queryClient.invalidateQueries({ queryKey: ['my-pro'] });
-          queryClient.invalidateQueries({ queryKey: ['professionals'] });
-          toast.success('Online (GPS negado)');
-          setLoading(false);
-        },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-      );
-    } else {
-      await base44.entities.Professional.update(professional.id, { is_available: false });
+    try {
+      if (newValue && navigator.geolocation) {
+        await new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              await base44.entities.Professional.update(professional.id, {
+                is_available: true,
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+              });
+              resolve();
+            },
+            async () => {
+              await base44.entities.Professional.update(professional.id, { is_available: true });
+              resolve();
+            },
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+          );
+        });
+        toast.success('Você está online! Clientes podem te encontrar.');
+      } else {
+        await base44.entities.Professional.update(professional.id, { is_available: false });
+        toast('Você está offline.');
+      }
       queryClient.invalidateQueries({ queryKey: ['my-pro'] });
       queryClient.invalidateQueries({ queryKey: ['professionals'] });
+      queryClient.invalidateQueries({ queryKey: ['my-pro-dashboard'] });
+    } catch {
+      // revert on error
+      setLocalIsOn(!newValue);
+      toast.error('Erro ao atualizar disponibilidade.');
+    } finally {
       setLoading(false);
     }
   };
@@ -54,39 +64,64 @@ export default function ProAvailabilityToggle({ professional }) {
     <button
       onClick={toggle}
       disabled={loading}
-      className="flex items-center gap-2 px-3 h-8 rounded-full transition-all active:scale-95 disabled:opacity-70"
+      className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all active:scale-[0.97] disabled:opacity-80 select-none"
       style={{
-        background: isOn ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.85)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)',
+        background: 'rgba(255,255,255,0.96)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.06)',
+        minWidth: 160,
       }}
-      aria-label="Disponibilidade"
     >
-      {/* iOS-style switch pill */}
-      <div
-        className="relative flex-shrink-0 transition-colors duration-200"
-        style={{
-          width: 28,
-          height: 16,
-          borderRadius: 8,
-          background: loading ? '#94a3b8' : isOn ? '#22c55e' : '#d1d5db',
-          transition: 'background 0.2s',
-        }}
-      >
+      {/* Status dot */}
+      <div className="relative shrink-0">
         <div
-          className="absolute top-0.5 rounded-full bg-white shadow-sm"
-          style={{
-            width: 12,
-            height: 12,
-            left: isOn ? 14 : 2,
-            transition: 'left 0.18s cubic-bezier(0.4,0,0.2,1)',
-          }}
-        />
+          className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors duration-300"
+          style={{ background: localIsOn ? '#dcfce7' : '#f1f5f9' }}
+        >
+          <MapPin className={`w-4 h-4 ${localIsOn ? 'text-green-600' : 'text-slate-400'}`} />
+        </div>
+        {localIsOn && !loading && (
+          <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+        )}
       </div>
-      <span className="text-[11px] font-semibold text-foreground leading-none">
-        {isOn ? 'Online' : 'Offline'}
-      </span>
+
+      {/* Label */}
+      <div className="flex-1 text-left">
+        <p className="text-xs font-bold text-foreground leading-tight">
+          {loading ? 'Atualizando...' : localIsOn ? 'Online' : 'Offline'}
+        </p>
+        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+          {localIsOn ? 'Visível no mapa' : 'Toque para ficar online'}
+        </p>
+      </div>
+
+      {/* Toggle pill */}
+      <div className="shrink-0">
+        {loading ? (
+          <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+        ) : (
+          <div
+            className="relative transition-colors duration-200"
+            style={{
+              width: 36,
+              height: 20,
+              borderRadius: 10,
+              background: localIsOn ? '#22c55e' : '#d1d5db',
+            }}
+          >
+            <div
+              className="absolute top-1 rounded-full bg-white shadow"
+              style={{
+                width: 14,
+                height: 14,
+                left: localIsOn ? 18 : 3,
+                transition: 'left 0.2s cubic-bezier(0.4,0,0.2,1)',
+              }}
+            />
+          </div>
+        )}
+      </div>
     </button>
   );
 }
