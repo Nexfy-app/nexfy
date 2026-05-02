@@ -8,22 +8,11 @@ import { ptBR } from 'date-fns/locale';
 
 const PLANS = [
   {
-    key: 'weekly',
-    label: 'Turbo Semanal',
-    price: 'R$ 19,90',
-    period: '/semana',
-    trial: '3 dias grátis',
-    highlight: false,
-    perks: ['Aparece primeiro nos resultados', 'Selo Turbo no perfil', 'Notificações de buscas'],
-  },
-  {
     key: 'monthly',
     label: 'Turbo Mensal',
-    price: 'R$ 59,90',
+    price: 'R$ 4,90',
     period: '/mês',
-    trial: '7 dias grátis',
     highlight: true,
-    badge: 'Mais popular',
     perks: ['Aparece primeiro nos resultados', 'Selo Turbo no perfil', 'Notificações de buscas', 'Métricas de visualizações', 'Prioridade máxima no mapa'],
   },
 ];
@@ -51,9 +40,7 @@ function PlanCard({ plan, onSelect, loading }) {
           <span className="text-2xl font-black">{plan.price}</span>
           <span className={`text-sm mb-0.5 ${plan.highlight ? 'text-white/60' : 'text-muted-foreground'}`}>{plan.period}</span>
         </div>
-        <div className={`text-[11px] font-bold mt-1 ${plan.highlight ? 'text-emerald-300' : 'text-emerald-600'}`}>
-          ✨ {plan.trial}
-        </div>
+
       </div>
 
       <ul className="space-y-1.5 mb-4">
@@ -101,7 +88,6 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
     setLoading(plan);
     const res = await base44.functions.invoke('turboCheckout', {
       action: 'create_checkout',
-      plan,
       professional_id: professional.id,
     });
     setLoading(null);
@@ -233,7 +219,7 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
               className="w-full h-11 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2 transition hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, #0d4f47, #021a14)' }}
             >
-              <Zap className="w-4 h-4" /> Ver planos — começa grátis
+              <Zap className="w-4 h-4" /> Ativar por R$ 4,90/mês
             </button>
           </motion.div>
         ) : (

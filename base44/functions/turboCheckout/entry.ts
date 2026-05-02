@@ -3,60 +3,34 @@ import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
-// Prices (create these in your Stripe dashboard and update the IDs)
-const PLANS = {
-  weekly: {
-    label: 'Turbo Semanal',
-    price_cents: 1990,
-    interval: 'week',
-    trial_days: 3,
-  },
-  monthly: {
-    label: 'Turbo Mensal',
-    price_cents: 5990,
-    interval: 'month',
-    trial_days: 7,
-  },
-};
+const PRICE_ID = 'price_1TSRPoJZXlkMaATAhUTntKFC';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { action, plan, subscription_id, professional_id } = await req.json();
+  const { action, subscription_id, professional_id } = await req.json();
 
   // ── CREATE CHECKOUT SESSION ──
   if (action === 'create_checkout') {
-    const planData = PLANS[plan];
-    if (!planData) return Response.json({ error: 'Plano inválido' }, { status: 400 });
-
-    // Create price on the fly (or use pre-created price IDs from Stripe dashboard)
-    const price = await stripe.prices.create({
-      unit_amount: planData.price_cents,
-      currency: 'brl',
-      recurring: { interval: planData.interval },
-      product_data: { name: `Turbo Serfy — ${planData.label}` },
-    });
-
     const origin = req.headers.get('origin') || 'https://app.base44.com';
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
-      line_items: [{ price: price.id, quantity: 1 }],
+      line_items: [{ price: PRICE_ID, quantity: 1 }],
       subscription_data: {
-        trial_period_days: planData.trial_days,
         metadata: {
           professional_id,
           professional_email: user.email,
-          plan,
+          plan: 'monthly',
         },
       },
       metadata: {
         professional_id,
         professional_email: user.email,
-        plan,
+        plan: 'monthly',
       },
       success_url: `${origin}/professional/dashboard?turbo=success`,
       cancel_url: `${origin}/professional/dashboard?turbo=cancel`,
@@ -74,7 +48,6 @@ Deno.serve(async (req) => {
       cancel_at_period_end: true,
     });
 
-    // Update DB
     const subs = await base44.asServiceRole.entities.TurboSubscription.filter({
       stripe_subscription_id: subscription_id,
     });
@@ -98,9 +71,8 @@ Deno.serve(async (req) => {
 
     const sub = subs[0];
     const isActive = sub.status === 'active' || sub.status === 'trial';
-    const now = new Date();
     const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
-    const expired = periodEnd && periodEnd < now;
+    const expired = periodEnd && periodEnd < new Date();
 
     return Response.json({
       active: isActive && !expired,
