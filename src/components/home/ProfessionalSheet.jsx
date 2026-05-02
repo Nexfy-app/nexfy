@@ -266,7 +266,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
           <div className="flex items-start gap-2.5 bg-slate-50 border border-slate-200 rounded-2xl p-3">
             <Shield className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
             <p className="text-[11px] text-slate-600 leading-relaxed">
-              <strong>O SERV não processa pagamentos.</strong> Somos apenas uma plataforma de conexão entre clientes e profissionais. Valores, condições e formas de pagamento são acordados e realizados <strong>diretamente entre as partes</strong>.
+              <strong>O SERFY não processa pagamentos.</strong> Somos apenas uma plataforma de conexão entre clientes e profissionais. Valores, condições e formas de pagamento são acordados e realizados <strong>diretamente entre as partes</strong>.
             </p>
           </div>
 
