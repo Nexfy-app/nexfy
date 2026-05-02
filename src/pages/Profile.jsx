@@ -212,34 +212,6 @@ export default function Profile() {
           </motion.div>
         )}
 
-        {/* Availability toggle */}
-        {professional && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="bg-white rounded-2xl p-4"
-            style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  professional.is_available ? 'bg-green-50' : 'bg-slate-100'
-                }`}>
-                  <MapPin className={`w-5 h-5 ${professional.is_available ? 'text-green-600' : 'text-muted-foreground'}`} />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-foreground">Disponível agora</p>
-                  <p className="text-xs text-muted-foreground">
-                    {professional.is_available ? '● Visível no mapa' : 'Ative para aparecer no mapa'}
-                  </p>
-                </div>
-              </div>
-              <Switch checked={professional.is_available} onCheckedChange={toggleAvailability} />
-            </div>
-          </motion.div>
-        )}
-
         {/* Menu items */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}

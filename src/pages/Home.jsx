@@ -14,6 +14,8 @@ import AppTutorial from '../components/tutorial/AppTutorial';
 import { Link } from 'react-router-dom';
 import { Briefcase, X } from 'lucide-react';
 import { useEffect } from 'react';
+import ProAvailabilityToggle from '../components/home/ProAvailabilityToggle';
+import ProTurboFloating from '../components/home/ProTurboFloating';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -31,6 +33,8 @@ function formatDistance(km) {
 export default function Home() {
   const [userEmail, setUserEmail] = useState(null);
   const [isUserPro, setIsUserPro] = useState(null); // null = loading
+  const [myProfessional, setMyProfessional] = useState(null);
+  const [turboActive, setTurboActive] = useState(false);
   const [dismissedProBanner, setDismissedProBanner] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [otherCategoryText, setOtherCategoryText] = useState('');
@@ -45,7 +49,16 @@ export default function Home() {
       if (u?.email) {
         setUserEmail(u.email);
         base44.entities.Professional.filter({ user_email: u.email })
-          .then(res => setIsUserPro(res?.length > 0))
+          .then(res => {
+            setIsUserPro(res?.length > 0);
+            if (res?.length > 0) {
+              setMyProfessional(res[0]);
+              // check turbo status
+              base44.functions.invoke('turboCheckout', { action: 'get_status' })
+                .then(r => setTurboActive(r?.data?.active || false))
+                .catch(() => {});
+            }
+          })
           .catch(() => setIsUserPro(false));
       } else {
         setIsUserPro(false);
@@ -172,6 +185,17 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Pro floating controls — availability toggle + turbo nudge */}
+      {myProfessional && (
+        <div
+          className="absolute z-20 left-3 flex flex-col items-start gap-2"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)' }}
+        >
+          <ProTurboFloating professional={myProfessional} turboActive={turboActive} />
+          <ProAvailabilityToggle professional={myProfessional} />
+        </div>
+      )}
 
       {/* Nova lista de profissionais */}
       <ProListPanel
