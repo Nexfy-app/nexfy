@@ -49,7 +49,7 @@ const steps = [
     emoji: '⭐',
     title: 'Avalie o Profissional',
     description: 'Após o serviço ser concluído, avalie o profissional com 1 a 5 estrelas e deixe um comentário. Isso ajuda outros clientes a escolherem bem.',
-    tip: 'Avaliações honestas fortalecem a comunidade do Serfy.',
+    tip: 'Avaliações honestas fortalecem a comunidade do Nexfy.',
     color: 'from-yellow-500 to-yellow-600',
   },
   {
@@ -64,7 +64,7 @@ const steps = [
     icon: Shield,
     emoji: '🔒',
     title: 'Pagamento Direto & Seguro',
-    description: 'O Serfy não processa pagamentos. Clientes e profissionais combinam o valor e a forma de pagamento diretamente (Pix, dinheiro, etc.).',
+    description: 'O Nexfy não processa pagamentos. Clientes e profissionais combinam o valor e a forma de pagamento diretamente (Pix, dinheiro, etc.).',
     tip: 'Combine tudo pelo chat antes de começar o serviço.',
     color: 'from-slate-500 to-slate-700',
   },
@@ -90,7 +90,7 @@ export default function AppTutorial() {
       <button
         onClick={() => setOpen(true)}
         className="flex items-center gap-1.5 bg-white/80 border border-slate-200 rounded-full px-2.5 py-1 text-[10px] text-slate-500 hover:text-foreground hover:border-slate-400 transition-all shadow-sm font-medium"
-        title="Como usar o Serfy"
+        title="Como usar o Nexfy"
       >
         <span className="text-[11px]">📖</span>
         Como usar
