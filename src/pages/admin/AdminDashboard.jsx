@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Users, Briefcase, Star, ArrowLeft,
-  TrendingUp, Activity, Shield, Trash2, UserX, UserCheck, ShieldCheck, ShieldOff
+  TrendingUp, Activity, Shield, Trash2, UserX, UserCheck, ShieldCheck, ShieldOff,
+  FileCheck, FileX, Clock, ExternalLink
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,8 @@ export default function AdminDashboard() {
   const { data: professionals = [] } = useQuery({ queryKey: ['admin-pros'], queryFn: () => base44.entities.Professional.list(), enabled });
   const { data: requests = [] } = useQuery({ queryKey: ['admin-requests'], queryFn: () => base44.entities.ServiceRequest.list('-created_date', 200), enabled });
   const { data: reviews = [] } = useQuery({ queryKey: ['admin-reviews'], queryFn: () => base44.entities.Review.list('-created_date', 50), enabled });
+  const { data: documents = [] } = useQuery({ queryKey: ['admin-docs'], queryFn: () => base44.entities.VerificationDocument.list('-created_date', 100), enabled });
+  const pendingDocs = documents.filter(d => d.status === 'pending');
   const onlinePros = professionals.filter(p => p.is_available).length;
   const completedRequests = requests.filter(r => r.status === 'completed');
   const totalEarnings = completedRequests.reduce((s, r) => s + (r.price_agreed || 0), 0);
@@ -84,6 +87,18 @@ export default function AdminDashboard() {
     await base44.entities.Professional.delete(proId);
     queryClient.invalidateQueries({ queryKey: ['admin-pros'] });
     toast.success('Profissional removido.');
+  });
+
+  const handleApproveDoc = (docId) => confirm('Aprovar este documento?', async () => {
+    await base44.entities.VerificationDocument.update(docId, { status: 'approved' });
+    queryClient.invalidateQueries({ queryKey: ['admin-docs'] });
+    toast.success('Documento aprovado!');
+  });
+
+  const handleRejectDoc = (docId) => confirm('Rejeitar este documento?', async () => {
+    await base44.entities.VerificationDocument.update(docId, { status: 'rejected' });
+    queryClient.invalidateQueries({ queryKey: ['admin-docs'] });
+    toast.success('Documento rejeitado.');
   });
 
   const handlePromoteUser = (userId) => confirm('Promover este usuário a admin?', async () => {
@@ -181,12 +196,58 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="users">
-          <TabsList className="w-full rounded-xl bg-secondary h-10 grid grid-cols-3">
+        <Tabs defaultValue="docs">
+          <TabsList className="w-full rounded-xl bg-secondary h-10 grid grid-cols-4">
+            <TabsTrigger value="docs" className="rounded-lg text-[11px]">
+              Documentos {pendingDocs.length > 0 && <span className="ml-1 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">{pendingDocs.length}</span>}
+            </TabsTrigger>
             <TabsTrigger value="users" className="rounded-lg text-[11px]">Usuários</TabsTrigger>
             <TabsTrigger value="pros" className="rounded-lg text-[11px]">Profissionais</TabsTrigger>
             <TabsTrigger value="requests" className="rounded-lg text-[11px]">Pedidos</TabsTrigger>
           </TabsList>
+
+          {/* Documents */}
+          <TabsContent value="docs">
+            <div className="space-y-2 mt-3">
+              {documents.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Nenhum documento enviado ainda</p>}
+              {documents.map(doc => {
+                const pro = professionals.find(p => p.id === doc.professional_id);
+                return (
+                  <div key={doc.id} className="bg-white rounded-2xl p-4" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{doc.document_name}</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{doc.professional_email}</p>
+                        {pro && <p className="text-[11px] text-muted-foreground truncate">Profissional: {pro.name}</p>}
+                      </div>
+                      <span className={`text-[9px] font-bold px-2 py-1 rounded-full shrink-0 ${
+                        doc.status === 'approved' ? 'bg-green-100 text-green-700' :
+                        doc.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                        'bg-amber-100 text-amber-700'
+                      }`}>
+                        {doc.status === 'approved' ? '✓ Aprovado' : doc.status === 'rejected' ? '✗ Rejeitado' : '⏳ Pendente'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <a href={doc.file_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-blue-600 hover:underline">
+                        <ExternalLink className="w-3 h-3" /> Ver arquivo
+                      </a>
+                      {doc.status === 'pending' && (
+                        <>
+                          <button onClick={() => handleApproveDoc(doc.id)} className="flex items-center gap-1 h-7 px-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-[10px] font-semibold hover:bg-green-100 transition">
+                            <FileCheck className="w-3 h-3" /> Aprovar
+                          </button>
+                          <button onClick={() => handleRejectDoc(doc.id)} className="flex items-center gap-1 h-7 px-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[10px] font-semibold hover:bg-red-100 transition">
+                            <FileX className="w-3 h-3" /> Rejeitar
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </TabsContent>
 
           {/* Users */}
           <TabsContent value="users">

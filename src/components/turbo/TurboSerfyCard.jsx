@@ -14,24 +14,8 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
     ? format(new Date(subscription.current_period_end), "dd 'de' MMMM", { locale: ptBR })
     : null;
 
-  const handleActivate = async () => {
-    if (!professional?.id) { toast.error('Perfil não encontrado'); return; }
-    setLoading(true);
-    try {
-      const res = await base44.functions.invoke('turboCheckout', {
-        action: 'create_checkout',
-        professional_id: professional.id,
-      });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
-      } else {
-        toast.error('Erro ao iniciar checkout. Tente novamente.');
-      }
-    } catch {
-      toast.error('Erro ao conectar com o servidor.');
-    } finally {
-      setLoading(false);
-    }
+  const handleActivate = () => {
+    window.location.href = 'https://buy.stripe.com/bJe3cu44u3Aw3OH3gT1VK00';
   };
 
   const handleCancel = async () => {
