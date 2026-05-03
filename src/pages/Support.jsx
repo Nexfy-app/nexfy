@@ -53,7 +53,7 @@ export default function Support() {
     setLoading(true);
     const conv = await base44.agents.createConversation({
       agent_name: 'suporte',
-      metadata: { name: 'Suporte Serfy' },
+      metadata: { name: 'Suporte Nexfy' },
     });
     setConversation(conv);
 
@@ -103,7 +103,7 @@ export default function Support() {
           <LifeBuoy className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h1 className="text-base font-bold text-foreground leading-tight">Suporte Serfy</h1>
+          <h1 className="text-base font-bold text-foreground leading-tight">Suporte Nexfy</h1>
           <p className="text-[11px] text-muted-foreground">Assistente de ajuda</p>
         </div>
       </div>

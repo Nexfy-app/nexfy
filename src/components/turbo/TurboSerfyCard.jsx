@@ -57,7 +57,7 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground leading-tight">Turbo Serfy</p>
+                <p className="text-sm font-semibold text-foreground leading-tight">Turbo Nexfy</p>
                 <p className="text-xs text-muted-foreground">
                   {subscription.plan === 'weekly' ? 'Plano Semanal' : 'Plano Mensal'}
                   {periodEnd ? ` · renova ${periodEnd}` : ''}
@@ -109,7 +109,7 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">Turbo Serfy</p>
+            <p className="text-sm font-semibold text-foreground">Turbo Nexfy</p>
             <p className="text-xs text-muted-foreground">Apareça primeiro e receba mais clientes</p>
           </div>
         </div>

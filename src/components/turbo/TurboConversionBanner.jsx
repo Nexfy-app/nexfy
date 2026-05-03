@@ -56,7 +56,7 @@ export default function TurboConversionBanner({ searchCount = 0, category = '', 
             className="mt-3 w-full h-9 bg-white text-[#0d4f47] rounded-xl font-black text-xs flex items-center justify-center gap-1.5 hover:bg-white/90 transition"
           >
             <Zap className="w-3.5 h-3.5" />
-            Ativar Turbo Serfy — começa grátis
+            Ativar Turbo Nexfy — começa grátis
           </button>
         </div>
       </motion.div>

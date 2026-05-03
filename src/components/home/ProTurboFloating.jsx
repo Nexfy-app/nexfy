@@ -46,7 +46,7 @@ export default function ProTurboFloating({ professional, turboActive }) {
         <Zap className="w-3.5 h-3.5 text-white" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-semibold text-foreground leading-tight">Ative o Turbo Serfy</p>
+        <p className="text-[11px] font-semibold text-foreground leading-tight">Ative o Turbo Nexfy</p>
         <p className="text-[10px] text-muted-foreground leading-tight">Apareça primeiro no mapa</p>
       </div>
       <button

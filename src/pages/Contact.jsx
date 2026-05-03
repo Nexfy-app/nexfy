@@ -17,7 +17,7 @@ export default function Contact() {
     setSending(true);
     await base44.integrations.Core.SendEmail({
       to: 'spage.suporte@gmail.com',
-      subject: `[Serfy Contato] ${form.name}`,
+      subject: `[Nexfy Contato] ${form.name}`,
       body: `Nome: ${form.name}\nEmail: ${form.email}\n\nMensagem:\n${form.message}`,
     });
     toast.success('Mensagem enviada! Responderemos em breve.');
