@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
@@ -92,11 +92,14 @@ export default function VerifyDocuments() {
     if (myPro?.length > 0) setProfessional(myPro[0]);
   }, [myPro]);
 
+  const fileInputRef = useRef(null);
+
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!docName.trim()) {
-      toast.error('Descreva o documento');
+      toast.error('Descreva o documento antes de selecionar o arquivo');
+      e.target.value = '';
       return;
     }
 
@@ -111,9 +114,15 @@ export default function VerifyDocuments() {
       file_url,
     });
 
+    // Notify admins
+    base44.functions.invoke('notifyAdminsNewDocument', {
+      data: { professional_email: user.email, document_name: docName.trim(), document_type: selectedType }
+    }).catch(() => {});
+
     toast.success('Documento enviado para validação!');
     setDocName('');
     setSelectedType('certificate');
+    if (fileInputRef.current) fileInputRef.current.value = '';
     queryClient.invalidateQueries({ queryKey: ['my-docs'] });
     setUploading(false);
   };
@@ -234,19 +243,20 @@ export default function VerifyDocuments() {
                 />
             </div>
 
-            <label className="block">
-              <input type="file" className="hidden" onChange={handleUpload} disabled={uploading} />
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-slate-400 transition">
-                <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-1.5" />
-                <p className="text-xs font-semibold text-foreground">Selecionar arquivo</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">PDF, JPG, PNG (máx 5MB)</p>
-                {uploading && <p className="text-[10px] text-blue-600 font-semibold mt-1">Enviando...</p>}
-              </div>
-            </label>
+            <div
+              onClick={() => !uploading && fileInputRef.current?.click()}
+              className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-slate-400 transition"
+            >
+              <input ref={fileInputRef} type="file" className="hidden" onChange={handleUpload} disabled={uploading} accept=".pdf,.jpg,.jpeg,.png" />
+              <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-1.5" />
+              <p className="text-xs font-semibold text-foreground">Selecionar arquivo</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">PDF, JPG, PNG (máx 5MB)</p>
+              {uploading && <p className="text-[10px] text-blue-600 font-semibold mt-1">Enviando...</p>}
+            </div>
           </div>
 
           <Button
-            onClick={() => document.querySelector('input[type="file"]').click()}
+            onClick={() => !uploading && docName.trim() && fileInputRef.current?.click()}
             disabled={uploading || !docName.trim()}
             className="w-full h-11 rounded-xl font-semibold"
           >

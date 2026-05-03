@@ -186,7 +186,7 @@ export default function ProfessionalDashboard() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('turbo') === 'success') {
       window.history.replaceState({}, '', '/professional/dashboard');
-      toast.success('Pagamento confirmado! Ativando Turbo Serfy...');
+      toast.success('Pagamento confirmado! Ativando Turbo Nexfy...');
       let attempts = 0;
       const interval = setInterval(async () => {
         attempts++;
@@ -195,7 +195,7 @@ export default function ProfessionalDashboard() {
           clearInterval(interval);
           queryClient.invalidateQueries({ queryKey: ['turbo-subscription'] });
           queryClient.invalidateQueries({ queryKey: ['my-pro-dashboard'] });
-          toast.success('Turbo Serfy ativo! Seu perfil está em destaque.');
+          toast.success('Turbo Nexfy ativo! Seu perfil está em destaque.');
         } else if (attempts >= 10) {
           clearInterval(interval);
           refetchTurbo();

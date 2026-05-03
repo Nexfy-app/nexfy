@@ -35,8 +35,8 @@ export default function CookieConsent({ onAccept }) {
                 <h3 className="font-semibold text-sm">Cookies e Termos de Uso</h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   Utilizamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossos{' '}
-                  <span className="text-primary underline cursor-pointer">Termos de Uso</span> e{' '}
-                  <span className="text-primary underline cursor-pointer">Política de Privacidade</span>.
+                  <a href="/about" className="text-primary underline">Termos de Uso</a> e{' '}
+                  <a href="/about" className="text-primary underline">Política de Privacidade</a>.
                   Coletamos dados de IP conforme a LGPD.
                 </p>
               </div>

@@ -30,8 +30,8 @@ export default function Profile() {
     // Send a deletion request email to admin and notify user
     await base44.integrations.Core.SendEmail({
       to: user.email,
-      subject: 'Solicitação de exclusão de conta - Serfy',
-      body: `Olá ${user.full_name || user.email},\n\nRecebemos sua solicitação de exclusão de conta. Nossa equipe processará sua solicitação em até 5 dias úteis e você receberá uma confirmação por e-mail.\n\nSerfy`,
+      subject: 'Solicitação de exclusão de conta - Nexfy',
+      body: `Olá ${user.full_name || user.email},\n\nRecebemos sua solicitação de exclusão de conta. Nossa equipe processará sua solicitação em até 5 dias úteis e você receberá uma confirmação por e-mail.\n\nNexfy`,
     }).catch(() => {});
     setDeletingAccount(false);
     setShowDeleteConfirm(false);
