@@ -117,7 +117,7 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
           disabled={loading || !professional?.id}
           className="w-full h-11 rounded-xl font-semibold text-sm text-white bg-black flex items-center justify-center gap-2 transition hover:bg-black/80 active:scale-[0.98] disabled:opacity-50"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Zap className="w-4 h-4" /> Ativar — R$ 4,90/mês</>}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Zap className="w-4 h-4" /> Ativar — R$ 12,90/mês</>}
         </button>
         <p className="text-center text-[10px] text-muted-foreground mt-2">Cancele quando quiser</p>
       </div>
