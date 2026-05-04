@@ -55,12 +55,14 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
 
           <div className="grid grid-cols-2 gap-2 mb-3">
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Visualizações</p>
+              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Visualizações de perfil</p>
               <p className="text-xl font-bold text-foreground">{subscription.profile_views || 0}</p>
+              <p className="text-[9px] text-muted-foreground mt-0.5">cliques no seu perfil</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Impressões</p>
+              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Impressões na busca</p>
               <p className="text-xl font-bold text-foreground">{subscription.search_impressions || 0}</p>
+              <p className="text-[9px] text-muted-foreground mt-0.5">vezes que apareceu</p>
             </div>
           </div>
 

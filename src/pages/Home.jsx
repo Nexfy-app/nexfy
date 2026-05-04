@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { LocateFixed, MapPin } from 'lucide-react';
@@ -13,7 +13,6 @@ import useUserLocation from '../hooks/useUserLocation';
 import AppTutorial from '../components/tutorial/AppTutorial';
 import { Link } from 'react-router-dom';
 import { Briefcase, X } from 'lucide-react';
-import { useEffect } from 'react';
 import ProAvailabilityToggle from '../components/home/ProAvailabilityToggle';
 
 function haversine(lat1, lng1, lat2, lng2) {
@@ -86,21 +85,36 @@ export default function Home() {
   }, [categoryFiltered, userLocation, radiusKm, userEmail]);
 
   const availableWithDist = useMemo(() => {
-    return available.map(p => {
+    const sorted = available.map(p => {
       if (!userLocation || !p.latitude || !p.longitude) return { ...p, _dist: null };
       const dist = haversine(userLocation.lat, userLocation.lng, p.latitude, p.longitude);
       return { ...p, _dist: dist };
     }).sort((a, b) => {
-      // Turbo (premium) professionals first, then by distance
       if (a.is_premium && !b.is_premium) return -1;
       if (!a.is_premium && b.is_premium) return 1;
       return (a._dist ?? 999) - (b._dist ?? 999);
     });
+    return sorted;
   }, [available, userLocation]);
+
+  // Rastreia search_impressions para profissionais Turbo visíveis
+  const trackedImpressionsRef = React.useRef(new Set());
+  React.useEffect(() => {
+    availableWithDist.forEach(p => {
+      if (p.is_premium && !trackedImpressionsRef.current.has(p.id)) {
+        trackedImpressionsRef.current.add(p.id);
+        base44.functions.invoke('trackTurboMetrics', { professional_id: p.id, metric: 'search_impression' }).catch(() => {});
+      }
+    });
+  }, [availableWithDist]);
 
   const handleSelectPro = (pro) => {
     setSelectedPro({ ...pro, _distFormatted: pro._dist ? formatDistance(pro._dist) : null });
     setSheetOpen(true);
+    // Rastreia visualização de perfil para profissionais Turbo
+    if (pro.is_premium) {
+      base44.functions.invoke('trackTurboMetrics', { professional_id: pro.id, metric: 'profile_view' }).catch(() => {});
+    }
   };
 
   return (
