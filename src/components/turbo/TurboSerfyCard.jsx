@@ -15,7 +15,7 @@ export default function TurboSerfyCard({ professional, subscription, onRefresh }
     : null;
 
   const handleActivate = () => {
-    window.location.href = 'https://buy.stripe.com/bJe3cu44u3Aw3OH3gT1VK00';
+    window.location.href = 'https://buy.stripe.com/5kQ5kCcB08UQ4SLbNp1VK01';
   };
 
   const handleCancel = async () => {
