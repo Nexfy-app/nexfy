@@ -194,13 +194,7 @@ export default function ChatRoom() {
       is_read: false,
     });
 
-    if (receiverEmail && type === 'text') {
-      base44.integrations.Core.SendEmail({
-        to: receiverEmail,
-        subject: `💬 Nova mensagem de ${user.full_name || user.email}`,
-        body: `"${content}"\n\nAbra o SERV para responder.`,
-      }).catch(() => {});
-    }
+    // Email de notificação é enviado automaticamente via automação de backend
     queryClient.invalidateQueries({ queryKey: ['chat-messages', requestId] });
     setSending(false);
   };
