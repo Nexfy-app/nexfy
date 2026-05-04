@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
-import TurboSerfyCard from '../components/turbo/TurboSerfyCard';
+import TurboNexfyCard from '../components/turbo/TurboNexfyCard';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from "@/components/ui/input";
@@ -205,10 +205,10 @@ export default function Profile() {
           )}
         </motion.div>
 
-        {/* Turbo Serfy — visível apenas para profissionais */}
+        {/* Turbo Nexfy — visível apenas para profissionais */}
         {professional && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            <TurboSerfyCard
+            <TurboNexfyCard
               professional={professional}
               subscription={turboData?.subscription || null}
               onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-export default function TurboSerfyCard({ professional, subscription, onRefresh }) {
+export default function TurboNexfyCard({ professional, subscription, onRefresh }) {
   const [loading, setLoading] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 

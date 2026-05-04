@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ProfessionalSheet from '../components/home/ProfessionalSheet';
 import CompleteServiceModal from '../components/dashboard/CompleteServiceModal';
-import TurboSerfyCard from '../components/turbo/TurboSerfyCard';
+import TurboNexfyCard from '../components/turbo/TurboNexfyCard';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -318,7 +318,7 @@ export default function ProfessionalDashboard() {
       <div className="px-4 pb-8 space-y-3 pt-4">
 
         {/* Turbo */}
-        <TurboSerfyCard
+        <TurboNexfyCard
           professional={professional}
           subscription={turboData?.subscription || null}
           onRefresh={refetchTurbo}
