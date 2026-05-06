@@ -219,19 +219,19 @@ export default function Profile() {
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
             <button
               onClick={() => setShowTurboModal(true)}
-              className="w-full bg-white rounded-2xl px-4 py-3.5 flex items-center gap-3.5 hover:bg-slate-50 transition"
+              className="w-full bg-foreground rounded-2xl px-4 py-3.5 flex items-center gap-3.5 hover:bg-foreground/90 transition"
               style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
             >
-              <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <Zap className="w-4 h-4 text-amber-500" />
+              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4 text-amber-400" />
               </div>
-              <span className="text-sm font-medium text-foreground flex-1 text-left">Minhas Assinaturas</span>
+              <span className="text-sm font-medium text-white flex-1 text-left">Minhas Assinaturas</span>
               {turboData?.active && (
                 <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Zap className="w-2.5 h-2.5" /> Ativo
                 </span>
               )}
-              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+              <ChevronRight className="w-4 h-4 text-white/50 shrink-0" />
             </button>
           </motion.div>
         )}
