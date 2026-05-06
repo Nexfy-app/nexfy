@@ -219,12 +219,12 @@ export default function Profile() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
             <button
             onClick={() => setShowTurboModal(true)}
-            className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition relative overflow-hidden bg-[hsl(var(--card-foreground))]"
+            className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', boxShadow: '0 4px 20px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.2)' }}>
             
-              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 hidden">
-                <Zap className="w-4 h-4 text-amber-400 hidden" />
-              </div>
+              
+
+            
               <span className="text-sm font-medium text-white flex-1 text-left">Minhas Assinaturas</span>
               {turboData?.active &&
             <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
