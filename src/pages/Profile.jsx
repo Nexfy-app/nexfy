@@ -75,6 +75,7 @@ export default function Profile() {
   });
 
   const [turboData, setTurboData] = React.useState(null);
+  const [showTurboModal, setShowTurboModal] = React.useState(false);
   useEffect(() => {
     if (professional) {
       base44.functions.invoke('turboCheckout', { action: 'get_status' })
@@ -213,23 +214,23 @@ export default function Profile() {
           )}
         </motion.div>
 
-        {/* Minhas Assinaturas — visível apenas para profissionais */}
+        {/* Botão Minhas Assinaturas — visível apenas para profissionais */}
         {professional && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-              <div className="px-4 pt-4 pb-2 flex items-center gap-2 border-b border-slate-100">
+            <button
+              onClick={() => setShowTurboModal(true)}
+              className="w-full bg-white rounded-2xl px-4 py-3.5 flex items-center gap-3.5 hover:bg-slate-50 transition"
+              style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                 <Zap className="w-4 h-4 text-amber-500" />
-                <p className="text-sm font-bold text-foreground">Minhas Assinaturas</p>
               </div>
-              <div className="p-3">
-                <TurboNexfyCard
-                  professional={professional}
-                  subscription={turboData?.subscription || null}
-                  active={turboData?.active}
-                  onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}
-                />
-              </div>
-            </div>
+              <span className="text-sm font-medium text-foreground flex-1 text-left">Minhas Assinaturas</span>
+              {turboData?.active && (
+                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">⚡ Ativo</span>
+              )}
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            </button>
           </motion.div>
         )}
 
@@ -319,6 +320,34 @@ export default function Profile() {
           Excluir minha conta
         </motion.button>
       </div>
+
+      {/* Modal Minhas Assinaturas */}
+      {showTurboModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowTurboModal(false)}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-md bg-background rounded-t-3xl p-5 pb-10"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5" />
+            <div className="flex items-center gap-2 mb-4">
+              <Zap className="w-5 h-5 text-amber-500" />
+              <h2 className="text-base font-bold text-foreground">Minhas Assinaturas</h2>
+            </div>
+            <TurboNexfyCard
+              professional={professional}
+              subscription={turboData?.subscription || null}
+              active={turboData?.active}
+              onRefresh={() => {
+                base44.functions.invoke('turboCheckout', { action: 'get_status' })
+                  .then(r => setTurboData(r?.data || null))
+                  .catch(() => {});
+              }}
+            />
+          </motion.div>
+        </div>
+      )}
 
       {/* Delete Account Confirmation Dialog */}
       {showDeleteConfirm && (
