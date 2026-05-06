@@ -55,8 +55,7 @@ export default function TurboSection({ onActivate, loading }) {
               className="shrink-0 flex flex-col items-end rounded-xl"
               style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', padding: '5px 10px' }}
             >
-              <span className="text-sm font-black leading-tight" style={{ color: '#f1f5f9', letterSpacing: '-0.03em' }}>R$12,90</span>
-              <span className="text-[9px] font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>/mês</span>
+              <span className="text-sm font-black leading-tight whitespace-nowrap" style={{ color: '#f1f5f9', letterSpacing: '-0.03em' }}>R$12,90<span className="text-[9px] font-medium ml-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>/mês</span></span>
             </div>
           </div>
         </div>
