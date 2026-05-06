@@ -219,8 +219,8 @@ export default function Profile() {
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
             <button
               onClick={() => setShowTurboModal(true)}
-              className="w-full bg-foreground rounded-2xl px-4 py-3.5 flex items-center gap-3.5 hover:bg-foreground/90 transition"
-              style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
+              className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', boxShadow: '0 4px 20px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.2)' }}
             >
               <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                 <Zap className="w-4 h-4 text-amber-400" />
