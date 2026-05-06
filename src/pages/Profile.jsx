@@ -5,6 +5,7 @@ import {
   User, Star, Briefcase, LogOut, ChevronRight,
   Shield, Award, Bell, BarChart2, Trash2, Zap } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
+import TurboSection from '../components/turbo/TurboSection';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -189,57 +190,36 @@ export default function Profile() {
         </motion.div>
 
         {/* Botão Turbo Nexfy — visível apenas para profissionais */}
-        {professional && (
+        {professional && !turboData?.active && (
+          <TurboSection onActivate={handleTurboClick} loading={turboLoading} />
+        )}
+
+        {professional && turboData?.active && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            {turboData?.active ? (
+            <div
+              className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%)',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 20px rgba(0,0,0,0.22)'
+              }}>
               <div
-                className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 relative overflow-hidden"
-                style={{
-                  background: 'linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%)',
-                  boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 20px rgba(0,0,0,0.22)'
-                }}>
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Zap className="w-4 h-4" style={{ color: '#e2e8f0' }} strokeWidth={2.5} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold" style={{ color: '#f1f5f9', letterSpacing: '-0.01em' }}>Turbo Nexfy</p>
-                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>Perfil em destaque na plataforma</p>
-                </div>
-                <div
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
-                  <span className="text-[10px] font-semibold" style={{ color: '#e2e8f0' }}>Ativo</span>
-                </div>
+                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <Zap className="w-4 h-4" style={{ color: '#e2e8f0' }} strokeWidth={2.5} />
               </div>
-            ) : (
-              <button
-                onClick={handleTurboClick}
-                disabled={turboLoading}
-                className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition active:scale-[0.98] relative overflow-hidden disabled:opacity-70"
-                style={{
-                  background: 'linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%)',
-                  boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 20px rgba(0,0,0,0.22)'
-                }}>
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  {turboLoading
-                    ? <div className="w-4 h-4 border-2 border-white/20 border-t-white/70 rounded-full animate-spin" />
-                    : <Zap className="w-4 h-4" style={{ color: '#e2e8f0' }} strokeWidth={2.5} />}
-                </div>
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-semibold" style={{ color: '#f1f5f9', letterSpacing: '-0.01em' }}>Assinar Turbo Nexfy</p>
-                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>Destaque nas buscas · R$ 12,90/mês</p>
-                </div>
-                <ChevronRight className="w-4 h-4 shrink-0" style={{ color: 'rgba(255,255,255,0.2)' }} />
-              </button>
-            )}
+              <div className="flex-1">
+                <p className="text-sm font-semibold" style={{ color: '#f1f5f9', letterSpacing: '-0.01em' }}>Turbo Nexfy</p>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>Perfil em destaque na plataforma</p>
+              </div>
+              <div
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
+                <span className="text-[10px] font-semibold" style={{ color: '#e2e8f0' }}>Ativo</span>
+              </div>
+            </div>
           </motion.div>
         )}
 
