@@ -155,7 +155,7 @@ export default function TurboSection({ onActivate, loading }) {
       </AnimatePresence>
 
       {/* Footer note */}
-      <p className="text-center text-[10px] pb-4" style={{ color: 'rgba(255,255,255,0.18)' }}>
+      <p className="text-center text-[10px] pb-4" style={{ color: 'rgba(255,255,255,0.42)' }}>
         Cancele a qualquer momento · Sem fidelidade
       </p>
     </motion.div>);
