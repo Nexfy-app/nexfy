@@ -187,14 +187,30 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
 
         {/* Turbo banner visible to clients */}
         {professional.is_premium && (
-          <div className="mx-5 mb-3 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0d4f47 0%, #021a14 100%)' }}>
+          <div
+            className="mx-5 mb-3 rounded-2xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%)',
+              boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 16px rgba(0,0,0,0.18)'
+            }}
+          >
             <div className="px-4 py-3 flex items-center gap-3">
-              <div className="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
-                <Zap className="w-4 h-4 text-amber-300" />
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <Zap className="w-4 h-4" style={{ color: '#e2e8f0' }} strokeWidth={2.5} />
               </div>
-              <div>
-                <p className="text-white font-black text-xs">Profissional Turbo Nexfy ⚡</p>
-                <p className="text-white/70 text-[11px] leading-tight mt-0.5">Perfil verificado com prioridade máxima na plataforma</p>
+              <div className="flex-1">
+                <p className="text-xs font-semibold" style={{ color: '#f1f5f9', letterSpacing: '-0.01em' }}>Turbo Nexfy</p>
+                <p className="text-[11px] leading-tight mt-0.5" style={{ color: 'rgba(255,255,255,0.38)' }}>Profissional em destaque na plataforma</p>
+              </div>
+              <div
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 5px rgba(52,211,153,0.8)' }} />
+                <span className="text-[9px] font-semibold" style={{ color: '#e2e8f0' }}>Premium</span>
               </div>
             </div>
           </div>
