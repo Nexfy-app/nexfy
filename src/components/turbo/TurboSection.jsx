@@ -97,14 +97,13 @@ export default function TurboSection({ onActivate, loading }) {
           onClick={() => setExpanded(!expanded)}
           className="w-full flex items-center justify-center gap-1.5 py-1 transition-opacity hover:opacity-80">
           
-          <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.65)' }}>
             {expanded ? 'Recolher benefícios' : 'Ver benefícios'}
           </span>
           <motion.div
             animate={{ rotate: expanded ? 180 : 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}>
-            
-            <ChevronDown className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.30)' }} />
+            <ChevronDown className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.60)' }} />
           </motion.div>
         </button>
       </div>
