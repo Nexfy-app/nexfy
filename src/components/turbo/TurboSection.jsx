@@ -138,11 +138,10 @@ export default function TurboSection({ onActivate, loading }) {
           {loading ? (
             <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin" />
           ) : (
-            <>
+            <span className="flex items-center justify-center gap-2 w-full min-w-0">
               <Zap className="w-4 h-4 shrink-0" strokeWidth={2.5} />
               <span className="truncate">Ativar Turbo Nexfy</span>
-              <ChevronRight className="w-4 h-4 shrink-0 opacity-40 ml-auto" />
-            </>
+            </span>
           )}
         </motion.button>
         <p className="text-center text-[10px] mt-2.5" style={{ color: 'rgba(255,255,255,0.22)' }}>
