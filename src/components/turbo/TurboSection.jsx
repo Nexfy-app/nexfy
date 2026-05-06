@@ -84,11 +84,13 @@ export default function TurboSection({ onActivate, loading }) {
           
           {loading ?
           <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin" /> :
-
-          <>
+          <div className="flex flex-col items-center leading-tight">
+            <div className="flex items-center gap-1.5">
               <Zap className="w-4 h-4 shrink-0" strokeWidth={2.5} />
-              <span>Ativar Turbo</span>
-            </>
+              <span className="font-bold">Ativar Turbo</span>
+            </div>
+            <span className="text-[10px] font-medium mt-0.5" style={{ color: 'rgba(13,13,13,0.45)' }}>Por menos de R$0,43/dia</span>
+          </div>
           }
         </motion.button>
 
