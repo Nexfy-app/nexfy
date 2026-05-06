@@ -75,7 +75,7 @@ export default function TurboSection({ onActivate, loading }) {
           whileTap={{ scale: 0.97 }}
           onClick={onActivate}
           disabled={loading}
-          className="w-full h-12 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
+          className="turbo-cta-btn w-full h-12 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-opacity"
           style={{
             background: 'linear-gradient(160deg, #f8fafc 0%, #e2e8f0 100%)',
             color: '#0d0d0d',
