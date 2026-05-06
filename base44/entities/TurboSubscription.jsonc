@@ -78,9 +78,7 @@
     "plan"
   ],
   "rls": {
-    "create": {
-      "data.professional_email": "{{user.email}}"
-    },
+    "create": {},
     "read": {
       "$or": [
         {

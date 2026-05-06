@@ -3,7 +3,7 @@ import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
-const PRICE_ID = 'price_1TSRPoJZXlkMaATAhUTntKFC';
+const PRICE_ID = Deno.env.get('STRIPE_PRICE_ID');
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -14,28 +14,36 @@ Deno.serve(async (req) => {
 
   // ── CREATE CHECKOUT SESSION ──
   if (action === 'create_checkout') {
+    if (!PRICE_ID) return Response.json({ error: 'STRIPE_PRICE_ID secret não configurado' }, { status: 500 });
+
     const origin = req.headers.get('origin') || 'https://app.base44.com';
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [{ price: PRICE_ID, quantity: 1 }],
-      subscription_data: {
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{ price: PRICE_ID, quantity: 1 }],
+        subscription_data: {
+          metadata: {
+            professional_id,
+            professional_email: user.email,
+            plan: 'monthly',
+          },
+        },
         metadata: {
           professional_id,
           professional_email: user.email,
           plan: 'monthly',
         },
-      },
-      metadata: {
-        professional_id,
-        professional_email: user.email,
-        plan: 'monthly',
-      },
-      success_url: `${origin}/professional/dashboard?turbo=success`,
-      cancel_url: `${origin}/professional/dashboard?turbo=cancel`,
-      customer_email: user.email,
-    });
+        success_url: `${origin}/professional/dashboard?turbo=success`,
+        cancel_url: `${origin}/profile?turbo=cancel`,
+        customer_email: user.email,
+      });
+    } catch (err) {
+      console.error('[turboCheckout] Stripe error:', err.message);
+      return Response.json({ error: err.message }, { status: 500 });
+    }
 
     return Response.json({ url: session.url });
   }
