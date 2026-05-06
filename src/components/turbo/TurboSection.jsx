@@ -44,7 +44,7 @@ export default function TurboSection({ onActivate, loading }) {
           >
             <Zap className="w-5 h-5" style={{ color: '#f1f5f9' }} strokeWidth={2.5} />
           </div>
-          <div className="flex flex-1 flex-wrap items-start justify-between gap-2 min-w-0">
+          <div className="flex flex-1 items-center justify-between gap-2 min-w-0">
             <div className="min-w-0">
               <p className="text-base font-bold leading-tight" style={{ color: '#f1f5f9', letterSpacing: '-0.02em' }}>
                 Turbo Nexfy
