@@ -14,8 +14,17 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
     ? format(new Date(subscription.current_period_end), "dd 'de' MMMM", { locale: ptBR })
     : null;
 
-  const handleActivate = () => {
-    window.location.href = 'https://buy.stripe.com/5kQ5kCcB08UQ4SLbNp1VK01';
+  const handleActivate = async () => {
+    if (!professional?.id) return;
+    setLoading(true);
+    const res = await base44.functions.invoke('turboCheckout', {
+      action: 'create_checkout',
+      professional_id: professional.id,
+    });
+    setLoading(false);
+    if (res?.data?.url) {
+      window.location.href = res.data.url;
+    }
   };
 
   const handleCancel = async () => {
@@ -33,54 +42,60 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
   // ── ACTIVE ──
   if (isActive) {
     return (
-      <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)' }}>
-        <div className="px-4 pt-4 pb-3">
+      <div className="rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>
+        {/* Shine sweep animation */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+          <div className="turbo-shine" />
+        </div>
+
+        <div className="px-4 pt-4 pb-3 relative">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-amber-400 rounded-xl flex items-center justify-center">
+                <Zap className="w-4 h-4 text-black" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground leading-tight">Turbo Nexfy</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm font-semibold text-white leading-tight">Turbo Nexfy</p>
+                <p className="text-xs text-white/60">
                   {subscription.plan === 'weekly' ? 'Plano Semanal' : 'Plano Mensal'}
                   {periodEnd ? ` · renova ${periodEnd}` : ''}
                 </p>
               </div>
             </div>
-            <span className="text-[11px] font-medium text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
-              {subscription.status === 'trial' ? 'Trial' : 'Ativo'}
+            <span className="text-[11px] font-bold text-amber-300 bg-amber-400/20 px-2.5 py-1 rounded-full border border-amber-400/30">
+              {subscription.status === 'trial' ? '⚡ Trial' : '⚡ Ativo'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Visualizações de perfil</p>
-              <p className="text-xl font-bold text-foreground">{subscription.profile_views || 0}</p>
-              <p className="text-[9px] text-muted-foreground mt-0.5">cliques no seu perfil</p>
+            <div className="bg-white/10 rounded-xl p-3">
+              <p className="text-[10px] text-white/60 font-medium mb-0.5">Visualizações de perfil</p>
+              <p className="text-xl font-bold text-white">{subscription.profile_views || 0}</p>
             </div>
-            <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-[10px] text-muted-foreground font-medium mb-0.5">Impressões na busca</p>
-              <p className="text-xl font-bold text-foreground">{subscription.search_impressions || 0}</p>
-              <p className="text-[9px] text-muted-foreground mt-0.5">vezes que apareceu</p>
+            <div className="bg-white/10 rounded-xl p-3">
+              <p className="text-[10px] text-white/60 font-medium mb-0.5">Impressões na busca</p>
+              <p className="text-xl font-bold text-white">{subscription.search_impressions || 0}</p>
             </div>
           </div>
 
-          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <p className="text-[11px] text-white/50 flex items-center gap-1.5">
             <TrendingUp className="w-3 h-3" />
             Perfil em destaque para clientes próximos
           </p>
         </div>
 
-        <div className="border-t border-slate-100 px-4 py-3">
+        <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between">
           <button
             onClick={handleCancel}
             disabled={cancelling || subscription.status === 'cancelled'}
-            className="text-xs text-muted-foreground hover:text-red-500 transition disabled:opacity-40 flex items-center gap-1.5"
+            className="text-xs text-white/40 hover:text-red-400 transition disabled:opacity-40 flex items-center gap-1.5"
           >
             {cancelling && <Loader2 className="w-3 h-3 animate-spin" />}
-            {subscription.status === 'cancelled' ? 'Cancelamento agendado' : 'Cancelar assinatura'}
+            {subscription.status === 'cancelled' ? '⏳ Cancelamento agendado' : 'Cancelar assinatura'}
           </button>
+          {subscription.status !== 'cancelled' && (
+            <span className="text-[10px] text-white/30">Cancele quando quiser</span>
+          )}
         </div>
       </div>
     );
@@ -119,7 +134,7 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
           disabled={loading || !professional?.id}
           className="w-full h-11 rounded-xl font-semibold text-sm text-white bg-black flex items-center justify-center gap-2 transition hover:bg-black/80 active:scale-[0.98] disabled:opacity-50"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Zap className="w-4 h-4" /> Ativar — R$ 12,90/mês</>}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Zap className="w-4 h-4" /> Assinar — R$ 12,90/mês</>}
         </button>
         <p className="text-center text-[10px] text-muted-foreground mt-2">Cancele quando quiser</p>
       </div>

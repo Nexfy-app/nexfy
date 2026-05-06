@@ -71,6 +71,7 @@ export default function VerifyDocuments() {
   const [selectedType, setSelectedType] = useState('certificate');
   const [docName, setDocName] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser);
@@ -94,18 +95,18 @@ export default function VerifyDocuments() {
 
   const fileInputRef = useRef(null);
 
-  const handleUpload = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    if (!docName.trim()) {
-      toast.error('Descreva o documento antes de selecionar o arquivo');
-      e.target.value = '';
-      return;
-    }
+    if (file) setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) { toast.error('Selecione um arquivo'); return; }
+    if (!docName.trim()) { toast.error('Descreva o documento'); return; }
 
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    
+    const { file_url } = await base44.integrations.Core.UploadFile({ file: selectedFile });
+
     await base44.entities.VerificationDocument.create({
       professional_id: professional.id,
       professional_email: user.email,
@@ -114,12 +115,15 @@ export default function VerifyDocuments() {
       file_url,
     });
 
-    // Notify admins
     base44.functions.invoke('notifyAdminsNewDocument', {
       data: { professional_email: user.email, document_name: docName.trim(), document_type: selectedType }
     }).catch(() => {});
 
     toast.success('✅ Documento enviado! Será avaliado pela equipe Nexfy em até 48h.');
+    setDocName('');
+    setSelectedType('certificate');
+    setSelectedFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
     queryClient.invalidateQueries({ queryKey: ['my-docs', professional?.id] });
     setUploading(false);
   };
@@ -242,22 +246,30 @@ export default function VerifyDocuments() {
 
             <div
               onClick={() => !uploading && fileInputRef.current?.click()}
-              className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-slate-400 transition"
+              className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${selectedFile ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-slate-400'}`}
             >
-              <input ref={fileInputRef} type="file" className="hidden" onChange={handleUpload} disabled={uploading} accept=".pdf,.jpg,.jpeg,.png" />
-              <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-1.5" />
-              <p className="text-xs font-semibold text-foreground">Selecionar arquivo</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">PDF, JPG, PNG (máx 5MB)</p>
-              {uploading && <p className="text-[10px] text-blue-600 font-semibold mt-1">Enviando...</p>}
+              <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} disabled={uploading} accept=".pdf,.jpg,.jpeg,.png" />
+              <Upload className={`w-6 h-6 mx-auto mb-1.5 ${selectedFile ? 'text-green-600' : 'text-muted-foreground'}`} />
+              {selectedFile ? (
+                <>
+                  <p className="text-xs font-semibold text-green-700">✓ {selectedFile.name}</p>
+                  <p className="text-[10px] text-green-600 mt-0.5">Clique para trocar</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xs font-semibold text-foreground">Selecionar arquivo</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">PDF, JPG, PNG (máx 5MB)</p>
+                </>
+              )}
             </div>
           </div>
 
           <Button
-            onClick={() => !uploading && docName.trim() && fileInputRef.current?.click()}
-            disabled={uploading || !docName.trim()}
+            onClick={handleUpload}
+            disabled={uploading || !docName.trim() || !selectedFile}
             className="w-full h-11 rounded-xl font-semibold"
           >
-            {uploading ? 'Enviando...' : 'Enviar Documento'}
+            {uploading ? 'Enviando...' : 'Enviar para análise da Nexfy'}
           </Button>
         </div>
 

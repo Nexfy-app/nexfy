@@ -50,8 +50,11 @@ export default function AdminDashboard() {
   const { data: requests = [] } = useQuery({ queryKey: ['admin-requests'], queryFn: () => base44.entities.ServiceRequest.list('-created_date', 200), enabled });
   const { data: reviews = [] } = useQuery({ queryKey: ['admin-reviews'], queryFn: () => base44.entities.Review.list('-created_date', 50), enabled });
   const { data: documents = [] } = useQuery({ queryKey: ['admin-docs'], queryFn: () => base44.entities.VerificationDocument.list('-created_date', 100), enabled });
+  const { data: turboSubs = [] } = useQuery({ queryKey: ['admin-turbo'], queryFn: () => base44.entities.TurboSubscription.list('-created_date', 200), enabled });
   const pendingDocs = documents.filter(d => d.status === 'pending');
   const onlinePros = professionals.filter(p => p.is_available).length;
+  const activeTurbo = turboSubs.filter(s => s.status === 'active' || s.status === 'trial').length;
+  const turboRevenue = activeTurbo * 12.90;
   const completedRequests = requests.filter(r => r.status === 'completed');
   const totalEarnings = completedRequests.reduce((s, r) => s + (r.price_agreed || 0), 0);
   const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
@@ -158,6 +161,8 @@ export default function AdminDashboard() {
           <StatCard title="Profissionais" value={professionals.length} icon={Briefcase} colorClass="bg-foreground" />
           <StatCard title="Online agora" value={onlinePros} icon={Activity} colorClass="bg-green-600" />
           <StatCard title="Avaliação média" value={avgRating !== '—' ? `${avgRating} ★` : '—'} icon={Star} colorClass="bg-amber-500" sub={`${reviews.length} avaliações`} />
+          <StatCard title="Assinantes Turbo" value={activeTurbo} icon={TrendingUp} colorClass="bg-amber-500" sub={`${turboSubs.length} total`} />
+          <StatCard title="MRR Turbo" value={`R$ ${turboRevenue.toFixed(0)}`} icon={TrendingUp} colorClass="bg-green-700" sub="receita mensal estimada" />
         </div>
 
         {/* Financial */}
