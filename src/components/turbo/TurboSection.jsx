@@ -24,7 +24,7 @@ export default function TurboSection({ onActivate, loading }) {
       className="relative rounded-3xl overflow-hidden w-full"
       style={{
         background: 'linear-gradient(160deg, #111111 0%, #0a0a0a 100%)',
-        boxShadow: '0 1px 0 rgba(255,255,255,0.07) inset, 0 20px 60px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2)',
+        boxShadow: 'none',
       }}
     >
       {/* Sheen */}
