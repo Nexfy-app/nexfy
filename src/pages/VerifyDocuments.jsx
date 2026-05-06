@@ -119,11 +119,8 @@ export default function VerifyDocuments() {
       data: { professional_email: user.email, document_name: docName.trim(), document_type: selectedType }
     }).catch(() => {});
 
-    toast.success('Documento enviado para validação!');
-    setDocName('');
-    setSelectedType('certificate');
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    queryClient.invalidateQueries({ queryKey: ['my-docs'] });
+    toast.success('✅ Documento enviado! Será avaliado pela equipe Nexfy em até 48h.');
+    queryClient.invalidateQueries({ queryKey: ['my-docs', professional?.id] });
     setUploading(false);
   };
 

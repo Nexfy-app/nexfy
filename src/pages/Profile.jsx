@@ -60,6 +60,14 @@ export default function Profile() {
 
   const professional = myPro?.[0];
 
+  const { data: approvedDocs = [] } = useQuery({
+    queryKey: ['my-approved-docs', professional?.id],
+    queryFn: () => base44.entities.VerificationDocument.filter({ professional_id: professional.id, status: 'approved' }),
+    enabled: !!professional?.id,
+  });
+
+  const isVerified = approvedDocs.length > 0;
+
   // Atualiza localização e gerencia auto-offline
   const { minutesLeft } = useProfessionalLocationSync(professional, () => {
     queryClient.invalidateQueries({ queryKey: ['my-pro'] });
@@ -175,7 +183,7 @@ export default function Profile() {
                 </div>
               )}
               <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
-              {professional && (
+              {professional && isVerified && (
                 <div className="flex items-center gap-1 mt-1.5">
                   <Award className="w-3 h-3 text-amber-500" />
                   <span className="text-[11px] font-semibold text-amber-600">Profissional verificado</span>
