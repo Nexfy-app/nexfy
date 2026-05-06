@@ -52,21 +52,28 @@ Deno.serve(async (req) => {
   if (action === 'cancel') {
     if (!subscription_id) return Response.json({ error: 'ID inválido' }, { status: 400 });
 
-    await stripe.subscriptions.update(subscription_id, {
-      cancel_at_period_end: true,
-    });
+    // Cancela imediatamente na Stripe
+    await stripe.subscriptions.cancel(subscription_id);
 
+    // Atualiza DB: status cancelled + remove is_premium do profissional
     const subs = await base44.asServiceRole.entities.TurboSubscription.filter({
       stripe_subscription_id: subscription_id,
     });
     if (subs.length > 0) {
-      await base44.asServiceRole.entities.TurboSubscription.update(subs[0].id, {
+      const sub = subs[0];
+      await base44.asServiceRole.entities.TurboSubscription.update(sub.id, {
         status: 'cancelled',
         cancelled_at: new Date().toISOString(),
       });
+      // Remove is_premium imediatamente
+      if (sub.professional_id) {
+        await base44.asServiceRole.entities.Professional.update(sub.professional_id, {
+          is_premium: false,
+        }).catch(() => {});
+      }
     }
 
-    return Response.json({ success: true });
+    return Response.json({ success: true, cancelled: true });
   }
 
   // ── GET STATUS ──

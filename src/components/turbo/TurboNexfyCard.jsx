@@ -27,16 +27,23 @@ export default function TurboNexfyCard({ professional, subscription, active: act
     }
   };
 
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleCancel = async () => {
     if (!subscription?.stripe_subscription_id) return;
     setCancelling(true);
-    await base44.functions.invoke('turboCheckout', {
+    setShowConfirm(false);
+    const res = await base44.functions.invoke('turboCheckout', {
       action: 'cancel',
       subscription_id: subscription.stripe_subscription_id,
     });
     setCancelling(false);
-    toast.success('Assinatura cancelada. Ativa até o fim do período.');
-    onRefresh?.();
+    if (res?.data?.cancelled) {
+      toast.success('Assinatura cancelada. Benefícios removidos imediatamente.');
+      onRefresh?.();
+    } else {
+      toast.error('Erro ao cancelar. Tente novamente.');
+    }
   };
 
   // ── ACTIVE ──
@@ -86,20 +93,39 @@ export default function TurboNexfyCard({ professional, subscription, active: act
 
         <div className="border-t border-white/10 px-4 py-3">
           {subscription.status === 'cancelled' ? (
-            <div className="flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 rounded-xl px-3 py-2.5">
-              <span className="text-base">⏳</span>
+            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2.5">
+              <span className="text-base">🚫</span>
               <div>
-                <p className="text-xs font-semibold text-amber-300">Cancelamento agendado</p>
-                <p className="text-[10px] text-white/40">Acesso ativo até {periodEnd || 'o fim do período'}</p>
+                <p className="text-xs font-semibold text-red-400">Assinatura cancelada</p>
+                <p className="text-[10px] text-white/40">Benefícios removidos</p>
+              </div>
+            </div>
+          ) : showConfirm ? (
+            <div className="space-y-2">
+              <p className="text-[11px] text-white/70 text-center">Tem certeza? O cancelamento é imediato e irreversível.</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="flex-1 h-9 rounded-xl border border-white/20 text-white/70 text-xs font-semibold hover:bg-white/5 transition"
+                >
+                  Voltar
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  className="flex-1 h-9 rounded-xl bg-red-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-700 transition disabled:opacity-40"
+                >
+                  {cancelling ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Confirmar cancelamento'}
+                </button>
               </div>
             </div>
           ) : (
             <button
-              onClick={handleCancel}
+              onClick={() => setShowConfirm(true)}
               disabled={cancelling}
               className="w-full h-10 rounded-xl border border-red-500/40 text-red-400 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-red-500/10 transition disabled:opacity-40"
             >
-              {cancelling ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '🚫 Cancelar assinatura'}
+              🚫 Cancelar assinatura
             </button>
           )}
         </div>
