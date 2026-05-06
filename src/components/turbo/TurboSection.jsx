@@ -65,7 +65,7 @@ export default function TurboSection({ onActivate, loading }) {
           <p className="text-sm font-semibold leading-snug" style={{ color: 'rgba(255,255,255,0.80)', letterSpacing: '-0.01em' }}>
             Mais visibilidade. Mais autoridade. Mais clientes.
           </p>
-          <p className="text-xs leading-relaxed mt-1 text-[hsl(var(--card))]" style={{ color: 'rgba(255,255,255,0.30)' }}>
+          <p className="text-xs leading-relaxed mt-1" style={{ color: 'rgba(255,255,255,0.50)' }}>
             Por menos de R$0,43/dia, seu perfil aparece antes de todos.
           </p>
         </div>
