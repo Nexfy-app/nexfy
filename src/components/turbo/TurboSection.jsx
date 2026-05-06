@@ -66,7 +66,7 @@ export default function TurboSection({ onActivate, loading }) {
             Apareça primeiro para novos clientes
           </p>
           <p className="text-xs leading-relaxed mt-1" style={{ color: 'rgba(255,255,255,0.50)' }}>
-            Acompanhe visitas no perfil e buscas pelo seu serviço em tempo real.
+            Por menos de R$0,43/dia, acompanhe visitas no perfil e buscas pelo seu serviço em tempo real.
           </p>
         </div>
 
