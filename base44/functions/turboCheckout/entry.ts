@@ -53,7 +53,12 @@ Deno.serve(async (req) => {
     if (!subscription_id) return Response.json({ error: 'ID inválido' }, { status: 400 });
 
     // Cancela imediatamente na Stripe
-    await stripe.subscriptions.cancel(subscription_id);
+    try {
+      await stripe.subscriptions.cancel(subscription_id);
+    } catch (err) {
+      console.error('[turboCheckout] Cancel error:', err.message);
+      return Response.json({ error: err.message }, { status: 500 });
+    }
 
     // Atualiza DB: status cancelled + remove is_premium do profissional
     const subs = await base44.asServiceRole.entities.TurboSubscription.filter({
@@ -65,7 +70,6 @@ Deno.serve(async (req) => {
         status: 'cancelled',
         cancelled_at: new Date().toISOString(),
       });
-      // Remove is_premium imediatamente
       if (sub.professional_id) {
         await base44.asServiceRole.entities.Professional.update(sub.professional_id, {
           is_premium: false,
