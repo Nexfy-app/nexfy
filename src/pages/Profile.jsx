@@ -4,8 +4,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch } from "@/components/ui/switch";
 import {
   User, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, MapPin, Bell, BarChart2, Trash2, Zap
-} from 'lucide-react';
+  Shield, Award, MapPin, Bell, BarChart2, Trash2, Zap } from
+'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
 import TurboNexfyCard from '../components/turbo/TurboNexfyCard';
@@ -31,7 +31,7 @@ export default function Profile() {
     await base44.integrations.Core.SendEmail({
       to: user.email,
       subject: 'Solicitação de exclusão de conta - Nexfy',
-      body: `Olá ${user.full_name || user.email},\n\nRecebemos sua solicitação de exclusão de conta. Nossa equipe processará sua solicitação em até 5 dias úteis e você receberá uma confirmação por e-mail.\n\nNexfy`,
+      body: `Olá ${user.full_name || user.email},\n\nRecebemos sua solicitação de exclusão de conta. Nossa equipe processará sua solicitação em até 5 dias úteis e você receberá uma confirmação por e-mail.\n\nNexfy`
     }).catch(() => {});
     setDeletingAccount(false);
     setShowDeleteConfirm(false);
@@ -46,7 +46,7 @@ export default function Profile() {
     if (!nameInput.trim()) return;
     setSavingName(true);
     await base44.auth.updateMe({ full_name: nameInput.trim() });
-    setUser(prev => ({ ...prev, full_name: nameInput.trim() }));
+    setUser((prev) => ({ ...prev, full_name: nameInput.trim() }));
     setEditingName(false);
     setSavingName(false);
     toast.success('Nome atualizado!');
@@ -55,7 +55,7 @@ export default function Profile() {
   const { data: myPro } = useQuery({
     queryKey: ['my-pro', user?.email],
     queryFn: () => base44.entities.Professional.filter({ user_email: user?.email }),
-    enabled: !!user?.email,
+    enabled: !!user?.email
   });
 
   const professional = myPro?.[0];
@@ -63,7 +63,7 @@ export default function Profile() {
   const { data: approvedDocs = [] } = useQuery({
     queryKey: ['my-approved-docs', professional?.id],
     queryFn: () => base44.entities.VerificationDocument.filter({ professional_id: professional.id, status: 'approved' }),
-    enabled: !!professional?.id,
+    enabled: !!professional?.id
   });
 
   const isVerified = approvedDocs.length > 0;
@@ -78,9 +78,9 @@ export default function Profile() {
   const [showTurboModal, setShowTurboModal] = React.useState(false);
   useEffect(() => {
     if (professional) {
-      base44.functions.invoke('turboCheckout', { action: 'get_status' })
-        .then(r => setTurboData(r?.data || null))
-        .catch(() => {});
+      base44.functions.invoke('turboCheckout', { action: 'get_status' }).
+      then((r) => setTurboData(r?.data || null)).
+      catch(() => {});
     }
   }, [professional?.id]);
 
@@ -95,7 +95,7 @@ export default function Profile() {
           await base44.entities.Professional.update(professional.id, {
             is_available: true,
             latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
+            longitude: pos.coords.longitude
           });
           queryClient.invalidateQueries({ queryKey: ['my-pro'] });
           queryClient.invalidateQueries({ queryKey: ['professionals'] });
@@ -118,12 +118,12 @@ export default function Profile() {
   };
 
   const menuItems = [
-    { label: professional ? "Editar Perfil Profissional" : "Cadastrar como Profissional", icon: Briefcase, path: "/professional/edit", show: true },
-    { label: "Validação de Documentos", icon: Shield, path: "/verify-documents", show: !!professional },
-    { label: "Meu Painel", icon: BarChart2, path: "/professional/dashboard", show: !!professional },
-    { label: "Minhas Avaliações", icon: Star, path: "/professional/reviews", show: !!professional },
-    { label: "Notificações", icon: Bell, path: "/notifications/settings", show: true },
-  ];
+  { label: professional ? "Editar Perfil Profissional" : "Cadastrar como Profissional", icon: Briefcase, path: "/professional/edit", show: true },
+  { label: "Validação de Documentos", icon: Shield, path: "/verify-documents", show: !!professional },
+  { label: "Meu Painel", icon: BarChart2, path: "/professional/dashboard", show: !!professional },
+  { label: "Minhas Avaliações", icon: Star, path: "/professional/reviews", show: !!professional },
+  { label: "Notificações", icon: Bell, path: "/notifications/settings", show: true }];
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -139,63 +139,63 @@ export default function Profile() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl p-5"
-          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
-        >
+          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+          
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 shadow-sm">
-                {professional?.photo_url ? (
-                  <img src={professional.photo_url} className="w-full h-full object-cover" alt="" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                {professional?.photo_url ?
+                <img src={professional.photo_url} className="w-full h-full object-cover" alt="" /> :
+
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                     <User className="w-7 h-7 text-slate-500" />
                   </div>
-                )}
+                }
               </div>
-              {professional?.is_available && (
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white online-dot" />
-              )}
+              {professional?.is_available &&
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white online-dot" />
+              }
             </div>
             <div className="flex-1 min-w-0">
-              {user?.role === 'admin' && editingName ? (
-                <div className="flex items-center gap-1.5 mb-1">
+              {user?.role === 'admin' && editingName ?
+              <div className="flex items-center gap-1.5 mb-1">
                   <Input
-                    value={nameInput}
-                    onChange={e => setNameInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') setEditingName(false); }}
-                    className="h-8 text-sm rounded-xl px-2 py-1"
-                    autoFocus
-                  />
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  onKeyDown={(e) => {if (e.key === 'Enter') handleSaveName();if (e.key === 'Escape') setEditingName(false);}}
+                  className="h-8 text-sm rounded-xl px-2 py-1"
+                  autoFocus />
+                
                   <button onClick={handleSaveName} disabled={savingName} className="w-7 h-7 bg-green-500 text-white rounded-lg flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </button>
                   <button onClick={() => setEditingName(false)} className="w-7 h-7 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center shrink-0">
                     <X className="w-3.5 h-3.5" />
                   </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5">
+                </div> :
+
+              <div className="flex items-center gap-1.5">
                   <h2 className="font-bold text-foreground truncate">{user?.full_name || 'Usuário'}</h2>
-                  {user?.role === 'admin' && (
-                    <button onClick={() => { setNameInput(user?.full_name || ''); setEditingName(true); }} className="w-5 h-5 text-muted-foreground hover:text-foreground transition shrink-0">
+                  {user?.role === 'admin' &&
+                <button onClick={() => {setNameInput(user?.full_name || '');setEditingName(true);}} className="w-5 h-5 text-muted-foreground hover:text-foreground transition shrink-0">
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
-                  )}
+                }
                 </div>
-              )}
+              }
               <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
-              {professional && isVerified && (
-                <div className="flex items-center gap-1 mt-1.5">
+              {professional && isVerified &&
+              <div className="flex items-center gap-1 mt-1.5">
                   <Award className="w-3 h-3 text-amber-500" />
                   <span className="text-[11px] font-semibold text-amber-600">Profissional verificado</span>
                 </div>
-              )}
+              }
             </div>
           </div>
 
           {/* Professional stats */}
-          {professional && (
-            <div className="flex gap-3 mt-4 pt-4 border-t border-slate-100">
+          {professional &&
+          <div className="flex gap-3 mt-4 pt-4 border-t border-slate-100">
               <div className="flex-1 text-center">
                 <p className="text-lg font-black text-foreground">{professional.services_completed || 0}</p>
                 <p className="text-[10px] text-muted-foreground font-medium">Serviços</p>
@@ -211,38 +211,38 @@ export default function Profile() {
                 <p className="text-[10px] text-muted-foreground font-medium">Avaliações</p>
               </div>
             </div>
-          )}
+          }
         </motion.div>
 
         {/* Botão Minhas Assinaturas — visível apenas para profissionais */}
-        {professional && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        {professional &&
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
             <button
-              onClick={() => setShowTurboModal(true)}
-              className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition relative overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', boxShadow: '0 4px 20px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.2)' }}
-            >
-              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                <Zap className="w-4 h-4 text-amber-400" />
+            onClick={() => setShowTurboModal(true)}
+            className="w-full rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition relative overflow-hidden bg-[hsl(var(--card-foreground))]"
+            style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', boxShadow: '0 4px 20px rgba(251,191,36,0.25), 0 2px 8px rgba(0,0,0,0.2)' }}>
+            
+              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 hidden">
+                <Zap className="w-4 h-4 text-amber-400 hidden" />
               </div>
               <span className="text-sm font-medium text-white flex-1 text-left">Minhas Assinaturas</span>
-              {turboData?.active && (
-                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+              {turboData?.active &&
+            <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Zap className="w-2.5 h-2.5" /> Ativo
                 </span>
-              )}
+            }
               <ChevronRight className="w-4 h-4 text-white/50 shrink-0" />
             </button>
           </motion.div>
-        )}
+        }
 
         {/* Aviso de auto-offline */}
-        {minutesLeft !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3"
-          >
+        {minutesLeft !== null &&
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3">
+          
             <span className="text-lg shrink-0">⏰</span>
             <div>
               <p className="text-sm font-bold text-amber-800">Você será colocado offline em breve</p>
@@ -251,7 +251,7 @@ export default function Profile() {
               </p>
             </div>
           </motion.div>
-        )}
+        }
 
         {/* Menu items */}
         <motion.div
@@ -259,36 +259,36 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white rounded-2xl overflow-hidden"
-          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
-        >
-          {menuItems.filter(item => item.show).map((item, i, arr) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              className="flex items-center gap-3.5 px-4 py-3.5 hover:bg-slate-50 transition"
-              style={{ borderBottom: i < arr.length - 1 ? '1px solid #f1f5f9' : 'none' }}
-            >
+          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+          
+          {menuItems.filter((item) => item.show).map((item, i, arr) =>
+          <Link
+            key={item.label}
+            to={item.path}
+            className="flex items-center gap-3.5 px-4 py-3.5 hover:bg-slate-50 transition"
+            style={{ borderBottom: i < arr.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+            
               <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
                 <item.icon className="w-4 h-4 text-foreground" />
               </div>
               <span className="text-sm font-medium text-foreground flex-1">{item.label}</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
-          ))}
+          )}
         </motion.div>
 
         {/* Admin */}
-        {user?.role === 'admin' && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
+        {user?.role === 'admin' &&
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}>
+          
             <Link
-              to="/admin"
-              className="flex items-center gap-3.5 bg-white rounded-2xl px-4 py-3.5 hover:bg-slate-50 transition"
-              style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
-            >
+            to="/admin"
+            className="flex items-center gap-3.5 bg-white rounded-2xl px-4 py-3.5 hover:bg-slate-50 transition"
+            style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+            
               <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
@@ -296,7 +296,7 @@ export default function Profile() {
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
           </motion.div>
-        )}
+        }
 
         {/* Logout */}
         <motion.button
@@ -304,8 +304,8 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => base44.auth.logout('/')}
-          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-100 bg-red-50 text-red-600 text-sm font-semibold hover:bg-red-100 transition"
-        >
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-100 bg-red-50 text-red-600 text-sm font-semibold hover:bg-red-100 transition">
+          
           <LogOut className="w-4 h-4" />
           Sair da conta
         </motion.button>
@@ -316,49 +316,49 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
           onClick={() => setShowDeleteConfirm(true)}
-          className="w-full flex items-center justify-center gap-2 h-10 rounded-2xl text-muted-foreground text-xs font-medium hover:text-red-500 transition"
-        >
+          className="w-full flex items-center justify-center gap-2 h-10 rounded-2xl text-muted-foreground text-xs font-medium hover:text-red-500 transition">
+          
           <Trash2 className="w-3.5 h-3.5" />
           Excluir minha conta
         </motion.button>
       </div>
 
       {/* Modal Minhas Assinaturas */}
-      {showTurboModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowTurboModal(false)}>
+      {showTurboModal &&
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowTurboModal(false)}>
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-md bg-background rounded-t-3xl p-5 pb-10"
-            onClick={e => e.stopPropagation()}
-          >
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-background rounded-t-3xl p-5 pb-10"
+          onClick={(e) => e.stopPropagation()}>
+          
             <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5" />
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-5 h-5 text-amber-500" />
               <h2 className="text-base font-bold text-foreground">Minhas Assinaturas</h2>
             </div>
             <TurboNexfyCard
-              professional={professional}
-              subscription={turboData?.subscription || null}
-              active={turboData?.active}
-              onRefresh={() => {
-                base44.functions.invoke('turboCheckout', { action: 'get_status' })
-                  .then(r => setTurboData(r?.data || null))
-                  .catch(() => {});
-              }}
-            />
+            professional={professional}
+            subscription={turboData?.subscription || null}
+            active={turboData?.active}
+            onRefresh={() => {
+              base44.functions.invoke('turboCheckout', { action: 'get_status' }).
+              then((r) => setTurboData(r?.data || null)).
+              catch(() => {});
+            }} />
+          
           </motion.div>
         </div>
-      )}
+      }
 
       {/* Delete Account Confirmation Dialog */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm px-4 pb-8">
+      {showDeleteConfirm &&
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm px-4 pb-8">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
-          >
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+          
             <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-red-500" />
             </div>
@@ -368,22 +368,22 @@ export default function Profile() {
             </p>
             <div className="flex gap-2">
               <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 h-11 rounded-2xl border border-slate-200 text-sm font-medium text-foreground hover:bg-slate-50 transition"
-              >
+              onClick={() => setShowDeleteConfirm(false)}
+              className="flex-1 h-11 rounded-2xl border border-slate-200 text-sm font-medium text-foreground hover:bg-slate-50 transition">
+              
                 Cancelar
               </button>
               <button
-                onClick={handleDeleteAccount}
-                disabled={deletingAccount}
-                className="flex-1 h-11 rounded-2xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-60"
-              >
+              onClick={handleDeleteAccount}
+              disabled={deletingAccount}
+              className="flex-1 h-11 rounded-2xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition disabled:opacity-60">
+              
                 {deletingAccount ? 'Enviando...' : 'Confirmar'}
               </button>
             </div>
           </motion.div>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
