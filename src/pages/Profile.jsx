@@ -225,6 +225,7 @@ export default function Profile() {
                 <TurboNexfyCard
                   professional={professional}
                   subscription={turboData?.subscription || null}
+                  active={turboData?.active}
                   onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}
                 />
               </div>

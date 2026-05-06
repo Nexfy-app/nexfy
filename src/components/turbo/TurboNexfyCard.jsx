@@ -5,11 +5,11 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-export default function TurboNexfyCard({ professional, subscription, onRefresh }) {
+export default function TurboNexfyCard({ professional, subscription, active: activeProp, onRefresh }) {
   const [loading, setLoading] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  const isActive = subscription && (subscription.status === 'active' || subscription.status === 'trial' || subscription.status === 'cancelled');
+  const isActive = activeProp || (subscription && (subscription.status === 'active' || subscription.status === 'trial' || subscription.status === 'cancelled'));
   const periodEnd = subscription?.current_period_end
     ? format(new Date(subscription.current_period_end), "dd 'de' MMMM", { locale: ptBR })
     : null;
