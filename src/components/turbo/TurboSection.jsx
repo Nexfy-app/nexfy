@@ -62,11 +62,11 @@ export default function TurboSection({ onActivate, loading }) {
 
         {/* Headline */}
         <div>
-          <p className="text-sm font-semibold leading-snug" style={{ color: 'rgba(255,255,255,0.80)', letterSpacing: '-0.01em' }}>
-            Ganhe mais destaque, veja quantas pessoas visitaram seu perfil e acompanhe as buscas pelo seu serviço em tempo real.
+          <p className="text-sm font-semibold leading-snug" style={{ color: 'rgba(255,255,255,0.90)', letterSpacing: '-0.02em' }}>
+            Apareça primeiro para novos clientes
           </p>
           <p className="text-xs leading-relaxed mt-1" style={{ color: 'rgba(255,255,255,0.50)' }}>
-            Por menos de R$0,43/dia, seu perfil aparece antes de todos.
+            Acompanhe visitas no perfil e buscas pelo seu serviço em tempo real.
           </p>
         </div>
 
