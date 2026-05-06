@@ -63,14 +63,78 @@ Deno.serve(async (req) => {
 
   // ── GET STATUS ──
   if (action === 'get_status') {
-    const subs = await base44.entities.TurboSubscription.filter({
+    // Busca por email primeiro, depois por professional_id
+    let subs = await base44.entities.TurboSubscription.filter({
       professional_email: user.email,
     }, '-created_date', 1);
 
-    if (subs.length === 0) return Response.json({ active: false });
+    if (subs.length === 0 && professional_id) {
+      subs = await base44.entities.TurboSubscription.filter({
+        professional_id: professional_id,
+      }, '-created_date', 1);
+    }
+
+    // Se não há registro local, busca diretamente no Stripe
+    if (subs.length === 0) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        const stripeSubs = await stripe.subscriptions.list({
+          customer: customers.data[0].id,
+          limit: 5,
+          status: 'all',
+        });
+        const validSub = stripeSubs.data.find(s =>
+          s.status === 'active' || s.status === 'trialing' || s.status === 'past_due'
+        );
+        if (validSub) {
+          const meta = validSub.metadata || {};
+          const proId = professional_id || meta.professional_id || '';
+          const newSub = await base44.asServiceRole.entities.TurboSubscription.create({
+            professional_id: proId,
+            professional_email: user.email,
+            plan: meta.plan || 'monthly',
+            status: 'active',
+            stripe_subscription_id: validSub.id,
+            stripe_customer_id: customers.data[0].id,
+            current_period_end: new Date(validSub.current_period_end * 1000).toISOString().split('T')[0],
+          });
+          if (proId) {
+            await base44.asServiceRole.entities.Professional.update(proId, { is_premium: true }).catch(() => {});
+          }
+          return Response.json({ active: true, subscription: newSub });
+        }
+      }
+      return Response.json({ active: false });
+    }
 
     const sub = subs[0];
-    const isActive = sub.status === 'active' || sub.status === 'trial';
+
+    // Se há registro mas sem ID do Stripe, sincroniza com Stripe
+    if (!sub.stripe_subscription_id) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        const stripeSubs = await stripe.subscriptions.list({
+          customer: customers.data[0].id,
+          limit: 5,
+          status: 'all',
+        });
+        const validSub = stripeSubs.data.find(s =>
+          s.status === 'active' || s.status === 'trialing'
+        );
+        if (validSub) {
+          await base44.asServiceRole.entities.TurboSubscription.update(sub.id, {
+            stripe_subscription_id: validSub.id,
+            stripe_customer_id: customers.data[0].id,
+            status: 'active',
+            current_period_end: new Date(validSub.current_period_end * 1000).toISOString().split('T')[0],
+          });
+          sub.stripe_subscription_id = validSub.id;
+          sub.status = 'active';
+        }
+      }
+    }
+
+    const isActive = sub.status === 'active' || sub.status === 'trial' || sub.status === 'cancelled';
     const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
     const expired = periodEnd && periodEnd < new Date();
 
