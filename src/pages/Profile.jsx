@@ -78,7 +78,7 @@ export default function Profile() {
   const [showTurboModal, setShowTurboModal] = React.useState(false);
   useEffect(() => {
     if (professional) {
-      base44.functions.invoke('turboCheckout', { action: 'get_status' }).
+      base44.functions.invoke('turboCheckout', { action: 'get_status', professional_id: professional.id }).
       then((r) => setTurboData(r?.data || null)).
       catch(() => {});
     }
@@ -342,7 +342,7 @@ export default function Profile() {
             subscription={turboData?.subscription || null}
             active={turboData?.active}
             onRefresh={() => {
-              base44.functions.invoke('turboCheckout', { action: 'get_status' }).
+              base44.functions.invoke('turboCheckout', { action: 'get_status', professional_id: professional?.id }).
               then((r) => setTurboData(r?.data || null)).
               catch(() => {});
             }} />
