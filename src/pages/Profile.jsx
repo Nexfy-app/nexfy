@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch } from "@/components/ui/switch";
 import {
   User, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, MapPin, Bell, BarChart2, Trash2
+  Shield, Award, MapPin, Bell, BarChart2, Trash2, Zap
 } from 'lucide-react';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
@@ -213,14 +213,22 @@ export default function Profile() {
           )}
         </motion.div>
 
-        {/* Turbo Nexfy — visível apenas para profissionais */}
+        {/* Minhas Assinaturas — visível apenas para profissionais */}
         {professional && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            <TurboNexfyCard
-              professional={professional}
-              subscription={turboData?.subscription || null}
-              onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}
-            />
+            <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+              <div className="px-4 pt-4 pb-2 flex items-center gap-2 border-b border-slate-100">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <p className="text-sm font-bold text-foreground">Minhas Assinaturas</p>
+              </div>
+              <div className="p-3">
+                <TurboNexfyCard
+                  professional={professional}
+                  subscription={turboData?.subscription || null}
+                  onRefresh={() => base44.functions.invoke('turboCheckout', { action: 'get_status' }).then(r => setTurboData(r?.data || null)).catch(() => {})}
+                />
+              </div>
+            </div>
           </motion.div>
         )}
 

@@ -9,7 +9,7 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
   const [loading, setLoading] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  const isActive = subscription && (subscription.status === 'active' || subscription.status === 'trial');
+  const isActive = subscription && (subscription.status === 'active' || subscription.status === 'trial' || subscription.status === 'cancelled');
   const periodEnd = subscription?.current_period_end
     ? format(new Date(subscription.current_period_end), "dd 'de' MMMM", { locale: ptBR })
     : null;
@@ -84,17 +84,23 @@ export default function TurboNexfyCard({ professional, subscription, onRefresh }
           </p>
         </div>
 
-        <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={handleCancel}
-            disabled={cancelling || subscription.status === 'cancelled'}
-            className="text-xs text-white/40 hover:text-red-400 transition disabled:opacity-40 flex items-center gap-1.5"
-          >
-            {cancelling && <Loader2 className="w-3 h-3 animate-spin" />}
-            {subscription.status === 'cancelled' ? '⏳ Cancelamento agendado' : 'Cancelar assinatura'}
-          </button>
-          {subscription.status !== 'cancelled' && (
-            <span className="text-[10px] text-white/30">Cancele quando quiser</span>
+        <div className="border-t border-white/10 px-4 py-3">
+          {subscription.status === 'cancelled' ? (
+            <div className="flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 rounded-xl px-3 py-2.5">
+              <span className="text-base">⏳</span>
+              <div>
+                <p className="text-xs font-semibold text-amber-300">Cancelamento agendado</p>
+                <p className="text-[10px] text-white/40">Acesso ativo até {periodEnd || 'o fim do período'}</p>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={handleCancel}
+              disabled={cancelling}
+              className="w-full h-10 rounded-xl border border-red-500/40 text-red-400 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-red-500/10 transition disabled:opacity-40"
+            >
+              {cancelling ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '🚫 Cancelar assinatura'}
+            </button>
           )}
         </div>
       </div>
