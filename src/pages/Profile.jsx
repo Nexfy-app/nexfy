@@ -227,7 +227,9 @@ export default function Profile() {
               </div>
               <span className="text-sm font-medium text-foreground flex-1 text-left">Minhas Assinaturas</span>
               {turboData?.active && (
-                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">⚡ Ativo</span>
+                <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Zap className="w-2.5 h-2.5" /> Ativo
+                </span>
               )}
               <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </button>
