@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { SANTA_MARIA_CENTER } from '@/lib/constants';
 import ProfessionalMarker from './ProfessionalMarker';
@@ -38,11 +38,13 @@ export default function MapView({
         zoomControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='&copy; OpenStreetMap'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          maxZoom={18}
+          keepBuffer={2}
         />
 
-        <MapController center={center} zoom={14} fly />
+        <MapController center={center} zoom={14} />
 
         <UserLocationMarker location={userLocation} radiusKm={radiusKm} />
 
