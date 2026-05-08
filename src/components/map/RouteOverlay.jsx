@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Polyline, CircleMarker, useMap } from 'react-leaflet';
+import { Source, Layer } from 'react-map-gl/maplibre';
 
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -18,12 +18,11 @@ function isValidCoord(arr) {
 }
 
 export default function RouteOverlay({ from, to, onEta }) {
-  const map = useMap();
-  const [routePoints, setRoutePoints] = useState(null);
+  const [geojson, setGeojson] = useState(null);
 
   useEffect(() => {
     if (!isValidCoord(from) || !isValidCoord(to)) return;
-    setRoutePoints(null);
+    setGeojson(null);
 
     const url = `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`;
 
@@ -32,12 +31,10 @@ export default function RouteOverlay({ from, to, onEta }) {
       .then(data => {
         if (data.routes?.[0]) {
           const route = data.routes[0];
-          const coords = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-          setRoutePoints(coords);
+          setGeojson(route.geometry);
           const distKm = (route.distance / 1000).toFixed(1);
           const minutes = Math.round(route.duration / 60);
-          onEta({ distKm, minutes });
-          map.fitBounds(coords, { padding: [120, 80] });
+          if (onEta) onEta({ distKm, minutes });
         } else {
           fallback();
         }
@@ -47,50 +44,21 @@ export default function RouteOverlay({ from, to, onEta }) {
     function fallback() {
       const distKm = haversine(from[0], from[1], to[0], to[1]);
       const minutes = Math.round((distKm / 30) * 60);
-      onEta({ distKm: distKm.toFixed(1), minutes });
-      setRoutePoints([from, to]);
-      map.fitBounds([from, to], { padding: [120, 80] });
+      if (onEta) onEta({ distKm: distKm.toFixed(1), minutes });
+      setGeojson({
+        type: 'LineString',
+        coordinates: [[from[1], from[0]], [to[1], to[0]]],
+      });
     }
   }, [from?.[0], from?.[1], to?.[0], to?.[1]]);
 
-  if (!routePoints) return null;
+  if (!geojson) return null;
 
   return (
-    <>
-      {/* Glow/shadow layer */}
-      <Polyline
-        positions={routePoints}
-        pathOptions={{ color: '#1d4ed8', weight: 14, opacity: 0.08, lineCap: 'round', lineJoin: 'round' }}
-      />
-      {/* Main route — estilo Uber */}
-      <Polyline
-        positions={routePoints}
-        pathOptions={{ color: '#1d4ed8', weight: 5, opacity: 1, lineCap: 'round', lineJoin: 'round' }}
-      />
-      {/* Highlight top line */}
-      <Polyline
-        positions={routePoints}
-        pathOptions={{ color: '#93c5fd', weight: 2, opacity: 0.9, lineCap: 'round', lineJoin: 'round' }}
-      />
-
-      {/* Ponto de origem (usuário) */}
-      <CircleMarker
-        center={from}
-        radius={8}
-        pathOptions={{ color: '#fff', weight: 3, fillColor: '#1d4ed8', fillOpacity: 1 }}
-      />
-
-      {/* Ponto de destino (profissional) */}
-      <CircleMarker
-        center={to}
-        radius={10}
-        pathOptions={{ color: '#fff', weight: 3, fillColor: '#0f172a', fillOpacity: 1 }}
-      />
-      <CircleMarker
-        center={to}
-        radius={4}
-        pathOptions={{ color: '#fff', weight: 0, fillColor: '#fff', fillOpacity: 1 }}
-      />
-    </>
+    <Source id="route" type="geojson" data={geojson}>
+      <Layer id="route-glow" type="line" paint={{ 'line-color': '#1d4ed8', 'line-width': 14, 'line-opacity': 0.08 }} layout={{ 'line-cap': 'round', 'line-join': 'round' }} />
+      <Layer id="route-main" type="line" paint={{ 'line-color': '#1d4ed8', 'line-width': 5, 'line-opacity': 1 }} layout={{ 'line-cap': 'round', 'line-join': 'round' }} />
+      <Layer id="route-highlight" type="line" paint={{ 'line-color': '#93c5fd', 'line-width': 2, 'line-opacity': 0.9 }} layout={{ 'line-cap': 'round', 'line-join': 'round' }} />
+    </Source>
   );
 }

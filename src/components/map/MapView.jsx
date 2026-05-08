@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import Map from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { SANTA_MARIA_CENTER } from '@/lib/constants';
 import ProfessionalMarker from './ProfessionalMarker';
 import UserLocationMarker from './UserLocationMarker';
 import RouteOverlay from './RouteOverlay';
-import MapController from './MapController';
 import LocateMeButton from './LocateMeButton';
-import 'leaflet/dist/leaflet.css';
+
+const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 
 export default function MapView({
   professionals,
@@ -17,21 +18,23 @@ export default function MapView({
   selectedPro,
   onEta,
 }) {
-  const centerSource = userLocation || mapCenter;
-  const center = useMemo(() => {
-    if (centerSource) return [centerSource.lat, centerSource.lng];
-    return [SANTA_MARIA_CENTER.lat, SANTA_MARIA_CENTER.lng];
-  }, [centerSource?.lat, centerSource?.lng]);
+  const initialCenter = userLocation || mapCenter || SANTA_MARIA_CENTER;
+  const [viewState, setViewState] = useState({
+    longitude: initialCenter.lng,
+    latitude: initialCenter.lat,
+    zoom: 13,
+  });
 
-  const routeFrom = userLocation && isFinite(userLocation.lat) && isFinite(userLocation.lng)
-    ? [userLocation.lat, userLocation.lng]
-    : null;
-  const routeTo = selectedPro?.latitude && selectedPro?.longitude && isFinite(selectedPro.latitude) && isFinite(selectedPro.longitude)
-    ? [selectedPro.latitude, selectedPro.longitude]
-    : null;
+  const hasSetLocationRef = useRef(false);
+  React.useEffect(() => {
+    if (userLocation && !hasSetLocationRef.current) {
+      hasSetLocationRef.current = true;
+      setViewState(v => ({ ...v, longitude: userLocation.lng, latitude: userLocation.lat }));
+    }
+  }, [userLocation]);
 
   const markers = useMemo(() => (
-    professionals?.map((pro) => (
+    professionals?.map(pro => (
       <ProfessionalMarker
         key={pro.id}
         professional={pro}
@@ -41,36 +44,28 @@ export default function MapView({
     ))
   ), [professionals, onMarkerClick, selectedPro?.id]);
 
+  const routeFrom = userLocation && isFinite(userLocation.lat) ? [userLocation.lat, userLocation.lng] : null;
+  const routeTo = selectedPro?.latitude && isFinite(selectedPro.latitude) ? [selectedPro.latitude, selectedPro.longitude] : null;
+
   return (
     <div className="relative w-full h-full">
-      <MapContainer
-        center={center}
-        zoom={14}
-        className="w-full h-full"
-        zoomControl={false}
-        preferCanvas={true}
+      <Map
+        {...viewState}
+        onMove={e => setViewState(e.viewState)}
+        style={{ width: '100%', height: '100%' }}
+        mapStyle={MAP_STYLE}
+        attributionControl={false}
       >
-        <TileLayer
-          attribution=''
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          maxZoom={18}
-          keepBuffer={2}
-          updateWhenIdle={true}
-          updateWhenZooming={false}
-        />
-
-        <MapController center={center} zoom={14} />
-
-        <UserLocationMarker location={userLocation} radiusKm={radiusKm} />
-
+        <UserLocationMarker location={userLocation} />
         {markers}
-
         {routeFrom && routeTo && (
           <RouteOverlay from={routeFrom} to={routeTo} onEta={onEta} />
         )}
-
-        <LocateMeButton userLocation={userLocation} />
-      </MapContainer>
+      </Map>
+      <LocateMeButton
+        userLocation={userLocation}
+        onLocate={(loc) => setViewState(v => ({ ...v, longitude: loc.lng, latitude: loc.lat, zoom: 16 }))}
+      />
     </div>
   );
 }
