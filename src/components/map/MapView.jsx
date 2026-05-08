@@ -12,12 +12,14 @@ export default function MapView({
   professionals,
   onMarkerClick,
   userLocation,
+  mapCenter,
   radiusKm = 5,
   selectedPro,
   onEta,
 }) {
-  const center = userLocation
-    ? [userLocation.lat, userLocation.lng]
+  const centerSource = userLocation || mapCenter;
+  const center = centerSource
+    ? [centerSource.lat, centerSource.lng]
     : [SANTA_MARIA_CENTER.lat, SANTA_MARIA_CENTER.lng];
 
   const routeFrom = userLocation && isFinite(userLocation.lat) && isFinite(userLocation.lng)

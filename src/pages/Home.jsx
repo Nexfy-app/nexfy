@@ -42,6 +42,16 @@ export default function Home() {
 
   const { location: userLocation, error: locationError } = useUserLocation();
 
+  // Centro padrão: média das coordenadas dos profissionais disponíveis (fallback quando não há GPS)
+  const mapCenter = useMemo(() => {
+    if (userLocation) return userLocation;
+    const withCoords = professionals.filter(p => p.latitude && p.longitude);
+    if (withCoords.length === 0) return null;
+    const lat = withCoords.reduce((s, p) => s + p.latitude, 0) / withCoords.length;
+    const lng = withCoords.reduce((s, p) => s + p.longitude, 0) / withCoords.length;
+    return { lat, lng };
+  }, [userLocation, professionals]);
+
   React.useEffect(() => {
     base44.auth.me().then(u => {
       if (u?.email) {
@@ -124,6 +134,7 @@ export default function Home() {
           professionals={availableWithDist}
           onMarkerClick={handleSelectPro}
           userLocation={userLocation}
+          mapCenter={mapCenter}
           radiusKm={radiusKm}
         />
       </div>
