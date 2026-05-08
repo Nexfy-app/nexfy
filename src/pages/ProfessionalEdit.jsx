@@ -108,6 +108,15 @@ export default function ProfessionalEdit() {
       await base44.entities.Professional.update(existing[0].id, data);
     } else {
       await base44.entities.Professional.create(data);
+      base44.analytics.track({
+        eventName: 'professional_profile_created',
+        properties: {
+          categories_count: form.categories.length,
+          price_type: form.price_type,
+          has_photo: !!form.photo_url,
+          has_bio: !!form.bio,
+        }
+      });
     }
     queryClient.invalidateQueries({ queryKey: ['my-pro'] });
     toast.success('Perfil salvo com sucesso!');
