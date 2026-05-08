@@ -67,7 +67,8 @@ export default function Home() {
   const { data: professionals = [] } = useQuery({
     queryKey: ['professionals'],
     queryFn: () => base44.entities.Professional.filter({ status: 'active' }),
-    refetchInterval: 15000,
+    refetchInterval: 30000,
+    staleTime: 20000,
   });
 
   const categoryFiltered = selectedCategory

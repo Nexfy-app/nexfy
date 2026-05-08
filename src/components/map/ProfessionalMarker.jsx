@@ -26,7 +26,7 @@ function createCustomIcon(isAvailable, isPremium, isSelected) {
   });
 }
 
-export default function ProfessionalMarker({ professional, onClick, isSelected }) {
+const ProfessionalMarker = React.memo(function ProfessionalMarker({ professional, onClick, isSelected }) {
   const icon = useMemo(
     () => createCustomIcon(professional.is_available, professional.is_premium, isSelected),
     [professional.is_available, professional.is_premium, isSelected]
@@ -41,4 +41,13 @@ export default function ProfessionalMarker({ professional, onClick, isSelected }
       eventHandlers={{ click: () => onClick(professional) }}
     />
   );
-}
+}, (prev, next) => {
+  return prev.professional.id === next.professional.id &&
+    prev.professional.latitude === next.professional.latitude &&
+    prev.professional.longitude === next.professional.longitude &&
+    prev.professional.is_available === next.professional.is_available &&
+    prev.professional.is_premium === next.professional.is_premium &&
+    prev.isSelected === next.isSelected;
+});
+
+export default ProfessionalMarker;
