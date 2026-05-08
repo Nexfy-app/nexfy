@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { LocateFixed, MapPin } from 'lucide-react';
@@ -117,14 +117,13 @@ export default function Home() {
     });
   }, [availableWithDist]);
 
-  const handleSelectPro = (pro) => {
+  const handleSelectPro = useCallback((pro) => {
     setSelectedPro({ ...pro, _distFormatted: pro._dist ? formatDistance(pro._dist) : null });
     setSheetOpen(true);
-    // Rastreia visualização de perfil para profissionais Turbo
     if (pro.is_premium) {
       base44.functions.invoke('trackTurboMetrics', { professional_id: pro.id, metric: 'profile_view' }).catch(() => {});
     }
-  };
+  }, []);
 
   return (
     <div className="h-screen flex flex-col relative overflow-hidden">
