@@ -38,7 +38,7 @@ export default function Home() {
   const [otherCategoryText, setOtherCategoryText] = useState('');
   const [selectedPro, setSelectedPro] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [radiusKm, setRadiusKm] = useState(5);
+  const [radiusKm, setRadiusKm] = useState(100);
 
   const { location: userLocation, error: locationError } = useUserLocation();
 
@@ -79,8 +79,7 @@ export default function Home() {
       if (!p.is_available) return false;
       if (!p.latitude || !p.longitude) return false;
       if (p.user_email === userEmail) return false;
-      if (!userLocation) return true;
-      return haversine(userLocation.lat, userLocation.lng, p.latitude, p.longitude) <= radiusKm;
+      return true;
     });
   }, [categoryFiltered, userLocation, radiusKm, userEmail]);
 
