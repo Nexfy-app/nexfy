@@ -67,10 +67,7 @@ export default function Profile() {
 
   const isVerified = approvedDocs.length > 0;
 
-  const { minutesLeft } = useProfessionalLocationSync(professional, () => {
-    queryClient.invalidateQueries({ queryKey: ['my-pro'] });
-    toast('⏰ Você foi colocado offline automaticamente após 2h. Ative novamente se ainda estiver disponível.', { duration: 8000 });
-  });
+  useProfessionalLocationSync(professional);
 
   useEffect(() => {
     if (professional?.id) {
@@ -223,21 +220,7 @@ export default function Profile() {
           </motion.div>
         )}
 
-        {/* Aviso de auto-offline */}
-        {minutesLeft !== null &&
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3">
-            <span className="text-lg shrink-0">⏰</span>
-            <div>
-              <p className="text-sm font-bold text-amber-800">Você será colocado offline em breve</p>
-              <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
-                Após 2h online, o sistema desativa automaticamente sua disponibilidade. Toque em "Disponível agora" para renovar mais 2h.
-              </p>
-            </div>
-          </motion.div>
-        }
+
 
         {/* Menu items */}
         <motion.div

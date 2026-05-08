@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 
 const APP_ID = import.meta.env.VITE_APP_ID;
 
-const AUTO_OFFLINE_MS = 2 * 60 * 60 * 1000; // desativa online após 2h
-const WARN_BEFORE_MS = 15 * 60 * 1000;      // avisa 15 min antes
-
-export default function useProfessionalLocationSync(professional, onAutoOffline) {
+export default function useProfessionalLocationSync(professional) {
   const watcherRef = useRef(null);
-  const offlineTimerRef = useRef(null);
-  const warnTimerRef = useRef(null);
-  const [minutesLeft, setMinutesLeft] = useState(null);
 
   useEffect(() => {
     // Para tudo se ficar offline ou sem professional
@@ -19,9 +13,7 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
         navigator.geolocation?.clearWatch(watcherRef.current);
         watcherRef.current = null;
       }
-      clearTimeout(offlineTimerRef.current);
-      clearTimeout(warnTimerRef.current);
-      setMinutesLeft(null);
+
       return;
     }
 
@@ -39,26 +31,11 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
       );
     }
 
-    // Aviso 15 min antes de desativar
-    warnTimerRef.current = setTimeout(() => {
-      setMinutesLeft(15);
-    }, AUTO_OFFLINE_MS - WARN_BEFORE_MS);
-
-    // Auto-desativar após 2h
-    offlineTimerRef.current = setTimeout(async () => {
-      await base44.entities.Professional.update(professional.id, { is_available: false }).catch(() => {});
-      setMinutesLeft(null);
-      if (onAutoOffline) onAutoOffline();
-    }, AUTO_OFFLINE_MS);
-
     return () => {
       if (watcherRef.current !== null) {
         navigator.geolocation?.clearWatch(watcherRef.current);
         watcherRef.current = null;
       }
-      clearTimeout(offlineTimerRef.current);
-      clearTimeout(warnTimerRef.current);
-      setMinutesLeft(null);
     };
   }, [professional?.id, professional?.is_available]);
 
@@ -76,5 +53,5 @@ export default function useProfessionalLocationSync(professional, onAutoOffline)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [professional?.id, professional?.is_available]);
 
-  return { minutesLeft };
+  return {};
 }
