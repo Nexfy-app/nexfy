@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+
 
 export default function SetNameModal({ open, onClose }) {
   const [name, setName] = useState('');
@@ -38,18 +38,10 @@ export default function SetNameModal({ open, onClose }) {
             className="w-full max-w-[340px] flex flex-col items-center gap-6 rounded-[32px] bg-white px-7 py-8"
             style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)' }}
           >
-            {/* Icon */}
-            <div
-              className="w-[72px] h-[72px] rounded-[22px] flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)' }}
-            >
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-
             {/* Text */}
             <div className="text-center space-y-2">
-              <h2 className="text-[22px] font-black text-slate-900 leading-snug tracking-tight">
-                Bem-vindo! 👋
+              <h2 className="text-[22px] font-bold text-slate-900 leading-snug tracking-tight">
+                Bem-vindo
               </h2>
               <p className="text-[14px] text-slate-500 leading-relaxed">
                 Como você quer ser chamado? Esse nome será exibido para outros usuários.
