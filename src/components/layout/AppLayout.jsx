@@ -11,8 +11,13 @@ export default function AppLayout() {
 
   useEffect(() => {
     base44.auth.me().then(u => {
+      if (!u) return;
       setUserEmail(u?.email);
-      if (!u?.full_name || u.full_name.includes('@')) {
+      const needsName = !u.full_name || u.full_name.includes('@') || u.full_name.trim().length < 2;
+      const sessionKey = `name_modal_shown_${u.email}`;
+      const alreadyShown = sessionStorage.getItem(sessionKey);
+      if (needsName && !alreadyShown) {
+        sessionStorage.setItem(sessionKey, '1');
         setShowSetName(true);
       }
     }).catch(() => {});
