@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import GoOnlineModal from '../components/home/GoOnlineModal';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export default function ProfessionalEdit() {
     longitude: null,
   });
   const [otherCategory, setOtherCategory] = useState('');
+  const [createdPro, setCreatedPro] = useState(null);
 
 
   useEffect(() => {
@@ -106,8 +108,12 @@ export default function ProfessionalEdit() {
 
     if (existing?.[0]) {
       await base44.entities.Professional.update(existing[0].id, data);
+      queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+      toast.success('Perfil salvo com sucesso!');
+      setSaving(false);
+      navigate('/profile');
     } else {
-      await base44.entities.Professional.create(data);
+      const created = await base44.entities.Professional.create(data);
       base44.analytics.track({
         eventName: 'professional_profile_created',
         properties: {
@@ -117,15 +123,20 @@ export default function ProfessionalEdit() {
           has_bio: !!form.bio,
         }
       });
+      queryClient.invalidateQueries({ queryKey: ['my-pro'] });
+      toast.success('Perfil salvo com sucesso!');
+      setSaving(false);
+      setCreatedPro(created);
     }
-    queryClient.invalidateQueries({ queryKey: ['my-pro'] });
-    toast.success('Perfil salvo com sucesso!');
-    setSaving(false);
-    navigate('/profile');
   };
 
   return (
     <div className="min-h-screen pb-24">
+      <GoOnlineModal
+        professional={createdPro}
+        open={!!createdPro}
+        onClose={() => { setCreatedPro(null); navigate('/profile'); }}
+      />
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b px-4 pt-safe">
         <div className="flex items-center gap-3 py-3">
           <button onClick={() => navigate(-1)}><ArrowLeft className="w-5 h-5" /></button>

@@ -116,6 +116,12 @@ export default function AdminDashboard() {
     toast.success('Usuário rebaixado.');
   });
 
+  const handleDeleteUser = (userId, email) => confirm(`Apagar permanentemente o usuário ${email}? Esta ação não pode ser desfeita.`, async () => {
+    await base44.entities.User.delete(userId);
+    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    toast.success('Usuário apagado.');
+  });
+
   const STATUS_PT = { pending: 'Pendente', accepted: 'Aceito', in_progress: 'Em andamento', completed: 'Concluído', cancelled: 'Cancelado' };
   const STATUS_COLOR = { pending: 'bg-amber-100 text-amber-700', accepted: 'bg-blue-100 text-blue-700', in_progress: 'bg-blue-100 text-blue-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' };
 
@@ -272,7 +278,7 @@ export default function AdminDashboard() {
                       <span className="text-[9px] text-muted-foreground">{u.created_date ? format(new Date(u.created_date), 'dd/MM/yy') : ''}</span>
                     </div>
                   </div>
-                  <div className="flex gap-1.5 shrink-0">
+                  <div className="flex flex-col gap-1.5 shrink-0">
                     {u.role !== 'admin' && u.email !== user?.email ? (
                       <button onClick={() => handlePromoteUser(u.id)} className="h-8 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1 text-[10px] font-semibold text-foreground">
                         <ShieldCheck className="w-3 h-3" /> Admin
@@ -282,6 +288,11 @@ export default function AdminDashboard() {
                         <ShieldOff className="w-3 h-3" /> Rebaixar
                       </button>
                     ) : null}
+                    {u.email !== user?.email && (
+                      <button onClick={() => handleDeleteUser(u.id, u.email)} className="h-8 px-2.5 rounded-xl bg-red-50 hover:bg-red-100 transition flex items-center gap-1 text-[10px] font-semibold text-red-700">
+                        <Trash2 className="w-3 h-3" /> Apagar
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
