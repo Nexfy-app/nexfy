@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export default function SetNameModal({ open, onClose }) {
   const [name, setName] = useState('');
@@ -19,10 +19,6 @@ export default function SetNameModal({ open, onClose }) {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSave();
-  };
-
   return (
     <AnimatePresence>
       {open && (
@@ -30,55 +26,67 @@ export default function SetNameModal({ open, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center px-4"
-          style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(6px)' }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center px-5"
+          style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
         >
           <motion.div
-            initial={{ scale: 0.92, opacity: 0, y: 20 }}
+            initial={{ scale: 0.88, opacity: 0, y: 24 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.92, opacity: 0, y: 20 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-7 flex flex-col items-center gap-5"
+            exit={{ scale: 0.92, opacity: 0, y: 16 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            className="w-full max-w-[340px] flex flex-col items-center gap-6 rounded-[32px] bg-white px-7 py-8"
+            style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)' }}
           >
             {/* Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
-              <User className="w-8 h-8 text-slate-700" />
+            <div
+              className="w-[72px] h-[72px] rounded-[22px] flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)' }}
+            >
+              <Sparkles className="w-8 h-8 text-white" />
             </div>
 
             {/* Text */}
-            <div className="text-center">
-              <h2 className="text-xl font-black text-foreground leading-tight">Como quer ser chamado?</h2>
-              <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                Esse é o nome que as pessoas irão ver quando você fizer pedidos no app.
+            <div className="text-center space-y-2">
+              <h2 className="text-[22px] font-black text-slate-900 leading-snug tracking-tight">
+                Bem-vindo! 👋
+              </h2>
+              <p className="text-[14px] text-slate-500 leading-relaxed">
+                Como você quer ser chamado? Esse nome será exibido para outros usuários.
               </p>
             </div>
 
             {/* Input */}
-            <input
-              type="text"
-              placeholder="Seu nome..."
-              value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              maxLength={50}
-              className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-800 focus:bg-white transition-all"
-            />
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="Seu nome..."
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSave()}
+                autoFocus
+                maxLength={50}
+                className="w-full h-[50px] px-4 rounded-2xl border border-slate-200 bg-slate-50 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent focus:bg-white transition-all"
+              />
+              <p className="text-[11px] text-slate-400 mt-2 text-center leading-relaxed">
+                Você poderá alterar seu nome a qualquer momento nas configurações do perfil.
+              </p>
+            </div>
 
             {/* Buttons */}
-            <div className="w-full flex flex-col gap-2">
+            <div className="w-full flex flex-col gap-2.5">
               <button
                 onClick={handleSave}
                 disabled={loading || name.trim().length < 2}
-                className="w-full h-12 bg-foreground text-white rounded-xl font-bold text-sm disabled:opacity-40 active:scale-[0.98] transition-all"
+                className="w-full h-[50px] rounded-2xl bg-slate-900 text-white font-bold text-[15px] tracking-tight disabled:opacity-30 active:scale-[0.97] transition-all"
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin mx-auto" />
-                ) : 'Salvar nome'}
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+                ) : 'Continuar'}
               </button>
               <button
                 onClick={onClose}
-                className="w-full h-10 text-sm text-muted-foreground hover:text-foreground transition"
+                className="w-full h-10 text-[13px] text-slate-400 hover:text-slate-600 transition-colors font-medium"
               >
                 Pular por enquanto
               </button>
