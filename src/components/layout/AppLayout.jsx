@@ -3,7 +3,6 @@ import SetNameModal from '../SetNameModal';
 import { Outlet, Link } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import CookieConsent from '../CookieConsent';
-import NotificationCenter from '../notifications/NotificationCenter';
 import { base44 } from '@/api/base44Client';
 
 export default function AppLayout() {
@@ -13,8 +12,7 @@ export default function AppLayout() {
   useEffect(() => {
     base44.auth.me().then(u => {
       setUserEmail(u?.email);
-      // Se o nome parece ser um email ou está vazio, pede nome
-      if (u?.full_name && u.full_name.includes('@')) {
+      if (!u?.full_name || u.full_name.includes('@')) {
         setShowSetName(true);
       }
     }).catch(() => {});
@@ -22,7 +20,6 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-
       <SetNameModal open={showSetName} onClose={() => setShowSetName(false)} />
       <main className="pb-24">
         <Outlet />
