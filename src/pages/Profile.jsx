@@ -42,10 +42,11 @@ export default function Profile() {
   };
 
   const handleSaveName = async () => {
-    if (!nameInput.trim()) return;
+    const trimmed = nameInput.trim();
+    if (!trimmed || trimmed.length < 2) return;
     setSavingName(true);
-    await base44.auth.updateMe({ full_name: nameInput.trim() });
-    setUser((prev) => ({ ...prev, full_name: nameInput.trim() }));
+    await base44.auth.updateMe({ display_name: trimmed });
+    setUser((prev) => ({ ...prev, display_name: trimmed }));
     setEditingName(false);
     setSavingName(false);
     toast.success('Nome atualizado!');
@@ -147,8 +148,8 @@ export default function Profile() {
                     </button>
                   </div>
                 : <div className="flex items-center gap-1.5">
-                    <h2 className="font-bold text-foreground truncate">{user?.full_name || 'Usuário'}</h2>
-                    <button onClick={() => { setNameInput(user?.full_name || ''); setEditingName(true); }} className="w-5 h-5 text-muted-foreground hover:text-foreground transition shrink-0">
+                    <h2 className="font-bold text-foreground truncate">{user?.display_name || user?.full_name || 'Usuário'}</h2>
+                    <button onClick={() => { setNameInput(user?.display_name || user?.full_name || ''); setEditingName(true); }} className="w-5 h-5 text-muted-foreground hover:text-foreground transition shrink-0">
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                   </div>

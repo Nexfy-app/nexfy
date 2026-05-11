@@ -57,7 +57,7 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
 
       const newRequest = await base44.entities.ServiceRequest.create({
         client_email: user.email,
-        client_name: user.full_name || user.email,
+        client_name: user.display_name || user.full_name || user.email,
         professional_id: professional.id,
         professional_name: professional.name,
         professional_user_email: professional.user_email,
@@ -70,15 +70,15 @@ export default function ProfessionalSheet({ professional, open, onClose }) {
 
       createNotification({
         user_email: professional.user_email,
-        title: `🔔 Novo pedido de ${user.full_name || user.email}`,
+        title: `🔔 Novo pedido de ${user.display_name || user.full_name || user.email}`,
         body: `${effectiveCategoryLabel}: ${description?.slice(0, 80)}`,
         type: 'new_request',
         link: '/requests',
       });
       sendEmailIfEnabled(professional.user_email, 'new_request', {
         to: professional.user_email,
-        subject: `🔔 Novo pedido — ${user.full_name || user.email}`,
-        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAbra o Nexfy agora para aceitar ou recusar.`,
+        subject: `🔔 Novo pedido — ${user.display_name || user.full_name || user.email}`,
+        emailBody: `Você recebeu um novo pedido!\n\nCliente: ${user.display_name || user.full_name || user.email}\nServiço: ${effectiveCategoryLabel}\nDescrição: ${description}\nEndereço: ${address || 'Não informado'}${isUrgent ? '\n⚡ URGENTE' : ''}\n\nAbra o Nexfy agora para aceitar ou recusar.`,
       });
 
       setDescription('');

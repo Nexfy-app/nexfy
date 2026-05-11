@@ -12,7 +12,7 @@ export default function SetNameModal({ open, onClose }) {
     if (!trimmed || trimmed.length < 2) return;
     setLoading(true);
     try {
-      await base44.auth.updateMe({ full_name: trimmed });
+      await base44.auth.updateMe({ display_name: trimmed });
       onClose();
     } finally {
       setLoading(false);

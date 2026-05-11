@@ -6,20 +6,13 @@
       "type": "string",
       "enum": [
         "admin",
-        "user",
-        "professional"
+        "user"
       ],
       "default": "user"
     },
-    "phone": {
-      "type": "string"
-    },
-    "accepted_terms": {
-      "type": "boolean",
-      "default": false
-    },
-    "ip_address": {
-      "type": "string"
+    "display_name": {
+      "type": "string",
+      "description": "Nome personalizado exibido no perfil"
     }
   }
 }

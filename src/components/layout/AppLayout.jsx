@@ -13,7 +13,7 @@ export default function AppLayout() {
     base44.auth.me().then(u => {
       if (!u) return;
       setUserEmail(u?.email);
-      const needsName = !u.full_name || u.full_name.includes('@') || u.full_name.trim().length < 2;
+      const needsName = !u.display_name || u.display_name.trim().length < 2;
       const sessionKey = `name_modal_shown_${u.email}`;
       const alreadyShown = sessionStorage.getItem(sessionKey);
       if (needsName && !alreadyShown) {
