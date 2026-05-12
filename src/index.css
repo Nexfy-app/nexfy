@@ -8,30 +8,35 @@
   :root {
     --font-inter: 'Inter', sans-serif;
 
-    --background: 210 20% 97%;
-    --foreground: 220 30% 10%;
+    --background: 220 14% 96%;
+    --foreground: 224 32% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 10%;
+    --card-foreground: 224 32% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 10%;
-    --primary: 220 30% 10%;
+    --popover-foreground: 224 32% 8%;
+    --primary: 224 32% 8%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 94%;
-    --secondary-foreground: 220 30% 10%;
-    --muted: 210 15% 92%;
-    --muted-foreground: 220 10% 50%;
-    --accent: 215 100% 55%;
+    --secondary: 220 13% 93%;
+    --secondary-foreground: 224 32% 8%;
+    --muted: 220 10% 91%;
+    --muted-foreground: 220 8% 52%;
+    --accent: 224 32% 8%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 80% 58%;
+    --destructive: 0 72% 56%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 15% 90%;
-    --input: 210 15% 92%;
-    --ring: 215 100% 55%;
-    --radius: 1rem;
+    --border: 220 12% 92%;
+    --input: 220 10% 94%;
+    --ring: 224 32% 8%;
+    --radius: 1.125rem;
 
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(255, 255, 255, 0.5);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --glass-bg: rgba(255, 255, 255, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0,0,0,0.03);
+
+    /* Premium card shadow */
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-float: 0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.08);
+    --shadow-modal: 0 8px 40px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
   }
 }
 
@@ -48,18 +53,34 @@
 /* Glass utility */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.08);
+}
+
+/* Premium card */
+.card-premium {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Smooth press feedback */
+.press-feedback {
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.press-feedback:active {
+  transform: scale(0.97);
 }
 
 /* Online glow */

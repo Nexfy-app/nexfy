@@ -39,30 +39,44 @@ export default function Explore() {
   return (
     <div className="min-h-screen bg-background">
       {/* Sticky header */}
-      <div className="sticky top-0 z-10" style={{ background: 'rgba(245,247,250,0.88)', backdropFilter: 'blur(20px)' }}>
+      <div
+        className="sticky top-0 z-10"
+        style={{ background: 'rgba(245,246,249,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}
+      >
         <div className="px-4 pt-12 pb-3">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-foreground">Encontrar</h1>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Encontrar</h1>
             {userEmail && <NotificationCenter userEmail={userEmail} />}
           </div>
 
           {/* Search bar */}
           <div className="relative mb-3">
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
-              <Search className="w-4 h-4 text-muted-foreground" />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <Search style={{ width: 16, height: 16, color: '#94a3b8' }} />
             </div>
             <input
               placeholder="Buscar serviço com IA..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleSearchKeyDown}
-              className="w-full pl-10 pr-28 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition shadow-sm"
+              className="w-full pl-11 pr-28 focus:outline-none transition"
+              style={{
+                height: 48,
+                borderRadius: 16,
+                background: '#ffffff',
+                border: '1px solid rgba(0,0,0,0.07)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                fontSize: 14,
+                fontWeight: 500,
+                color: 'hsl(224 32% 8%)',
+              }}
             />
             <button
               onClick={() => search.trim() && navigate(`/search?q=${encodeURIComponent(search.trim())}`)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-foreground text-white text-[11px] font-bold px-3 py-1.5 rounded-xl hover:opacity-80 transition"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-white text-[11px] font-bold px-3.5 py-2 rounded-xl transition active:scale-95"
+              style={{ background: 'hsl(224 32% 8%)' }}
             >
-              <Sparkles className="w-3 h-3" /> Buscar
+              <Sparkles style={{ width: 11, height: 11 }} /> Buscar
             </button>
           </div>
 
@@ -84,15 +98,19 @@ export default function Explore() {
         )}
 
         {isLoading ? (
-          <div className="flex flex-col gap-2.5 pt-2">
+          <div className="flex flex-col gap-3 pt-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 shadow-sm" style={{ height: 86 }}>
-                <div className="flex gap-3 items-center">
-                  <div className="w-14 h-14 rounded-full bg-slate-100 animate-pulse" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 bg-slate-100 rounded-full w-32 animate-pulse" />
+              <div
+                key={i}
+                className="p-4"
+                style={{ background: '#fff', borderRadius: 20, border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+              >
+                <div className="flex gap-3.5 items-center">
+                  <div className="shrink-0 animate-pulse bg-slate-100" style={{ width: 54, height: 54, borderRadius: 16 }} />
+                  <div className="flex-1 space-y-2.5">
+                    <div className="h-3 bg-slate-100 rounded-full w-36 animate-pulse" />
                     <div className="h-2.5 bg-slate-100 rounded-full w-24 animate-pulse" />
-                    <div className="h-2.5 bg-slate-100 rounded-full w-16 animate-pulse" />
+                    <div className="h-2.5 bg-slate-100 rounded-full w-20 animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -105,12 +123,15 @@ export default function Explore() {
             ))}
           </AnimatedList>
         ) : (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Search className="w-7 h-7 text-muted-foreground" />
+          <div className="text-center py-20">
+            <div
+              className="w-16 h-16 flex items-center justify-center mx-auto mb-4"
+              style={{ background: 'rgba(0,0,0,0.04)', borderRadius: 22 }}
+            >
+              <Search style={{ width: 26, height: 26, color: '#94a3b8' }} />
             </div>
-            <p className="font-semibold text-foreground">Nenhum resultado</p>
-            <p className="text-sm text-muted-foreground mt-1">Tente outro nome ou categoria</p>
+            <p className="font-bold text-foreground text-[15px] tracking-tight">Nenhum resultado</p>
+            <p className="text-[13px] text-muted-foreground mt-1">Tente outro nome ou categoria</p>
           </div>
         )}
       </div>

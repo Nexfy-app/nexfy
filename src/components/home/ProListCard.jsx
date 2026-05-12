@@ -24,71 +24,92 @@ export default function ProListCard({ professional, onClick, distance, badges = 
 
   return (
     <motion.div
-      whileTap={{ scale: 0.975 }}
+      whileTap={{ scale: 0.972 }}
       onClick={() => onClick(professional)}
-      className={`cursor-pointer rounded-2xl px-3 py-3 transition-all ${
-        isSelected
-          ? 'bg-foreground text-white shadow-lg ring-2 ring-foreground/30'
-          : 'bg-white text-foreground shadow-sm hover:shadow-md'
-      }`}
-      style={{ boxShadow: isSelected ? '0 4px 20px rgba(15,23,42,0.2)' : '0 2px 10px rgba(0,0,0,0.06)' }}
+      className="cursor-pointer transition-all"
+      style={{
+        borderRadius: 18,
+        padding: '12px 14px',
+        background: isSelected ? 'hsl(224 32% 8%)' : '#ffffff',
+        boxShadow: isSelected
+          ? '0 4px 20px rgba(15,20,40,0.22)'
+          : '0 1px 3px rgba(0,0,0,0.04), 0 2px 10px rgba(0,0,0,0.05)',
+        border: isSelected ? 'none' : '1px solid rgba(0,0,0,0.04)',
+      }}
     >
       <div className="flex items-center gap-3">
         {/* Avatar */}
         <div className="relative shrink-0">
-          <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100">
+          <div
+            className="overflow-hidden"
+            style={{ width: 46, height: 46, borderRadius: 14, background: '#f1f5f9' }}
+          >
             {professional.photo_url ? (
               <img src={professional.photo_url} alt={professional.name} className="w-full h-full object-cover" />
             ) : (
-              <div className={`w-full h-full flex items-center justify-center text-base font-bold ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
+              <div
+                className="w-full h-full flex items-center justify-center text-base font-bold"
+                style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : '#64748b' }}
+              >
                 {professional.name?.charAt(0)}
               </div>
             )}
           </div>
-          {/* Online dot */}
-          <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white" />
+          <div
+            className="absolute -bottom-0.5 -right-0.5 rounded-full border-2"
+            style={{ width: 13, height: 13, background: '#22c55e', borderColor: isSelected ? 'hsl(224 32% 8%)' : '#ffffff' }}
+          />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1 flex-wrap">
-            <p className={`text-sm font-bold truncate ${isSelected ? 'text-white' : 'text-foreground'}`}>{professional.name}</p>
-            {professional.verified && <CheckCircle className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-green-300' : 'text-green-600 fill-green-600'}`} />}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <p className="text-[13px] font-bold truncate" style={{ color: isSelected ? '#ffffff' : 'hsl(224 32% 8%)' }}>
+              {professional.name}
+            </p>
+            {professional.verified && (
+              <CheckCircle style={{ width: 13, height: 13, flexShrink: 0, color: isSelected ? '#86efac' : '#16a34a', fill: isSelected ? '#86efac' : '#16a34a' }} />
+            )}
             {professional.is_premium && !isSelected && <TurboBadge size="xs" />}
           </div>
-          <p className={`text-[11px] truncate ${isSelected ? 'text-white/70' : 'text-muted-foreground'}`}>{primaryCategory}</p>
-
-          <div className={`flex items-center gap-2.5 mt-1 flex-wrap ${isSelected ? 'text-white/80' : 'text-muted-foreground'}`}>
+          <p className="text-[11px] truncate mt-0.5" style={{ color: isSelected ? 'rgba(255,255,255,0.55)' : '#94a3b8' }}>
+            {primaryCategory}
+          </p>
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span className="flex items-center gap-0.5 text-[10px] font-medium" style={{ color: isSelected ? 'rgba(255,255,255,0.65)' : '#94a3b8' }}>
+              <Star style={{ width: 10, height: 10, fill: isSelected ? '#fbbf24' : '#fbbf24', color: isSelected ? '#fbbf24' : '#fbbf24' }} />
+              {professional.rating_avg?.toFixed(1) || '0.0'}
+            </span>
             {distance && (
-              <span className="flex items-center gap-0.5 text-[10px]">
-                <Navigation className="w-2.5 h-2.5" />
+              <span className="flex items-center gap-0.5 text-[10px]" style={{ color: isSelected ? 'rgba(255,255,255,0.55)' : '#94a3b8' }}>
+                <Navigation style={{ width: 9, height: 9 }} />
                 {distance}
               </span>
             )}
             {arrival && (
-              <span className="flex items-center gap-0.5 text-[10px]">
-                <Clock className="w-2.5 h-2.5" />
-                Chega em {arrival}
+              <span className="flex items-center gap-0.5 text-[10px]" style={{ color: isSelected ? 'rgba(255,255,255,0.55)' : '#94a3b8' }}>
+                <Clock style={{ width: 9, height: 9 }} />
+                {arrival}
               </span>
             )}
-            <span className="flex items-center gap-0.5 text-[10px]">
-              <Star className={`w-2.5 h-2.5 ${isSelected ? 'text-amber-300 fill-amber-300' : 'text-amber-400 fill-amber-400'}`} />
-              {professional.rating_avg?.toFixed(1) || '0.0'}
-            </span>
           </div>
-
-          {!isSelected && <ProBadges badgeKeys={badges} />}
         </div>
 
         {/* Price */}
         <div className="text-right shrink-0">
           {professional.price_min ? (
             <>
-              <p className={`text-[9px] leading-none ${isSelected ? 'text-white/60' : 'text-muted-foreground'}`}>a partir de</p>
-              <p className={`text-sm font-black mt-0.5 ${isSelected ? 'text-white' : 'text-foreground'}`}>R${professional.price_min}</p>
+              <p className="text-[9px] leading-none font-medium" style={{ color: isSelected ? 'rgba(255,255,255,0.4)' : '#94a3b8' }}>
+                a partir de
+              </p>
+              <p className="text-[14px] font-black mt-0.5 tracking-tight" style={{ color: isSelected ? '#ffffff' : 'hsl(224 32% 8%)' }}>
+                R${professional.price_min}
+              </p>
             </>
           ) : (
-            <p className={`text-[10px] font-semibold ${isSelected ? 'text-white/70' : 'text-muted-foreground'}`}>Orçamento</p>
+            <p className="text-[10px] font-semibold" style={{ color: isSelected ? 'rgba(255,255,255,0.55)' : '#94a3b8' }}>
+              Orçamento
+            </p>
           )}
         </div>
       </div>

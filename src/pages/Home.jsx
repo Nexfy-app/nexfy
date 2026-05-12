@@ -141,36 +141,50 @@ export default function Home() {
       {/* Top glass header */}
       <div className="absolute top-0 left-0 right-0 z-10 px-3 pt-3 flex justify-center">
         <div className="w-full max-w-lg md:max-w-2xl lg:max-w-4xl">
-        <div className="glass rounded-2xl">
-          {/* Location bar */}
-          <div className="flex items-center gap-2 px-3 pt-2 pb-1.5">
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-              userLocation ? 'bg-blue-600' : 'bg-foreground'
-            }`}>
-              {userLocation
-                ? <LocateFixed className="w-2.5 h-2.5 text-white" />
-                : <MapPin className="w-2.5 h-2.5 text-white" />
-              }
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.90)',
+              backdropFilter: 'blur(28px)',
+              WebkitBackdropFilter: 'blur(28px)',
+              borderRadius: 22,
+              border: '1px solid rgba(0,0,0,0.05)',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.07)',
+            }}
+          >
+            {/* Location bar */}
+            <div className="flex items-center gap-2.5 px-3.5 pt-2.5 pb-2">
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: userLocation ? '#3b82f6' : 'hsl(224 32% 8%)' }}
+              >
+                {userLocation
+                  ? <LocateFixed style={{ width: 11, height: 11, color: 'white' }} />
+                  : <MapPin style={{ width: 11, height: 11, color: 'white' }} />
+                }
+              </div>
+              <p className="text-[12px] font-semibold text-foreground flex-1 truncate tracking-tight">
+                {userLocation ? 'Localização ativa' : locationError ? 'GPS indisponível' : 'Obtendo localização...'}
+              </p>
+              <div
+                className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-full"
+                style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.2)' }}
+              >
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                <span className="text-[10px] font-bold text-green-700">{availableWithDist.length} online</span>
+              </div>
+              <AppTutorial />
+              {userEmail && <NotificationCenter userEmail={userEmail} />}
             </div>
-            <p className="text-[11px] font-medium text-foreground flex-1 truncate">
-              {userLocation ? 'GPS ativo' : locationError ? 'GPS negado' : 'Obtendo GPS...'}
-            </p>
-            <div className="bg-green-500/15 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-green-200 shrink-0">
-              {availableWithDist.length} online
-            </div>
-            <AppTutorial />
-            {userEmail && <NotificationCenter userEmail={userEmail} />}
-          </div>
 
-          {/* Categories */}
-          <div className="border-t border-white/40">
-            <CategoryFilter
-              selected={selectedCategory}
-              onSelect={setSelectedCategory}
-              professionals={availableWithDist}
-            />
+            {/* Categories */}
+            <div style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+              <CategoryFilter
+                selected={selectedCategory}
+                onSelect={setSelectedCategory}
+                professionals={availableWithDist}
+              />
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
@@ -180,27 +194,47 @@ export default function Home() {
       <AnimatePresence>
         {userEmail && isUserPro === false && !dismissedProBanner && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             className="fixed left-0 right-0 z-50 px-3 flex justify-center"
-            style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)' }}
+            style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 164px)' }}
           >
             <div className="w-full max-w-lg">
-              <div className="glass-strong rounded-2xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.12)' }}>
-                <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shrink-0">
-                  <Briefcase className="w-4 h-4 text-white" />
+              <div
+                className="flex items-center gap-3 px-4 py-3.5 rounded-[22px]"
+                style={{
+                  background: 'rgba(255,255,255,0.97)',
+                  backdropFilter: 'blur(40px)',
+                  WebkitBackdropFilter: 'blur(40px)',
+                  border: '1px solid rgba(0,0,0,0.05)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ background: 'hsl(224 32% 8%)' }}
+                >
+                  <Briefcase style={{ width: 16, height: 16, color: 'white' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-foreground leading-tight">Você é um profissional?</p>
-                  <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">Cadastre-se e apareça no mapa para clientes próximos.</p>
+                  <p className="text-[13px] font-bold text-foreground leading-tight tracking-tight">Você é profissional?</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">Apareça no mapa para clientes próximos.</p>
                 </div>
-                <Link to="/professional/edit" className="shrink-0 bg-foreground text-white text-[11px] font-bold px-3 py-1.5 rounded-xl hover:opacity-80 transition">
+                <Link
+                  to="/professional/edit"
+                  className="shrink-0 text-white text-[12px] font-bold px-4 py-2 rounded-full transition active:scale-95"
+                  style={{ background: 'hsl(224 32% 8%)', letterSpacing: '-0.01em' }}
+                >
                   Cadastrar
                 </Link>
-                <button onClick={() => setDismissedProBanner(true)} className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition shrink-0">
-                  <X className="w-3.5 h-3.5 text-muted-foreground" />
+                <button
+                  onClick={() => setDismissedProBanner(true)}
+                  className="w-7 h-7 flex items-center justify-center rounded-full transition shrink-0"
+                  style={{ background: 'rgba(0,0,0,0.05)' }}
+                >
+                  <X style={{ width: 13, height: 13, color: '#94a3b8' }} />
                 </button>
               </div>
             </div>

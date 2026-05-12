@@ -31,9 +31,22 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 px-3 pt-1" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))', userSelect: 'none', WebkitUserSelect: 'none' }}>
-      <div className="glass-strong rounded-2xl max-w-lg mx-auto">
-        <div className="flex items-center justify-around px-2 py-1.5">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-40 px-4"
+      style={{ paddingBottom: 'calc(10px + env(safe-area-inset-bottom, 0px))', userSelect: 'none', WebkitUserSelect: 'none' }}
+    >
+      <div
+        className="max-w-lg mx-auto"
+        style={{
+          background: 'rgba(255,255,255,0.96)',
+          backdropFilter: 'blur(40px)',
+          WebkitBackdropFilter: 'blur(40px)',
+          borderRadius: 28,
+          border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.10)',
+        }}
+      >
+        <div className="flex items-center justify-around px-1 py-2">
           {navItems.map((item) => {
             const { path, icon: Icon, label } = item;
             const isActive = location.pathname === path;
@@ -42,24 +55,27 @@ export default function BottomNav() {
                 key={path}
                 to={path}
                 onClick={(e) => handleNavClick(e, item)}
-                className="flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-200 min-w-[52px]"
+                className="flex flex-col items-center gap-0.5 py-1 px-3 min-w-[54px] relative"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                <div className={cn(
-                  "w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200",
-                  isActive
-                    ? "bg-foreground shadow-md"
-                    : "hover:bg-muted"
-                )}>
+                <div
+                  className="w-10 h-10 flex items-center justify-center transition-all duration-200"
+                  style={{
+                    borderRadius: 16,
+                    background: isActive ? 'hsl(224 32% 8%)' : 'transparent',
+                    boxShadow: isActive ? '0 2px 10px rgba(15,20,40,0.18)' : 'none',
+                    transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                  }}
+                >
                   <Icon
-                    className={cn("w-4.5 h-4.5 transition-all", isActive ? "text-white" : "text-muted-foreground")}
-                    style={{ width: '18px', height: '18px' }}
-                    strokeWidth={isActive ? 2.5 : 1.8}
+                    style={{ width: 18, height: 18 }}
+                    className={cn("transition-all", isActive ? "text-white" : "text-slate-400")}
+                    strokeWidth={isActive ? 2.5 : 1.9}
                   />
                 </div>
-                <span className={cn(
-                  "text-[10px] font-medium transition-all",
-                  isActive ? "text-foreground font-semibold" : "text-muted-foreground"
-                )}>
+                <span
+                  className={cn("text-[10px] tracking-tight transition-all leading-none mt-0.5", isActive ? "text-foreground font-semibold" : "text-slate-400 font-medium")}
+                >
                   {label}
                 </span>
               </Link>

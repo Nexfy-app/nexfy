@@ -47,15 +47,26 @@ function MobilePanel({ professionals, onSelect, selectedId }) {
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.15 }}
               onClick={() => setExpanded(true)}
-              className="w-full glass-strong rounded-2xl flex items-center justify-between px-4 py-3 shadow-lg active:scale-[0.98] transition-all"
+              className="w-full flex items-center justify-between px-5 py-3.5 active:scale-[0.98] transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.97)',
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
+                borderRadius: 24,
+                border: '1px solid rgba(0,0,0,0.05)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.04), 0 10px 36px rgba(0,0,0,0.09)',
+              }}
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-sm font-bold text-foreground">
+                <div className="w-2 h-2 bg-green-500 rounded-full" style={{ boxShadow: '0 0 0 3px rgba(34,197,94,0.2)' }} />
+                <span className="text-[14px] font-bold text-foreground tracking-tight">
                   {professionals.length} profissional{professionals.length > 1 ? 'is' : ''} disponíve{professionals.length > 1 ? 'is' : 'l'}
                 </span>
               </div>
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] text-muted-foreground font-medium">Ver todos</span>
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              </div>
             </motion.button>
           ) : (
             <motion.div
@@ -63,15 +74,26 @@ function MobilePanel({ professionals, onSelect, selectedId }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="glass-strong rounded-2xl overflow-hidden shadow-xl"
-              style={{ maxHeight: '52vh' }}
+              transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+              style={{
+                background: 'rgba(255,255,255,0.97)',
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
+                borderRadius: 24,
+                border: '1px solid rgba(0,0,0,0.05)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.12)',
+                maxHeight: '54vh',
+                overflow: 'hidden',
+              }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/40">
+              <div
+                className="flex items-center justify-between px-4 py-3"
+                style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}
+              >
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-bold text-foreground">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" style={{ boxShadow: '0 0 0 3px rgba(34,197,94,0.2)' }} />
+                  <span className="text-[13px] font-bold text-foreground tracking-tight">
                     {professionals.length} disponíveis
                   </span>
                 </div>
@@ -79,7 +101,8 @@ function MobilePanel({ professionals, onSelect, selectedId }) {
                   <SortSelector value={sortBy} onChange={setSortBy} />
                   <button
                     onClick={() => setExpanded(false)}
-                    className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition"
+                    className="w-7 h-7 flex items-center justify-center rounded-full transition"
+                    style={{ background: 'rgba(0,0,0,0.05)' }}
                   >
                     <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
@@ -87,7 +110,7 @@ function MobilePanel({ professionals, onSelect, selectedId }) {
               </div>
 
               {/* Cards list */}
-              <div className="overflow-y-auto px-3 py-2.5 space-y-2" style={{ maxHeight: 'calc(52vh - 52px)' }}>
+              <div className="overflow-y-auto px-3 py-2.5 space-y-2" style={{ maxHeight: 'calc(54vh - 52px)' }}>
                 <AnimatePresence>
                   {sorted.map(pro => (
                     <ProListCard

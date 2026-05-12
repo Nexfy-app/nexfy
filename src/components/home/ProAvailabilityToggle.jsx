@@ -64,13 +64,16 @@ export default function ProAvailabilityToggle({ professional }) {
     <button
       onClick={toggle}
       disabled={loading}
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all active:scale-[0.97] disabled:opacity-80 select-none"
+      className="flex items-center gap-2.5 transition-all active:scale-[0.97] disabled:opacity-80 select-none"
       style={{
-        background: 'rgba(255,255,255,0.96)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.06)',
-        minWidth: 160,
+        background: 'rgba(255,255,255,0.97)',
+        backdropFilter: 'blur(32px)',
+        WebkitBackdropFilter: 'blur(32px)',
+        borderRadius: 20,
+        padding: '10px 14px',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.06), 0 8px 28px rgba(0,0,0,0.10)',
+        minWidth: 148,
       }}
     >
       {/* Status dot */}

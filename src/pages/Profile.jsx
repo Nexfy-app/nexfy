@@ -105,7 +105,7 @@ export default function Profile() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="px-4 pt-12 pb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Perfil</h1>
+        <h1 className="text-[26px] font-bold text-foreground tracking-tight">Perfil</h1>
         {user?.email && <NotificationCenter userEmail={user.email} />}
       </div>
 
@@ -114,8 +114,13 @@ export default function Profile() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-5"
-          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+          className="p-5"
+          style={{
+            background: '#ffffff',
+            borderRadius: 22,
+            border: '1px solid rgba(0,0,0,0.04)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
+          }}>
 
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -226,8 +231,13 @@ export default function Profile() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl overflow-hidden"
-          style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+          className="overflow-hidden"
+          style={{
+            background: '#ffffff',
+            borderRadius: 22,
+            border: '1px solid rgba(0,0,0,0.04)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
+          }}>
           {menuItems.filter((item) => item.show).map((item, i, arr) =>
             <Link
               key={item.label}
@@ -244,20 +254,28 @@ export default function Profile() {
         </motion.div>
 
         {/* Admin */}
-        {user?.role === 'admin' &&
+        {user?.role === 'admin' && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
             <Link
               to="/admin"
-              className="flex items-center gap-3.5 bg-white rounded-2xl px-4 py-3.5 hover:bg-slate-50 transition"
-              style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
-              <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center">
+              className="flex items-center gap-3.5 px-4 py-3.5 transition hover:opacity-90"
+              style={{
+                background: '#ffffff',
+                borderRadius: 22,
+                border: '1px solid rgba(0,0,0,0.04)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
+              }}>
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center"
+                style={{ background: 'hsl(224 32% 8%)' }}
+              >
                 <Shield className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm font-medium text-foreground flex-1">Painel Administrativo</span>
+              <span className="text-[14px] font-semibold text-foreground flex-1 tracking-tight">Painel Administrativo</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
           </motion.div>
-        }
+        )}
 
         {/* Logout */}
         <motion.button
@@ -265,7 +283,12 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => base44.auth.logout('/')}
-          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl border border-red-100 bg-red-50 text-red-600 text-sm font-semibold hover:bg-red-100 transition">
+          className="w-full flex items-center justify-center gap-2 h-12 text-red-600 text-[14px] font-semibold transition active:scale-[0.98]"
+          style={{
+            borderRadius: 22,
+            border: '1px solid rgba(239,68,68,0.15)',
+            background: 'rgba(239,68,68,0.05)',
+          }}>
           <LogOut className="w-4 h-4" />
           Sair da conta
         </motion.button>

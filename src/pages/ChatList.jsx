@@ -70,19 +70,22 @@ export default function ChatList() {
       {/* Header */}
       <div
         className="sticky top-0 z-10 px-4"
-        style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}
+        style={{ background: 'rgba(245,246,249,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}
       >
         <div className="pt-12 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-foreground">Mensagens</h1>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Mensagens</h1>
             {totalUnread > 0 && (
-              <span className="bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <span
+                className="text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center"
+                style={{ background: '#3b82f6' }}
+              >
                 {totalUnread > 9 ? '9+' : totalUnread}
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium">{requests.length} conversa{requests.length !== 1 ? 's' : ''}</span>
+            <span className="text-[12px] text-muted-foreground font-medium">{requests.length} conversa{requests.length !== 1 ? 's' : ''}</span>
             {user?.email && <NotificationCenter userEmail={user.email} />}
           </div>
         </div>
@@ -112,31 +115,45 @@ export default function ChatList() {
             >
               <Link
                 to={`/chat/${r.id}`}
-                className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3.5 transition-all hover:shadow-md active:scale-[0.98]"
-                style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+                className="flex items-center gap-3.5 transition-all active:scale-[0.98]"
+                style={{
+                  background: '#ffffff',
+                  borderRadius: 20,
+                  padding: '14px 16px',
+                  border: '1px solid rgba(0,0,0,0.04)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05)',
+                }}
               >
                 {/* Avatar with unread indicator */}
                 <div className="relative shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                  <div
+                    className="flex items-center justify-center text-white font-bold text-[13px]"
+                    style={{ width: 46, height: 46, borderRadius: 14, background: 'hsl(224 32% 8%)' }}
+                  >
                     {initials}
                   </div>
                   {unread > 0 && (
-                    <div className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white">
-                      <span className="text-[9px] font-black text-white">{unread > 9 ? '9+' : unread}</span>
+                    <div
+                      className="absolute -top-0.5 -right-0.5 flex items-center justify-center border-2 border-white"
+                      style={{ width: 18, height: 18, background: '#3b82f6', borderRadius: 9 }}
+                    >
+                      <span className="text-[8px] font-black text-white">{unread > 9 ? '9+' : unread}</span>
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className={cn("text-sm truncate", unread > 0 ? "font-bold text-foreground" : "font-semibold text-foreground")}>
+                    <p className={cn("text-[14px] truncate tracking-tight", unread > 0 ? "font-bold text-foreground" : "font-semibold text-foreground")}>
                       {otherName}
                     </p>
-                    {unread > 0 && <span className="w-2 h-2 bg-blue-600 rounded-full shrink-0 mx-2" />}
-                    <span className="text-[10px] text-muted-foreground shrink-0 ml-2 font-medium">{dateLabel}</span>
+                    <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                      {unread > 0 && <span className="w-2 h-2 bg-blue-500 rounded-full" />}
+                      <span className="text-[10px] text-muted-foreground font-medium">{dateLabel}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground capitalize truncate">
+                  <div className="flex items-center justify-between mt-0.5">
+                    <p className="text-[11px] text-muted-foreground capitalize truncate">
                       {r.category?.startsWith('outros:') ? r.category.replace('outros:', '') : r.category?.replace(/_/g, ' ')}
                     </p>
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ml-2 shrink-0 ${STATUS_COLORS[r.status] || 'bg-slate-100 text-slate-600'}`}>
@@ -152,8 +169,8 @@ export default function ChatList() {
             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-7 h-7 text-muted-foreground" />
             </div>
-            <p className="font-bold text-foreground">Nenhuma conversa ainda</p>
-            <p className="text-sm text-muted-foreground mt-1">Contrate um profissional para iniciar uma conversa</p>
+            <p className="font-bold text-foreground text-[15px] tracking-tight">Nenhuma conversa ainda</p>
+            <p className="text-[13px] text-muted-foreground mt-1">Contrate um profissional para iniciar uma conversa</p>
           </div>
         )}
       </div>

@@ -144,8 +144,13 @@ function RequestCard({ request, isProvider, onAction, userEmail }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl overflow-hidden mb-3"
-      style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)' }}>
+      className="mb-3 overflow-hidden"
+      style={{
+        background: '#ffffff',
+        borderRadius: 20,
+        border: '1px solid rgba(0,0,0,0.04)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)',
+      }}>
       
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
@@ -323,15 +328,21 @@ export default function Requests() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 px-4" style={{ background: 'rgba(245,247,250,0.9)', backdropFilter: 'blur(20px)' }}>
+      <div
+        className="sticky top-0 z-10 px-4"
+        style={{ background: 'rgba(245,246,249,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}
+      >
         <div className="pt-12 pb-3 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Pedidos</h1>
+          <h1 className="text-[26px] font-bold text-foreground tracking-tight">Pedidos</h1>
           <div className="flex items-center gap-2">
-            {pendingCount > 0 &&
-            <span className="bg-foreground text-white text-xs font-bold px-3 py-1 rounded-full">
+            {pendingCount > 0 && (
+              <span
+                className="text-white text-[11px] font-bold px-3 py-1 rounded-full"
+                style={{ background: 'hsl(224 32% 8%)' }}
+              >
                 {pendingCount} novo{pendingCount > 1 ? 's' : ''}
               </span>
-            }
+            )}
             {user?.email && <NotificationCenter userEmail={user.email} />}
           </div>
         </div>
@@ -343,29 +354,52 @@ export default function Requests() {
         {/* Support shortcut */}
         <button
           onClick={() => navigate('/support')}
-          className="w-full flex items-center gap-3 bg-white rounded-2xl px-4 py-3 mb-4 border border-slate-100 hover:border-slate-300 transition"
-          style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+          className="w-full flex items-center gap-3 mb-4 transition active:scale-[0.98]"
+          style={{
+            background: '#ffffff',
+            borderRadius: 18,
+            padding: '12px 16px',
+            border: '1px solid rgba(0,0,0,0.04)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.05)',
+          }}
         >
-          <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center shrink-0">
-            <HelpCircle className="w-4 h-4 text-white" />
+          <div
+            className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ background: 'hsl(224 32% 8%)' }}
+          >
+            <HelpCircle style={{ width: 16, height: 16, color: 'white' }} />
           </div>
           <div className="flex-1 text-left">
-            <p className="text-sm font-semibold text-foreground">Precisa de ajuda?</p>
+            <p className="text-[13px] font-bold text-foreground tracking-tight">Precisa de ajuda?</p>
             <p className="text-[11px] text-muted-foreground">Fale com nosso assistente de suporte</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          <ChevronRight style={{ width: 15, height: 15, color: '#94a3b8' }} />
         </button>
 
         <Tabs defaultValue="client">
-          <TabsList className="w-full rounded-2xl bg-white border border-slate-200 h-11 mb-4 p-1 shadow-sm">
-            <TabsTrigger value="client" className="flex-1 rounded-xl text-xs font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm">
+          <TabsList
+            className="w-full h-11 mb-4 p-1"
+            style={{
+              background: '#ffffff',
+              borderRadius: 18,
+              border: '1px solid rgba(0,0,0,0.05)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            }}
+          >
+            <TabsTrigger
+              value="client"
+              className="flex-1 rounded-[14px] text-[12px] font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm transition-all"
+            >
               Como Cliente
             </TabsTrigger>
-            {professional &&
-            <TabsTrigger value="provider" className="flex-1 rounded-xl text-xs font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm">
+            {professional && (
+              <TabsTrigger
+                value="provider"
+                className="flex-1 rounded-[14px] text-[12px] font-semibold data-[state=active]:bg-foreground data-[state=active]:text-white data-[state=active]:shadow-sm transition-all"
+              >
                 Profissional {pendingCount > 0 && `(${pendingCount})`}
               </TabsTrigger>
-            }
+            )}
           </TabsList>
 
           <TabsContent value="client">

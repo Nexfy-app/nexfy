@@ -31,12 +31,12 @@ export default function SetNameModal({ open, onClose }) {
           style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
         >
           <motion.div
-            initial={{ scale: 0.88, opacity: 0, y: 24 }}
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.92, opacity: 0, y: 16 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-            className="w-full max-w-[340px] flex flex-col items-center gap-6 rounded-[32px] bg-white px-7 py-8"
-            style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)' }}
+            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+            className="w-full max-w-[320px] flex flex-col gap-5 rounded-[28px] bg-white px-6 py-7"
+            style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.06)' }}
           >
             {/* Text */}
             <div className="text-center space-y-2">
