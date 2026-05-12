@@ -16,6 +16,13 @@ Deno.serve(async (req) => {
   if (action === 'create_checkout') {
     if (!PRICE_ID) return Response.json({ error: 'STRIPE_PRICE_ID secret não configurado' }, { status: 500 });
 
+    // Security: validate that the professional_id belongs to the authenticated user
+    if (professional_id) {
+      const pros = await base44.entities.Professional.filter({ user_email: user.email });
+      const belongs = pros.some(p => p.id === professional_id);
+      if (!belongs) return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const origin = req.headers.get('origin') || 'https://app.base44.com';
 
     let session;
@@ -51,6 +58,11 @@ Deno.serve(async (req) => {
   // ── CANCEL SUBSCRIPTION ──
   if (action === 'cancel') {
     if (!subscription_id) return Response.json({ error: 'ID inválido' }, { status: 400 });
+
+    // Security: validate that the subscription belongs to the authenticated user
+    const ownedSubs = await base44.entities.TurboSubscription.filter({ professional_email: user.email });
+    const owned = ownedSubs.find(s => s.stripe_subscription_id === subscription_id);
+    if (!owned) return Response.json({ error: 'Forbidden' }, { status: 403 });
 
     // Cancela imediatamente na Stripe
     try {
