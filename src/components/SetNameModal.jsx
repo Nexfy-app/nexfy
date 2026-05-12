@@ -39,12 +39,12 @@ export default function SetNameModal({ open, onClose }) {
             style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.06)' }}
           >
             {/* Text */}
-            <div className="text-center space-y-2">
-              <h2 className="text-[22px] font-bold text-slate-900 leading-snug tracking-tight">
+            <div className="space-y-1.5">
+              <h2 className="text-[20px] font-bold text-slate-900 leading-snug tracking-tight">
                 Bem-vindo
               </h2>
-              <p className="text-[14px] text-slate-500 leading-relaxed">
-                Como você quer ser chamado? Esse nome será exibido para outros usuários.
+              <p className="text-[13px] text-slate-500 leading-relaxed">
+                Como você quer ser chamado? Esse nome será exibido para outros usuários na plataforma.
               </p>
             </div>
 
@@ -58,19 +58,36 @@ export default function SetNameModal({ open, onClose }) {
                 onKeyDown={e => e.key === 'Enter' && handleSave()}
                 autoFocus
                 maxLength={50}
-                className="w-full h-[50px] px-4 rounded-2xl border border-slate-200 bg-slate-50 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent focus:bg-white transition-all"
+                className="w-full focus:outline-none transition-all"
+                style={{
+                  height: 48,
+                  borderRadius: 14,
+                  border: '1px solid rgba(0,0,0,0.10)',
+                  background: 'rgba(0,0,0,0.03)',
+                  padding: '0 14px',
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: '#0f1729',
+                  letterSpacing: '-0.01em',
+                }}
               />
-              <p className="text-[11px] text-slate-400 mt-2 text-center leading-relaxed">
-                Você poderá alterar seu nome a qualquer momento nas configurações do perfil.
+              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                Você pode alterar isso a qualquer momento no seu perfil.
               </p>
             </div>
 
             {/* Buttons */}
-            <div className="w-full flex flex-col gap-2.5">
+            <div className="w-full flex flex-col gap-2">
               <button
                 onClick={handleSave}
                 disabled={loading || name.trim().length < 2}
-                className="w-full h-[50px] rounded-2xl bg-slate-900 text-white font-bold text-[15px] tracking-tight disabled:opacity-30 active:scale-[0.97] transition-all"
+                className="w-full text-white font-bold text-[15px] transition-all active:scale-[0.97] disabled:opacity-30"
+                style={{
+                  height: 50,
+                  borderRadius: 14,
+                  background: 'hsl(224 32% 8%)',
+                  letterSpacing: '-0.02em',
+                }}
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
@@ -78,7 +95,7 @@ export default function SetNameModal({ open, onClose }) {
               </button>
               <button
                 onClick={onClose}
-                className="w-full h-10 text-[13px] text-slate-400 hover:text-slate-600 transition-colors font-medium"
+                className="w-full h-10 text-[13px] text-slate-400 font-medium transition-colors"
               >
                 Pular por enquanto
               </button>

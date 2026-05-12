@@ -57,20 +57,25 @@ function TrackingSteps({ status }) {
 
 function SafetyBanner() {
   return (
-    <div className="bg-[#e6e6e6] mb-4 p-3.5 opacity-100 rounded-[28px] border border-slate-200/50">
-      <div className="flex gap-2.5">
-        <div className="bg-[#13be69] rounded-xl w-7 h-7 flex items-center justify-center shrink-0">
-          <Shield className="text-slate-50 lucide lucide-shield w-3.5 h-3.5" />
-        </div>
-        <div>
-          <p className="text-slate-900 mb-0.5 text-xs font-bold">Dica de Segurança</p>
-          <p className="text-gray-500 leading-relaxed">Sempre pague após o serviço concluído. Nunca envie dinheiro antecipado.
-
-          </p>
-        </div>
+    <div
+      className="mb-4 flex items-start gap-3 px-4 py-3.5"
+      style={{
+        background: '#f0fdf4',
+        borderRadius: 18,
+        border: '1px solid rgba(34,197,94,0.15)',
+      }}
+    >
+      <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style={{ background: '#22c55e' }}>
+        <Shield className="w-3.5 h-3.5 text-white" />
       </div>
-    </div>);
-
+      <div>
+        <p className="text-[12px] font-bold text-green-900 mb-0.5">Dica de Segurança</p>
+        <p className="text-[11px] text-green-700 leading-relaxed">
+          Sempre pague após o serviço concluído. Nunca envie dinheiro antecipado.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function RequestCard({ request, isProvider, onAction, userEmail }) {
