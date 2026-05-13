@@ -155,7 +155,7 @@ export default function Home() {
             <div className="flex items-center gap-2.5 px-3.5 pt-2.5 pb-2">
               <div
                 className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: userLocation ? '#3b82f6' : 'hsl(224 32% 8%)' }}
+                style={{ background: 'hsl(224 32% 8%)' }}
               >
                 {userLocation
                   ? <LocateFixed style={{ width: 11, height: 11, color: 'white' }} />
