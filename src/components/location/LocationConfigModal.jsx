@@ -316,7 +316,7 @@ export default function LocationConfigModal({ professional, open, onClose, onSav
                                 <div className="flex items-start gap-2.5 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl">
                                   <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                                   <p className="text-[12px] text-slate-500 leading-relaxed">
-                                    Sua posição será atualizada automaticamente enquanto o app estiver aberto.
+                                    Sua posição será atualizada automaticamente enquanto o app estiver aberto. Pode consumir mais bateria.
                                   </p>
                                 </div>
                                 <button
