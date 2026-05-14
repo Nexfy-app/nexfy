@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   User, Star, Briefcase, LogOut, ChevronRight,
-  Shield, Award, Bell, BarChart2, Trash2, Zap } from 'lucide-react';
+  Shield, Award, Bell, BarChart2, Trash2, Zap, MapPin } from 'lucide-react';
+import LocationConfigModal from '../components/location/LocationConfigModal';
 import NotificationCenter from '../components/notifications/NotificationCenter';
 import TurboSection from '../components/turbo/TurboSection';
 import useProfessionalLocationSync from '../hooks/useProfessionalLocationSync';
@@ -22,6 +23,7 @@ export default function Profile() {
   const [savingName, setSavingName] = useState(false);
   const [turboData, setTurboData] = useState(null);
   const [turboLoading, setTurboLoading] = useState(false);
+  const [showLocationConfig, setShowLocationConfig] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -100,6 +102,16 @@ export default function Profile() {
     { label: "Minhas Avaliações", icon: Star, path: "/professional/reviews", show: !!professional },
     { label: "Notificações", icon: Bell, path: "/notifications/settings", show: true }
   ];
+
+  const locationStatusLabel = () => {
+    if (!professional) return null;
+    if (!professional.is_available) return { label: 'Offline no mapa', color: '#8E8E93', dot: '#8E8E93' };
+    if (professional.location_type === 'realtime') return { label: 'Tempo Real Ativo', color: '#007AFF', dot: '#007AFF' };
+    if (professional.location_type === 'fixed' || professional.location_type === 'current') return { label: 'Localização Fixa Ativa', color: '#30D158', dot: '#30D158' };
+    return { label: 'Online no mapa', color: '#30D158', dot: '#30D158' };
+  };
+
+  const locStatus = locationStatusLabel();
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,6 +238,43 @@ export default function Profile() {
 
 
 
+        {/* Location config card — apenas para profissionais */}
+        {professional && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+          >
+            <button
+              onClick={() => setShowLocationConfig(true)}
+              className="w-full flex items-center gap-3.5 px-4 py-3.5 hover:opacity-95 transition active:scale-[0.99]"
+              style={{
+                background: '#ffffff',
+                borderRadius: 22,
+                border: '1px solid rgba(0,0,0,0.04)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.07)',
+              }}
+            >
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: locStatus ? `${locStatus.dot}18` : 'rgba(0,122,255,0.10)' }}
+              >
+                <MapPin className="w-4 h-4" style={{ color: locStatus ? locStatus.dot : '#007AFF' }} />
+              </div>
+              <div className="flex-1 text-left">
+                <span className="text-sm font-medium text-foreground">Configurar Localização</span>
+                {locStatus && (
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: locStatus.dot }} />
+                    <span className="text-[11px] font-medium" style={{ color: locStatus.color }}>{locStatus.label}</span>
+                  </div>
+                )}
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </motion.div>
+        )}
+
         {/* Menu items */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -304,6 +353,14 @@ export default function Profile() {
           Excluir minha conta
         </motion.button>
       </div>
+
+      {/* Location Config Modal */}
+      <LocationConfigModal
+        professional={professional}
+        open={showLocationConfig}
+        onClose={() => setShowLocationConfig(false)}
+        onSaved={() => queryClient.invalidateQueries({ queryKey: ['my-pro', user?.email] })}
+      />
 
       {/* Delete Account Confirmation Dialog */}
       {showDeleteConfirm &&
