@@ -14,5 +14,8 @@
       "type": "string",
       "description": "Nome personalizado exibido no perfil"
     }
-  }
+  },
+  "required": [
+    "display_name"
+  ]
 }

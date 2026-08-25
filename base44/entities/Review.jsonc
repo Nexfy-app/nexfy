@@ -36,7 +36,7 @@
     "create": {
       "data.client_email": "{{user.email}}"
     },
-    "read": null,
+    "read": {},
     "update": {
       "$or": [
         {
